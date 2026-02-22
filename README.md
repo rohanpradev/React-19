@@ -46,7 +46,7 @@ This project is a **sandbox for testing and exploring React 19 features**. It's 
 
 ```bash id="lqxz9p"
 # Clone the repository
-git clone <your-repo-url>
+git clone "https://github.com/rohanpradev/React-19.git"
 cd <your-repo-directory>
 
 # Install dependencies with Bun
