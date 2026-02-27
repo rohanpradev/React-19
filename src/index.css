@@ -5,13 +5,23 @@
 		@apply font-sans;
 	}
 
+	html,
 	body {
-		@apply grid place-items-center min-w-[320px] min-h-screen relative m-0 bg-background text-foreground;
+		@apply min-w-[320px] min-h-screen m-0 p-0 bg-background text-foreground;
+	}
+
+	body {
+		/* Use flex to allow sidebar + main content to stretch */
+		@apply flex flex-col;
+		/* Remove centering for full-page layout */
+	}
+
+	#root {
+		@apply flex-1 flex; /* Make root fill the screen and allow sidebar + content flex layout */
 	}
 }
 
-/* cool Bun background animation 😎 */
-
+/* Cool Bun background animation 😎 */
 @keyframes slide {
 	from {
 		background-position: 0 0;
