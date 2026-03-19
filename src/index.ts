@@ -1,19 +1,20 @@
 import { serve } from "bun";
+import { initializeDatabase } from "./db/init";
 import index from "./index.html";
+import { listCustomers } from "./server/customers";
+
+initializeDatabase();
 
 const server = serve({
 	routes: {
-		// Serve index.html for all unmatched routes.
-		"/*": index,
-
 		"/api/hello": {
-			async GET(req) {
+			async GET(_req) {
 				return Response.json({
 					message: "Hello, world!",
 					method: "GET",
 				});
 			},
-			async PUT(req) {
+			async PUT(_req) {
 				return Response.json({
 					message: "Hello, world!",
 					method: "PUT",
@@ -27,6 +28,15 @@ const server = serve({
 				message: `Hello, ${name}!`,
 			});
 		},
+
+		"/api/customers": {
+			GET(req) {
+				return Response.json(listCustomers(req));
+			},
+		},
+
+		// Serve index.html for all unmatched routes.
+		"/*": index,
 	},
 
 	development: process.env.NODE_ENV !== "production" && {
@@ -38,4 +48,4 @@ const server = serve({
 	},
 });
 
-console.log(`🚀 Server running at ${server.url}`);
+console.log(`Server running at ${server.url}`);

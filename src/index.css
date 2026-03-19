@@ -1,42 +1,17 @@
 @import "../styles/globals.css";
 
 @layer base {
-	:root {
-		@apply font-sans;
-	}
-
 	html,
 	body {
-		@apply min-w-[320px] min-h-screen m-0 p-0 bg-background text-foreground;
+		@apply min-h-screen min-w-[320px] m-0 p-0;
 	}
 
 	body {
-		/* Use flex to allow sidebar + main content to stretch */
 		@apply flex flex-col;
-		/* Remove centering for full-page layout */
 	}
 
 	#root {
-		@apply flex-1 flex; /* Make root fill the screen and allow sidebar + content flex layout */
-	}
-}
-
-/* Cool Bun background animation 😎 */
-@keyframes slide {
-	from {
-		background-position: 0 0;
-	}
-	to {
-		background-position: 256px 224px;
-	}
-}
-
-@keyframes spin {
-	from {
-		transform: rotate(0);
-	}
-	to {
-		transform: rotate(360deg);
+		@apply flex min-h-screen flex-1;
 	}
 }
 
@@ -44,6 +19,9 @@
 	*,
 	::before,
 	::after {
-		animation: none !important;
+		animation-duration: 0.01ms;
+		animation-iteration-count: 1;
+		scroll-behavior: auto;
+		transition-duration: 0.01ms;
 	}
 }

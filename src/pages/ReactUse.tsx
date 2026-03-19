@@ -1,72 +1,165 @@
-import { Suspense, use } from "react";
+import { createContext, type ReactNode, Suspense, use, useState } from "react";
+import { FeatureIntro } from "@/components/feature-intro";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
 
-async function fetchCharacter(id: number) {
-	const res = await fetch(`https://swapi.dev/api/people/${id}/`);
-	if (!res.ok) throw new Error("Failed to fetch character");
-	return res.json() as Promise<{
-		name: string;
-		height: string;
-		mass: string;
-		species: string[];
-		homeworld: string;
-	}>;
-}
+const HighlightContext = createContext(
+	"Conditional context reads are allowed with use.",
+);
 
-const characterPromise = fetchCharacter(1);
+const releaseBriefPromise = new Promise<{
+	title: string;
+	bullets: string[];
+}>((resolve) => {
+	setTimeout(() => {
+		resolve({
+			title: "React 19 data flow highlights",
+			bullets: [
+				"use reads Promises and suspends naturally until they resolve.",
+				"Unlike most Hooks, use can be called conditionally.",
+				"Promises should be created outside render or come from a cache.",
+			],
+		});
+	}, 900);
+});
 
-function CharacterCard() {
-	const character = use(characterPromise);
+function AsyncBriefCard() {
+	const brief = use(releaseBriefPromise);
 
 	return (
-		<div className="bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 p-6 rounded-xl shadow-2xl text-white max-w-md mx-auto transform transition-transform hover:-translate-y-2 hover:scale-105">
-			<h2 className="text-3xl font-extrabold mb-4 drop-shadow-md">
-				{character.name}
-			</h2>
+		<Card className="border-border/60">
+			<CardHeader>
+				<CardTitle>{brief.title}</CardTitle>
+				<CardDescription>
+					This card is reading a Promise during render.
+				</CardDescription>
+			</CardHeader>
+			<CardContent>
+				<ul className="space-y-3 text-sm text-muted-foreground">
+					{brief.bullets.map((bullet) => (
+						<li
+							key={bullet}
+							className="rounded-2xl border border-border/60 p-3"
+						>
+							{bullet}
+						</li>
+					))}
+				</ul>
+			</CardContent>
+		</Card>
+	);
+}
 
-			<div className="space-y-2 text-sm md:text-base">
-				<p>
-					<span className="font-semibold">Height:</span>{" "}
-					<Badge variant="secondary">{character.height} cm</Badge>
-				</p>
-				<p>
-					<span className="font-semibold">Mass:</span>{" "}
-					<Badge variant="secondary">{character.mass} kg</Badge>
-				</p>
-				<p>
-					<span className="font-semibold">Homeworld:</span>{" "}
-					<Badge variant="default">{character.homeworld}</Badge>
-				</p>
-				<p>
-					<span className="font-semibold">Species:</span>{" "}
-					{character.species.length > 0 ? (
-						character.species.map((s) => (
-							<Badge key={s} variant="default" className="mr-2">
-								{s}
-							</Badge>
-						))
-					) : (
-						<Badge variant="default">Human</Badge>
-					)}
-				</p>
-			</div>
-		</div>
+function ConditionalContextNote({ visible }: { visible: boolean }) {
+	if (!visible) {
+		return (
+			<p className="text-sm text-muted-foreground">
+				Turn the note back on to call use on context after this early return.
+			</p>
+		);
+	}
+
+	const note = use(HighlightContext);
+	return <Badge variant="secondary">{note}</Badge>;
+}
+
+function SuspensePanel({ children }: { children: ReactNode }) {
+	return (
+		<Suspense
+			fallback={
+				<Card className="border-border/60">
+					<CardContent className="p-6 text-sm text-muted-foreground">
+						Resolving the Promise with Suspense...
+					</CardContent>
+				</Card>
+			}
+		>
+			{children}
+		</Suspense>
 	);
 }
 
 export function ReactUsePage() {
+	const [showContextNote, setShowContextNote] = useState(true);
+
 	return (
-		<Suspense
-			fallback={
-				<div className="p-6 max-w-md mx-auto animate-pulse bg-gray-200 rounded-xl">
-					Loading Star Wars character...
+		<div className="space-y-6">
+			<FeatureIntro
+				eyebrow="React 19"
+				title="Render-time use"
+				summary="The new use API reads a Promise or context during render. It integrates with Suspense for async work, and unlike most Hooks it can be called conditionally."
+				points={[
+					{
+						title: "Promises suspend the component",
+						detail:
+							"When use reads a pending Promise, React pauses that branch and renders the nearest Suspense fallback until the Promise resolves.",
+					},
+					{
+						title: "Context reads can be conditional",
+						detail:
+							"use can read context after an early return or inside branches where useContext would not be allowed.",
+					},
+					{
+						title: "This page uses two React 19 APIs together",
+						detail:
+							"The Promise is cached outside render, and the provider below uses the new shorter <Context value={...}> syntax.",
+					},
+				]}
+				links={[
+					{
+						label: "React 19 release",
+						href: "https://react.dev/blog/2024/12/05/react-19",
+					},
+					{
+						label: "use",
+						href: "https://react.dev/reference/react/use",
+					},
+				]}
+			/>
+
+			<HighlightContext value="This note comes from context via use, not useContext.">
+				<div className="grid gap-6 xl:grid-cols-[minmax(0,1.3fr)_360px]">
+					<SuspensePanel>
+						<AsyncBriefCard />
+					</SuspensePanel>
+
+					<Card className="border-border/60">
+						<CardHeader>
+							<CardTitle>Conditional context read</CardTitle>
+							<CardDescription>
+								This demo flips a branch before calling use on context.
+							</CardDescription>
+						</CardHeader>
+						<CardContent className="space-y-4">
+							<Button
+								type="button"
+								variant="outline"
+								onClick={() => setShowContextNote((current) => !current)}
+							>
+								{showContextNote ? "Hide context note" : "Show context note"}
+							</Button>
+
+							<ConditionalContextNote visible={showContextNote} />
+
+							<div className="rounded-2xl border border-border/60 p-4 text-sm text-muted-foreground">
+								<p className="font-medium text-foreground">Why this matters</p>
+								<p className="mt-2">
+									The Promise on the left is created outside render, matching
+									the release-note guidance, and the provider itself is using
+									React 19's new shorthand syntax.
+								</p>
+							</div>
+						</CardContent>
+					</Card>
 				</div>
-			}
-		>
-			<ScrollArea className="max-h-[500px] p-4">
-				<CharacterCard />
-			</ScrollArea>
-		</Suspense>
+			</HighlightContext>
+		</div>
 	);
 }

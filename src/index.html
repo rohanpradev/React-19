@@ -1,12 +1,38 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Bun + React</title>
-        <script type="module" src="./frontend.tsx" async></script>
-    </head>
-    <body>
-        <div id="root"></div>
-    </body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bun + React Lab</title>
+    <script>
+      (() => {
+        try {
+          const storedTheme = localStorage.getItem("bun-react-theme");
+          const theme =
+            storedTheme === "light" ||
+            storedTheme === "dark" ||
+            storedTheme === "system"
+              ? storedTheme
+              : "system";
+          const resolvedTheme =
+            theme === "system"
+              ? window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light"
+              : theme;
+
+          document.documentElement.classList.toggle(
+            "dark",
+            resolvedTheme === "dark",
+          );
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch {}
+      })();
+    </script>
+    <script type="module" src="./frontend.tsx" async></script>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
 </html>

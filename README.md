@@ -1,103 +1,85 @@
-# 🚀 Bun + React 19 Playground
+# Bun + React Lab
 
-An **experimental React 19 project** built with **Bun**, exploring the latest React features including **new hooks**, **shadcn hooks**, **debounced search**, and **optimistic updates**.
+This project is a Bun-powered React 19 playground with two main goals:
 
----
+- demonstrate React 19 features in focused pages
+- showcase a full-stack Bun + Drizzle + SQLite table with server-side pagination, sorting, filtering, and search
 
-## Purpose
+## Stack
 
-This project is a **sandbox for testing and exploring React 19 features**. Key goals:
+- Bun
+- React 19
+- React Router
+- TanStack Table
+- Drizzle ORM
+- SQLite via Bun
+- shadcn-style UI components
+- Temporal via `@js-temporal/polyfill`
 
-- Experiment with **new React hooks** and patterns
-- Use **shadcn hooks** for reusable and composable state logic
-- Implement **debounced search** for performant input handling
-- Explore **optimistic updates** and **async actions**
-- Evaluate **Bun** as a fast runtime and bundler for React
+## Pages
 
-> ⚡ Note: This is not a production-ready app. Features and APIs may change with future React releases.
+- `/react-19` - React 19 overview
+- `/form-actions` - `useActionState` and `useFormStatus`
+- `/actions` - async actions with `startTransition`
+- `/optimistic` - `useOptimistic`
+- `/react-use` - `use` with Suspense and context
+- `/dom-interop` - document metadata, refs, and custom elements
+- `/search-debounce` - debounced search with `useDeferredValue`
+- `/revenue-ops` - server-side TanStack Table backed by Bun + Drizzle + SQLite
 
----
+## Prerequisites
 
-## Features
+- Bun installed locally
 
-- **Debounced Search** – Reduce unnecessary renders and API calls.
-- **Shadcn Hooks** – Modular hooks for clean state management.
-- **React 19 Experimental Hooks** – Try `use`, `useOptimistic`, `useActionState`, and more.
-- **Optimistic UI Updates** – Update UI instantly while async requests complete.
-- **Bun-Powered Development** – Lightning-fast builds and hot reload for experimentation.
-
----
-
-## Tech Stack
-
-- **Bun** – Ultra-fast JavaScript runtime and bundler
-- **React 19** – Cutting-edge React version with experimental hooks
-- **shadcn/hooks** – Reusable state hooks
-- **Tailwind CSS** – Rapid styling for UI components
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- [Bun](https://bun.sh/) installed
-- Optional: Node.js for comparison
-
-### Installation
+## Install
 
 ```bash
-# Clone the repository
-git clone https://github.com/rohanpradev/React-19.git
-cd React-19
-
-# Install dependencies with Bun
 bun install
+```
 
-# Start development server
+## Run
+
+```bash
 bun dev
 ```
 
-The app runs at `http://localhost:3000` (or the port Bun provides).
+The app serves the frontend and API from Bun. The default landing page is `/react-19`.
 
----
+## Database Behavior
 
-## Usage
+The app uses a local SQLite database file:
 
-- Explore the **React 19 feature pages** via the sidebar.
-- Try **debounced search** inputs and watch performance improvements.
-- Experiment with **shadcn hooks** and **optimistic state updates**.
-- Great for learning **new React patterns, state management techniques, and experimental APIs**.
+- `mydb.sqlite`
+- `mydb.sqlite-shm`
+- `mydb.sqlite-wal`
 
----
+On startup, Bun will:
 
-## Folder Structure
+1. run Drizzle migrations from `./drizzle`
+2. seed demo customer data if the database is empty
 
-```txt
-src/
-├─ components/       # Reusable React components (ShadCN UI)
-├─hooks/             # Custom hooks (shadcn + experimental)
-├─ pages/             # Feature demo pages (React 19 hooks, Actions, etc.)
-├─utils/             # Utility functions (debounce, helpers)
-└─App.tsx            # Main app component with routing
+You do not need to run a separate database process.
+
+## Reset Local State
+
+If you want a clean local run, stop Bun and delete these files from the project root:
+
+- `mydb.sqlite`
+- `mydb.sqlite-shm`
+- `mydb.sqlite-wal`
+
+The next `bun dev` will recreate the database and seed it again.
+
+## Useful Scripts
+
+```bash
+bun dev
+bun start
+bun run db:generate
+bun run db:seed
 ```
 
----
+## Notes
 
-## Contributing
-
-This is an **experimental playground**, but contributions are welcome!
-
-1. Fork the repository
-2. Create a branch: `git checkout -b feature/experiment`
-3. Commit your changes: `git commit -m "Add experimental hook"`
-4. Push the branch: `git push origin feature/experiment`
-5. Open a pull request
-
----
-
-## License
-
-MIT License – Feel free to experiment!
-
----
+- The local development path is `bun dev`.
+- Time handling in app code uses `Temporal` through `src/lib/temporal.ts`, which falls back to `@js-temporal/polyfill` when the runtime does not expose `globalThis.Temporal`.
