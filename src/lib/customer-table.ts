@@ -92,6 +92,27 @@ export type CustomerListResponse = {
 	};
 };
 
+export type CustomerAutocompleteItem = Pick<
+	CustomerRow,
+	| "id"
+	| "name"
+	| "email"
+	| "company"
+	| "status"
+	| "plan"
+	| "country"
+	| "lastSeenAt"
+>;
+
+export type CustomerAutocompleteResponse = {
+	items: CustomerAutocompleteItem[];
+	meta: {
+		query: string;
+		limit: number;
+		total: number;
+	};
+};
+
 const DEFAULT_PAGE_SIZE = 10;
 const MAX_PAGE_SIZE = 50;
 const MAX_PAGE_INDEX = 10_000;

@@ -1,16 +1,4 @@
-// src/App.tsx
-import {
-	ChartColumnIncreasing,
-	FilePenLine,
-	FlaskConical,
-	type LucideIcon,
-	Orbit,
-	PanelTopOpen,
-	Rocket,
-	Search,
-	Sparkles,
-	Workflow,
-} from "lucide-react";
+import { BookOpenText, Layers3, Rocket } from "lucide-react";
 import {
 	Navigate,
 	NavLink,
@@ -18,9 +6,11 @@ import {
 	Routes,
 	useLocation,
 } from "react-router-dom";
+import { AppCommandPalette } from "@/components/app-command-palette";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { appIdentity, learningStages, navItems } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import { ActionsPage } from "@/pages/Actions";
 import { DomInteropPage } from "@/pages/DomInterop";
@@ -33,104 +23,88 @@ import { ServerTablePage } from "@/pages/ServerTable";
 
 import "./index.css";
 
-type NavItem = {
-	path: string;
-	label: string;
-	blurb: string;
-	icon: LucideIcon;
-};
-
-const links: [NavItem, ...NavItem[]] = [
+const showcaseStats = [
 	{
-		path: "/react-19",
-		label: "React 19 Overview",
-		blurb: "Release notes mapped to concrete pages in the app.",
-		icon: Sparkles,
-	},
-	{
-		path: "/form-actions",
-		label: "Form Actions",
-		blurb: "Function actions, pending state, and returned UI state.",
-		icon: FilePenLine,
-	},
-	{
-		path: "/actions",
-		label: "Async Actions",
-		blurb: "Button-driven mutations with transitions and feedback.",
-		icon: Workflow,
-	},
-	{
-		path: "/optimistic",
-		label: "Optimistic UI",
-		blurb: "Immediate UI moves with clean success and rollback behavior.",
+		label: "React 19 demos",
+		value: "6 core routes",
 		icon: Rocket,
 	},
 	{
-		path: "/react-use",
-		label: "use + Suspense",
-		blurb: "Promises and conditional context reads during render.",
-		icon: Orbit,
+		label: "UI surfaces",
+		value: "shadcn shell + palette",
+		icon: Layers3,
 	},
 	{
-		path: "/dom-interop",
-		label: "DOM + Head APIs",
-		blurb: "Metadata, refs, and custom element interop in React 19.",
-		icon: PanelTopOpen,
+		label: "Runtime",
+		value: "Bun routes + HTML imports",
+		icon: BookOpenText,
 	},
-	{
-		path: "/search-debounce",
-		label: "Search + Deferred",
-		blurb: "Debounced search shaped with useDeferredValue.",
-		icon: Search,
-	},
-	{
-		path: "/revenue-ops",
-		label: "Revenue Ops",
-		blurb: "Server-side table state powered by Bun, Drizzle, and SQLite.",
-		icon: ChartColumnIncreasing,
-	},
-];
+] as const;
 
 export function App() {
 	const location = useLocation();
 	const activeLink =
-		links.find(({ path }) => location.pathname === path) ?? links[0];
+		navItems.find(({ path }) => location.pathname === path) ?? navItems[0];
 	const ActiveIcon = activeLink.icon;
+	const IdentityIcon = appIdentity.icon;
 
 	return (
 		<div className="min-h-screen w-full">
-			<div className="mx-auto flex min-h-screen max-w-[1600px] gap-4 p-3 sm:p-4 lg:p-6">
-				<aside className="hidden w-[320px] shrink-0 lg:flex">
-					<div className="flex w-full flex-col gap-6 rounded-[2rem] border border-sidebar-border/70 bg-sidebar/78 p-6 shadow-2xl shadow-black/[0.06] backdrop-blur-xl dark:shadow-black/[0.32]">
-						<div className="space-y-4">
-							<div className="flex items-start justify-between gap-4">
-								<div className="flex items-center gap-3">
-									<div className="flex size-12 items-center justify-center rounded-2xl bg-primary/12 text-primary">
-										<FlaskConical className="size-6" />
-									</div>
-									<div className="space-y-1">
-										<p className="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
-											Bun + React Lab
-										</p>
-										<h2 className="font-display text-2xl text-sidebar-foreground">
-											Interface Studio
-										</h2>
-									</div>
+			<div className="mx-auto grid min-h-screen max-w-[1560px] gap-4 p-3 sm:p-4 lg:grid-cols-[340px_minmax(0,1fr)] lg:gap-6 lg:p-6">
+				<aside className="hidden lg:block">
+					<div className="sticky top-6 flex max-h-[calc(100vh-3rem)] flex-col gap-5 overflow-y-auto rounded-[2.2rem] border border-sidebar-border/70 bg-sidebar/80 p-5 shadow-2xl shadow-black/[0.06] backdrop-blur-xl dark:shadow-black/[0.32]">
+						<div className="shrink-0 rounded-[1.8rem] border border-sidebar-border/60 bg-background/58 p-5">
+							<div className="flex min-w-0 items-start gap-3">
+								<div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/12 text-primary">
+									<IdentityIcon className="size-6" />
 								</div>
-								<ThemeToggle />
+								<div className="min-w-0 space-y-1">
+									<p className="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
+										{appIdentity.label}
+									</p>
+									<h2 className="font-display text-2xl text-sidebar-foreground">
+										{appIdentity.title}
+									</h2>
+								</div>
 							</div>
 
-							<div className="rounded-[1.5rem] border border-sidebar-border/60 bg-background/55 p-4">
-								<p className="text-sm leading-6 text-muted-foreground">
-									A themed sandbox for React 19, server-side data flows, and
-									polished component work built on shadcn-style tokens.
-								</p>
+							<p className="mt-4 text-sm leading-6 text-muted-foreground">
+								{appIdentity.description}
+							</p>
+
+							<div className="mt-4 flex flex-wrap gap-2">
+								<Badge variant="secondary">React 19.2</Badge>
+								<Badge variant="outline">shadcn/ui</Badge>
+								<Badge variant="outline">Bun full-stack</Badge>
+							</div>
+
+							<div className="mt-5 rounded-[1.4rem] border border-sidebar-border/60 bg-background/46 p-3">
+								<div className="space-y-1 px-1">
+									<p className="text-xs font-medium tracking-[0.16em] text-muted-foreground uppercase">
+										Appearance
+									</p>
+									<p className="text-sm leading-6 text-muted-foreground">
+										Theme controls stay in the sidebar on desktop so the content
+										area stays clean.
+									</p>
+								</div>
+								<ThemeToggle className="mt-3 w-full justify-between" />
 							</div>
 						</div>
 
-						<ScrollArea className="flex-1 pr-2">
-							<nav className="space-y-2">
-								{links.map((link) => {
+						<div className="rounded-[1.8rem] border border-sidebar-border/60 bg-background/52 p-3">
+							<div className="px-3 pb-3">
+								<p className="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
+									Learning routes
+								</p>
+								<p className="mt-2 text-sm leading-6 text-muted-foreground">
+									Move from release overview to focused demos and the applied
+									full-stack page.
+								</p>
+							</div>
+
+							<nav className="space-y-2 pb-2">
+								{navItems.map((link) => {
 									const Icon = link.icon;
 
 									return (
@@ -150,61 +124,173 @@ export function App() {
 												<Icon className="size-5" />
 											</div>
 											<div className="min-w-0 space-y-1">
-												<p className="font-medium">{link.label}</p>
+												<div className="flex flex-wrap items-center gap-2">
+													<p className="font-medium">{link.label}</p>
+													<Badge
+														variant="outline"
+														className="border-current/20 bg-background/40 text-[10px] text-current/75"
+													>
+														{learningStages[link.stage]}
+													</Badge>
+												</div>
 												<p className="text-sm leading-5 text-current/70">
 													{link.blurb}
 												</p>
+												<div className="flex flex-wrap gap-2 pt-1">
+													{link.apiLabels.slice(0, 2).map((api) => (
+														<span
+															key={api}
+															className="rounded-full border border-current/15 bg-background/35 px-2 py-1 text-[10px] font-medium tracking-[0.12em] text-current/70 uppercase"
+														>
+															{api}
+														</span>
+													))}
+												</div>
 											</div>
 										</NavLink>
 									);
 								})}
 							</nav>
-						</ScrollArea>
+						</div>
 
-						<div className="rounded-[1.5rem] border border-sidebar-border/60 bg-background/55 p-4">
-							<p className="text-sm font-medium text-sidebar-foreground">
-								Theme-aware shell
+						<div className="shrink-0 rounded-[1.8rem] border border-sidebar-border/60 bg-background/58 p-5">
+							<p className="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
+								Quick access
 							</p>
 							<p className="mt-2 text-sm leading-6 text-muted-foreground">
-								Light and dark modes are driven by the same shadcn token system,
-								not a separate layer of one-off overrides.
+								Jump to demos, docs, and theme actions without leaving the
+								current route.
 							</p>
+							<AppCommandPalette buttonClassName="mt-4 w-full sm:min-w-0" />
+
+							<div className="mt-4 grid gap-3">
+								{showcaseStats.map((stat) => {
+									const Icon = stat.icon;
+
+									return (
+										<div
+											key={stat.label}
+											className="rounded-[1.3rem] border border-sidebar-border/60 bg-background/60 p-4"
+										>
+											<div className="flex items-center gap-3">
+												<div className="flex size-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+													<Icon className="size-5" />
+												</div>
+												<div>
+													<p className="text-sm font-medium text-sidebar-foreground">
+														{stat.value}
+													</p>
+													<p className="text-xs text-muted-foreground">
+														{stat.label}
+													</p>
+												</div>
+											</div>
+										</div>
+									);
+								})}
+							</div>
 						</div>
 					</div>
 				</aside>
 
-				<div className="flex min-w-0 flex-1 flex-col gap-4">
-					<header className="rounded-[1.75rem] border border-border/65 bg-background/70 p-4 shadow-xl shadow-black/[0.05] backdrop-blur-xl dark:shadow-black/[0.28]">
-						<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-							<div className="flex items-center gap-4">
-								<div className="flex size-12 items-center justify-center rounded-2xl bg-primary/12 text-primary">
-									<ActiveIcon className="size-6" />
-								</div>
-								<div className="space-y-1">
-									<div className="flex flex-wrap items-center gap-2">
-										<Badge variant="secondary">Active route</Badge>
-										<p className="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
-											React 19 + Bun sandbox
-										</p>
+				<div className="flex min-w-0 flex-col gap-4 lg:gap-6">
+					<header className="relative overflow-hidden rounded-[2.1rem] border border-border/65 bg-background/74 p-5 shadow-xl shadow-black/[0.05] backdrop-blur-xl sm:p-6 lg:p-7 dark:shadow-black/[0.28]">
+						<div className="pointer-events-none absolute inset-0">
+							<div className="absolute top-0 right-0 h-52 w-52 rounded-full bg-primary/12 blur-3xl" />
+							<div className="absolute bottom-0 left-0 h-40 w-40 rounded-full bg-accent/16 blur-3xl" />
+						</div>
+
+						<div className="relative grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px] xl:items-start">
+							<div className="space-y-5">
+								<div className="flex items-start gap-4">
+									<div className="flex size-14 shrink-0 items-center justify-center rounded-[1.4rem] bg-primary/12 text-primary shadow-sm shadow-black/[0.08]">
+										<ActiveIcon className="size-7" />
 									</div>
-									<p className="font-medium text-foreground">
-										{activeLink.label}
-									</p>
-									<p className="text-sm text-muted-foreground">
-										{activeLink.blurb}
-									</p>
+									<div className="min-w-0 space-y-3">
+										<div className="flex flex-wrap items-center gap-2">
+											<Badge variant="secondary">Active route</Badge>
+											<Badge variant="outline">{activeLink.releaseArea}</Badge>
+											<Badge variant="outline">
+												{learningStages[activeLink.stage]}
+											</Badge>
+											<p className="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
+												React 19 + Bun sandbox
+											</p>
+										</div>
+
+										<div className="space-y-2">
+											<h1 className="font-display text-4xl leading-none text-foreground sm:text-5xl">
+												{activeLink.label}
+											</h1>
+											<p className="max-w-3xl text-sm leading-7 text-muted-foreground sm:text-base">
+												{activeLink.blurb} Each route is treated like a focused
+												studio module, so the shell stays out of the way and the
+												page content can do the teaching.
+											</p>
+										</div>
+									</div>
+								</div>
+
+								<div className="flex flex-wrap gap-2">
+									{activeLink.apiLabels.map((api) => (
+										<Badge
+											key={api}
+											variant="outline"
+											className="rounded-full bg-background/72 px-3 py-1"
+										>
+											{api}
+										</Badge>
+									))}
 								</div>
 							</div>
 
-							<div className="flex items-center gap-3 self-start sm:self-auto lg:hidden">
-								<ThemeToggle />
+							<div className="hidden xl:block">
+								<div className="app-surface rounded-[1.65rem] p-5">
+									<p className="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
+										Route lens
+									</p>
+
+									<div className="mt-4 grid gap-3">
+										<div className="rounded-[1.2rem] border border-border/60 bg-background/65 p-4">
+											<p className="text-xs font-medium tracking-[0.16em] text-muted-foreground uppercase">
+												Learning stage
+											</p>
+											<p className="mt-2 font-medium text-foreground">
+												{learningStages[activeLink.stage]}
+											</p>
+										</div>
+
+										<div className="rounded-[1.2rem] border border-border/60 bg-background/65 p-4">
+											<p className="text-xs font-medium tracking-[0.16em] text-muted-foreground uppercase">
+												Release area
+											</p>
+											<p className="mt-2 font-medium text-foreground">
+												{activeLink.releaseArea}
+											</p>
+										</div>
+
+										<div className="rounded-[1.2rem] border border-border/60 bg-background/65 p-4">
+											<p className="text-xs font-medium tracking-[0.16em] text-muted-foreground uppercase">
+												APIs in focus
+											</p>
+											<p className="mt-2 text-sm leading-6 text-muted-foreground">
+												{activeLink.apiLabels.join(" / ")}
+											</p>
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
 
-						<div className="mt-4 lg:hidden">
+						<div className="relative mt-5 space-y-3 lg:hidden">
+							<div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+								<AppCommandPalette buttonClassName="w-full sm:min-w-0" />
+								<ThemeToggle className="justify-self-start sm:justify-self-end" />
+							</div>
+
 							<ScrollArea className="w-full whitespace-nowrap">
 								<div className="flex gap-2 pb-1">
-									{links.map((link) => {
+									{navItems.map((link) => {
 										const Icon = link.icon;
 
 										return (

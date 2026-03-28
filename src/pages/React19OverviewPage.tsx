@@ -1,16 +1,15 @@
 import {
 	ArrowRight,
-	ChartColumnIncreasing,
-	FilePenLine,
+	ArrowUpRight,
+	BookOpenText,
+	CheckCircle2,
+	Cpu,
 	type LucideIcon,
-	Orbit,
-	PanelTopOpen,
-	Rocket,
-	Search,
-	Workflow,
+	Server,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { FeatureIntro } from "@/components/feature-intro";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -19,71 +18,75 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
+import { learningStages, navItems, releaseCoverage } from "@/lib/navigation";
 
-const featureRoutes = [
+const learningRoutes = navItems.filter((item) => item.path !== "/react-19");
+const navItemsByPath = Object.fromEntries(
+	navItems.map((item) => [item.path, item]),
+);
+
+const stackHighlights = [
 	{
-		title: "Form Actions",
+		title: "React 19 stable APIs",
 		description:
-			"See how useActionState and useFormStatus turn a form action into a single source of truth for validation, pending state, and returned UI state.",
-		path: "/form-actions",
-		icon: FilePenLine,
+			"Actions, use, optimistic state, metadata tags, ref cleanup callbacks, and deferred-value patterns are all surfaced in runnable pages.",
+		icon: CheckCircle2,
 	},
 	{
-		title: "Async Actions",
+		title: "shadcn/ui composition",
 		description:
-			"Review React 19's action model through startTransition for mutations that are not primarily form-driven.",
-		path: "/actions",
-		icon: Workflow,
+			"The shell now uses a command palette, route metadata chips, and shared card/button/badge primitives instead of ad hoc wrappers.",
+		icon: BookOpenText,
 	},
 	{
-		title: "use + Suspense",
+		title: "Bun full-stack shape",
 		description:
-			"Read a Promise during render, suspend naturally, and compare it with context reads that can happen conditionally.",
-		path: "/react-use",
-		icon: Orbit,
-	},
-	{
-		title: "Optimistic UI",
-		description:
-			"Show a result immediately while the mutation is still in flight, then commit or roll back based on the server response.",
-		path: "/optimistic",
-		icon: Rocket,
-	},
-	{
-		title: "DOM + Head APIs",
-		description:
-			"Cover the platform side of React 19: document metadata, ref as a prop, ref cleanup callbacks, and improved custom element interoperability.",
-		path: "/dom-interop",
-		icon: PanelTopOpen,
-	},
-	{
-		title: "Search + Deferred",
-		description:
-			"Pair debouncing with the new useDeferredValue initial value so the input stays immediate while slower search work lags behind.",
-		path: "/search-debounce",
-		icon: Search,
-	},
-	{
-		title: "Revenue Ops",
-		description:
-			"A full-stack page in this repo that combines Bun, Drizzle, and server-side table state outside the React 19-specific demos.",
-		path: "/revenue-ops",
-		icon: ChartColumnIncreasing,
+			"The project keeps Bun's routes, HTML imports, Tailwind plugin flow, and server-side data APIs visible as first-class learning material.",
+		icon: Server,
 	},
 ] as const satisfies {
 	title: string;
 	description: string;
-	path: string;
 	icon: LucideIcon;
 }[];
 
-const otherReleaseItems = [
-	"useDeferredValue now accepts an initial value for the first render",
-	"<Context> can be rendered directly as a provider",
-	"Stylesheet support adds precedence-aware loading from components",
-	"Async scripts can be deduplicated from the React tree",
-	"preload, preinit, preconnect, and prefetchDNS help resource scheduling",
-	"Hydration diagnostics and root-level error hooks are more actionable",
+const docsStack = [
+	{
+		title: "React",
+		subtitle: "Release notes + API docs",
+		description:
+			"The overview and demo pages are organized around the stable React 19 release post and the hook/component references it points to.",
+		href: "https://react.dev/blog/2024/12/05/react-19",
+		icon: Cpu,
+	},
+	{
+		title: "shadcn/ui",
+		subtitle: "Current component patterns",
+		description:
+			"The UI layer leans on the current command/dialog/card primitives and the repo's Tailwind v4-style token setup in components.json.",
+		href: "https://ui.shadcn.com/docs/components/command",
+		icon: BookOpenText,
+	},
+	{
+		title: "Bun",
+		subtitle: "Full-stack routes + HTML imports",
+		description:
+			"The server/runtime side mirrors Bun's current docs around routes, development mode, and HTML-import-based frontend bundling.",
+		href: "https://bun.sh/docs/bundler/fullstack",
+		icon: Server,
+	},
+] as const satisfies {
+	title: string;
+	subtitle: string;
+	description: string;
+	href: string;
+	icon: LucideIcon;
+}[];
+
+const bunPractices = [
+	"`src/index.ts` uses Bun route objects and parameterized API handlers.",
+	"`bunfig.toml` enables the Tailwind plugin under `[serve.static]`.",
+	"`src/index.html` stays the frontend entry while Bun owns serving and bundling.",
 ] as const;
 
 export function React19OverviewPage() {
@@ -92,22 +95,22 @@ export function React19OverviewPage() {
 			<FeatureIntro
 				eyebrow="React 19"
 				title="Release Notes Tour"
-				summary="This section maps the official React 19 release notes to examples in the app. The tour covers actions, form hooks, optimistic updates, the new use API, and the DOM-level improvements that make React easier to use as a platform tool, not only a component library."
+				summary="This project now works as a docs-to-code map: the React 19 release is broken into guided routes, the shell exposes the right demos and official docs quickly, and the Bun plus shadcn layers are visible enough to show current-stack adoption instead of hiding under boilerplate."
 				points={[
 					{
-						title: "Actions are the center of the release",
+						title: "Learn from the release, not from random demos",
 						detail:
-							"React 19 formalizes async transitions and form actions so pending UI, optimistic work, and returned state fit one mental model.",
+							"Each route is tagged by release area and learning stage so you can move from overview to hands-on examples in a deliberate order.",
 					},
 					{
-						title: "use expands render-time data access",
+						title: "UI primitives now support the teaching goal",
 						detail:
-							"The new use API can read Promises and context during render, integrates with Suspense, and can be called conditionally.",
+							"The command palette, badges, cards, and shell stats are all built from reusable shadcn-style primitives rather than bespoke one-off markup.",
 					},
 					{
-						title: "DOM integration got sharper too",
+						title: "Bun is part of the story",
 						detail:
-							"Metadata, stylesheets, refs, scripts, and Custom Elements all received quality-of-life upgrades that make React friendlier outside pure component logic.",
+							"The app exposes Bun's route model, HTML-import setup, and server-side data flow so the repo reads as a full-stack lab instead of only a frontend sandbox.",
 					},
 				]}
 				links={[
@@ -115,58 +118,194 @@ export function React19OverviewPage() {
 						label: "React 19 release",
 						href: "https://react.dev/blog/2024/12/05/react-19",
 					},
+					{
+						label: "shadcn docs",
+						href: "https://ui.shadcn.com/docs/components/command",
+					},
+					{
+						label: "Bun fullstack docs",
+						href: "https://bun.sh/docs/bundler/fullstack",
+					},
 				]}
 			/>
 
-			<div className="grid gap-4 lg:grid-cols-2">
-				{featureRoutes.map((feature) => (
-					<Card
-						key={feature.path}
-						className="group border-border/60 transition-all duration-200 hover:-translate-y-1 hover:border-primary/20"
-					>
-						<CardHeader>
-							<div className="mb-2 flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-								<feature.icon className="size-5" />
+			<div className="grid gap-6 xl:grid-cols-[minmax(0,1.5fr)_380px]">
+				<Card className="border-border/60">
+					<CardHeader>
+						<CardTitle>React 19 coverage map</CardTitle>
+						<CardDescription className="leading-6">
+							These cards track the major React 19 release areas and show where
+							each concept is demonstrated in this repo.
+						</CardDescription>
+					</CardHeader>
+					<CardContent className="grid gap-4 md:grid-cols-2">
+						{releaseCoverage.map((item) => (
+							<div key={item.title} className="app-muted-surface p-4">
+								<div className="flex flex-wrap items-center gap-2">
+									<p className="font-medium text-foreground">{item.title}</p>
+									<Badge variant="secondary">{item.status}</Badge>
+								</div>
+								<p className="mt-3 text-sm leading-6 text-muted-foreground">
+									{item.detail}
+								</p>
+								<div className="mt-4 flex flex-wrap gap-2">
+									{item.relatedPaths.map((path) => {
+										const route = navItemsByPath[path];
+										if (!route) {
+											return null;
+										}
+
+										return (
+											<Button
+												key={path}
+												asChild
+												variant="outline"
+												size="sm"
+												className="rounded-full"
+											>
+												<NavLink to={path}>
+													{route.label}
+													<ArrowRight className="size-4" />
+												</NavLink>
+											</Button>
+										);
+									})}
+								</div>
 							</div>
-							<CardTitle>{feature.title}</CardTitle>
+						))}
+					</CardContent>
+				</Card>
+
+				<div className="grid gap-4">
+					<Card className="border-border/60">
+						<CardHeader>
+							<CardTitle>Current stack adoption</CardTitle>
 							<CardDescription className="leading-6">
-								{feature.description}
+								The repo is now shaped to show current React, shadcn, and Bun
+								practices together instead of treating the tooling as invisible.
 							</CardDescription>
 						</CardHeader>
-						<CardContent>
-							<Button asChild variant="outline">
-								<NavLink to={feature.path}>
-									Open page
-									<ArrowRight className="size-4" />
-								</NavLink>
-							</Button>
+						<CardContent className="space-y-3">
+							{stackHighlights.map((item) => {
+								const Icon = item.icon;
+
+								return (
+									<div key={item.title} className="app-surface p-4">
+										<div className="flex items-start gap-3">
+											<div className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+												<Icon className="size-5" />
+											</div>
+											<div className="space-y-1">
+												<p className="font-medium text-foreground">
+													{item.title}
+												</p>
+												<p className="text-sm leading-6 text-muted-foreground">
+													{item.description}
+												</p>
+											</div>
+										</div>
+									</div>
+								);
+							})}
 						</CardContent>
 					</Card>
-				))}
+
+					<Card className="border-border/60">
+						<CardHeader>
+							<CardTitle>Bun practices in this repo</CardTitle>
+							<CardDescription className="leading-6">
+								The backend and frontend entry flow matches Bun's current
+								full-stack direction: route objects on the server, HTML imports
+								for the UI, and static plugin config in <code>bunfig.toml</code>
+								.
+							</CardDescription>
+						</CardHeader>
+						<CardContent className="space-y-3">
+							{bunPractices.map((practice) => (
+								<div
+									key={practice}
+									className="app-muted-surface p-3 text-sm leading-6 text-muted-foreground"
+								>
+									{practice}
+								</div>
+							))}
+						</CardContent>
+					</Card>
+				</div>
 			</div>
 
-			<Card className="border-border/60">
-				<CardHeader>
-					<CardTitle>Also in the React 19 release</CardTitle>
-					<CardDescription className="leading-6">
-						These also ship in the release notes. Some are called out on the
-						pages above, while others are noted here so the tour stays broad
-						without turning every item into its own route.
-					</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<ul className="space-y-3 text-sm text-muted-foreground">
-						{otherReleaseItems.map((item) => (
-							<li
-								key={item}
-								className="rounded-2xl border border-border/60 bg-muted/35 p-3"
-							>
-								{item}
-							</li>
-						))}
-					</ul>
-				</CardContent>
-			</Card>
+			<div className="grid gap-4 lg:grid-cols-2">
+				{learningRoutes.map((route) => {
+					const Icon = route.icon;
+
+					return (
+						<Card
+							key={route.path}
+							className="group border-border/60 transition-all duration-200 hover:-translate-y-1 hover:border-primary/20"
+						>
+							<CardHeader>
+								<div className="mb-2 flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+									<Icon className="size-5" />
+								</div>
+								<div className="flex flex-wrap items-center gap-2">
+									<CardTitle>{route.label}</CardTitle>
+									<Badge variant="outline">{route.releaseArea}</Badge>
+									<Badge variant="secondary">
+										{learningStages[route.stage]}
+									</Badge>
+								</div>
+								<CardDescription className="leading-6">
+									{route.blurb}
+								</CardDescription>
+							</CardHeader>
+							<CardContent className="space-y-4">
+								<div className="flex flex-wrap gap-2">
+									{route.apiLabels.map((api) => (
+										<Badge key={api} variant="outline">
+											{api}
+										</Badge>
+									))}
+								</div>
+								<Button asChild variant="outline">
+									<NavLink to={route.path}>
+										Open page
+										<ArrowRight className="size-4" />
+									</NavLink>
+								</Button>
+							</CardContent>
+						</Card>
+					);
+				})}
+			</div>
+
+			<div className="grid gap-4 lg:grid-cols-3">
+				{docsStack.map((item) => {
+					const Icon = item.icon;
+
+					return (
+						<Card key={item.href} className="border-border/60">
+							<CardHeader>
+								<div className="mb-2 flex size-11 items-center justify-center rounded-2xl bg-accent/45 text-accent-foreground">
+									<Icon className="size-5" />
+								</div>
+								<CardTitle>{item.title}</CardTitle>
+								<CardDescription>{item.subtitle}</CardDescription>
+							</CardHeader>
+							<CardContent className="space-y-4">
+								<p className="text-sm leading-6 text-muted-foreground">
+									{item.description}
+								</p>
+								<Button asChild variant="outline">
+									<a href={item.href} target="_blank" rel="noreferrer">
+										Open docs
+										<ArrowUpRight className="size-4" />
+									</a>
+								</Button>
+							</CardContent>
+						</Card>
+					);
+				})}
+			</div>
 		</div>
 	);
 }

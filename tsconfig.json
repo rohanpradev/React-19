@@ -22,7 +22,6 @@
     "noImplicitOverride": true,
 
     // Paths config
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
     },

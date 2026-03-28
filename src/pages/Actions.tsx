@@ -1,5 +1,7 @@
+import { CircleAlert, Info } from "lucide-react";
 import { useState, useTransition } from "react";
 import { FeatureIntro } from "@/components/feature-intro";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -115,13 +117,21 @@ export function ActionsPage() {
 						</Button>
 
 						{error ? (
-							<div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-								{error}
-							</div>
+							<Alert variant="destructive">
+								<CircleAlert />
+								<div className="space-y-1">
+									<AlertTitle>Batch action failed</AlertTitle>
+									<AlertDescription>{error}</AlertDescription>
+								</div>
+							</Alert>
 						) : (
-							<div className="rounded-2xl border border-border/60 bg-muted/45 px-4 py-3 text-sm text-muted-foreground">
-								{notice}
-							</div>
+							<Alert variant="info">
+								<Info />
+								<div className="space-y-1">
+									<AlertTitle>Current selection</AlertTitle>
+									<AlertDescription>{notice}</AlertDescription>
+								</div>
+							</Alert>
 						)}
 					</CardContent>
 				</Card>
@@ -145,7 +155,7 @@ export function ActionsPage() {
 							<p>Last completed: {lastRun ?? "not yet run"}</p>
 						</div>
 
-						<div className="rounded-2xl border border-border/60 p-4 text-sm text-muted-foreground">
+						<div className="app-muted-surface p-4 text-sm text-muted-foreground">
 							<p className="font-medium text-foreground">When to use this</p>
 							<p className="mt-2">
 								Reach for async actions when the user is clicking a control to

@@ -1,5 +1,7 @@
+import { CircleAlert } from "lucide-react";
 import { useOptimistic, useState, useTransition } from "react";
 import { FeatureIntro } from "@/components/feature-intro";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -142,17 +144,18 @@ export function UseOptimisticPage() {
 						</form>
 
 						{error ? (
-							<div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-								{error}
-							</div>
+							<Alert variant="destructive">
+								<CircleAlert />
+								<div className="space-y-1">
+									<AlertTitle>Save failed</AlertTitle>
+									<AlertDescription>{error}</AlertDescription>
+								</div>
+							</Alert>
 						) : null}
 
 						<div className="space-y-3">
 							{optimisticNotes.map((note) => (
-								<div
-									key={note.id}
-									className="rounded-2xl border border-border/60 bg-background/45 px-4 py-3"
-								>
+								<div key={note.id} className="app-surface px-4 py-3">
 									<div className="flex items-start justify-between gap-4">
 										<p className="text-sm leading-6 text-foreground/80">
 											{note.text}
@@ -182,7 +185,7 @@ export function UseOptimisticPage() {
 						<p>Rendered notes: {optimisticNotes.length}</p>
 						<p>Pending request: {String(isPending)}</p>
 
-						<div className="rounded-2xl border border-border/60 p-4">
+						<div className="app-muted-surface p-4">
 							<p className="font-medium text-foreground">Why this matters</p>
 							<p className="mt-2">
 								Optimistic interfaces feel instant, but they are only safe when

@@ -12,10 +12,11 @@ const helpText = `
 Usage: bun run build.ts [options]
 
 Common Options:
+  --entrypoints <list>     Entrypoint files (comma separated, default: "src/index.ts")
   --outdir <path>          Output directory (default: "dist")
   --minify                 Enable minification (or --minify.whitespace, --minify.syntax, etc)
   --sourcemap <type>       Sourcemap type: none|linked|inline|external
-  --target <target>        Build target: browser|bun|node
+  --target <target>        Build target: bun|browser|node (default: "bun")
   --format <format>        Output format: esm|cjs|iife
   --splitting              Enable code splitting
   --packages <type>        Package handling: bundle|external
@@ -29,7 +30,7 @@ Common Options:
   --help, -h               Show this help message
 
 Example:
-  bun run build.ts --outdir=dist --minify --sourcemap=linked --external=react,react-dom
+  bun run build.ts --outdir=dist --target=bun --minify
 `;
 
 if (process.argv.includes("--help") || process.argv.includes("-h")) {
@@ -148,6 +149,14 @@ const outdir =
 	typeof cliConfig.outdir === "string"
 		? cliConfig.outdir
 		: path.join(process.cwd(), "dist");
+const entrypoints =
+	typeof cliConfig.entrypoints === "string"
+		? [path.resolve(cliConfig.entrypoints)]
+		: Array.isArray(cliConfig.entrypoints)
+			? cliConfig.entrypoints
+					.filter((value): value is string => typeof value === "string")
+					.map((entrypoint) => path.resolve(entrypoint))
+			: [path.resolve("src/index.ts")];
 
 if (existsSync(outdir)) {
 	console.log(`Cleaning previous build at ${outdir}`);
@@ -156,12 +165,8 @@ if (existsSync(outdir)) {
 
 const start = performance.now();
 
-const entrypoints = [...new Bun.Glob("**.html").scanSync("src")]
-	.map((entrypoint) => path.resolve("src", entrypoint))
-	.filter((entrypoint) => !entrypoint.includes("node_modules"));
-
 console.log(
-	`Found ${entrypoints.length} HTML ${entrypoints.length === 1 ? "file" : "files"} to process\n`,
+	`Bundling ${entrypoints.length} ${entrypoints.length === 1 ? "entrypoint" : "entrypoints"} with Bun's full-stack pipeline\n`,
 );
 
 const buildConfig: Bun.BuildConfig = {
@@ -169,7 +174,7 @@ const buildConfig: Bun.BuildConfig = {
 	outdir,
 	plugins: [plugin],
 	minify: true,
-	target: "browser",
+	target: "bun",
 	sourcemap: "linked",
 	define: {
 		"process.env.NODE_ENV": JSON.stringify("production"),

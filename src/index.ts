@@ -1,9 +1,10 @@
 import { serve } from "bun";
 import { initializeDatabase } from "./db/init";
 import index from "./index.html";
-import { listCustomers } from "./server/customers";
+import { autocompleteCustomers, listCustomers } from "./server/customers";
 
 initializeDatabase();
+const isDevelopment = process.env.NODE_ENV !== "production";
 
 const server = serve({
 	routes: {
@@ -35,17 +36,25 @@ const server = serve({
 			},
 		},
 
+		"/api/customers/autocomplete": {
+			GET(req) {
+				return Response.json(autocompleteCustomers(req));
+			},
+		},
+
 		// Serve index.html for all unmatched routes.
 		"/*": index,
 	},
 
-	development: process.env.NODE_ENV !== "production" && {
-		// Enable browser hot reloading in development
-		hmr: true,
+	development: isDevelopment
+		? {
+				// Enable browser hot reloading in development
+				hmr: true,
 
-		// Echo console logs from the browser to the server
-		console: true,
-	},
+				// Echo console logs from the browser to the server
+				console: true,
+			}
+		: false,
 });
 
 console.log(`Server running at ${server.url}`);

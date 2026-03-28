@@ -1,7 +1,8 @@
+import { CheckCircle2, CircleAlert, Info } from "lucide-react";
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { FeatureIntro } from "@/components/feature-intro";
-import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -35,7 +36,7 @@ async function submitInvite(
 	const email = String(formData.get("email") ?? "").trim();
 	const workspace = String(formData.get("workspace") ?? "").trim();
 
-	if (!email || !email.includes("@")) {
+	if (!email?.includes("@")) {
 		return {
 			status: "error",
 			message: "Enter a valid email so the action can complete.",
@@ -81,6 +82,25 @@ export function FormActionsPage() {
 		submitInvite,
 		initialState,
 	);
+	const stateConfig =
+		state.status === "error"
+			? {
+					icon: CircleAlert,
+					title: "Submission needs attention",
+					variant: "destructive" as const,
+				}
+			: state.status === "success"
+				? {
+						icon: CheckCircle2,
+						title: "Action completed",
+						variant: "success" as const,
+					}
+				: {
+						icon: Info,
+						title: "Ready to submit",
+						variant: "info" as const,
+					};
+	const StateIcon = stateConfig.icon;
 
 	return (
 		<div className="space-y-6">
@@ -176,33 +196,21 @@ export function FormActionsPage() {
 						</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-4">
-						<Badge
-							variant={
-								state.status === "error"
-									? "destructive"
-									: state.status === "success"
-										? "default"
-										: "outline"
-							}
-						>
-							{state.status === "idle"
-								? "Ready"
-								: state.status === "success"
-									? "Submitted"
-									: "Needs attention"}
-						</Badge>
+						<Alert variant={stateConfig.variant}>
+							<StateIcon />
+							<div className="space-y-1">
+								<AlertTitle>{stateConfig.title}</AlertTitle>
+								<AlertDescription>{state.message}</AlertDescription>
+							</div>
+						</Alert>
 
-						<p className="text-sm leading-6 text-muted-foreground">
-							{state.message}
-						</p>
-
-						<div className="rounded-2xl border border-border/60 bg-muted/45 p-4 text-sm text-muted-foreground">
+						<div className="app-muted-surface p-4 text-sm text-muted-foreground">
 							<p className="font-medium text-foreground">Current hook values</p>
 							<p className="mt-2">isPending: {String(isPending)}</p>
 							<p>lastEmail: {state.lastEmail || "none yet"}</p>
 						</div>
 
-						<div className="rounded-2xl border border-border/60 p-4 text-sm text-muted-foreground">
+						<div className="app-surface p-4 text-sm text-muted-foreground">
 							<p className="font-medium text-foreground">
 								When to reach for this
 							</p>

@@ -7,6 +7,7 @@ import {
 	useRef,
 	useState,
 } from "react";
+import { CodeBlock } from "@/components/code-block";
 import { FeatureIntro } from "@/components/feature-intro";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -147,16 +148,16 @@ class OpsSignalElement extends HTMLElement {
 	private render() {
 		const toneColor =
 			this.toneValue === "positive"
-				? "#047857"
+				? "var(--success)"
 				: this.toneValue === "watch"
-					? "#b45309"
-					: "#b91c1c";
+					? "var(--warning)"
+					: "var(--destructive)";
 		const toneSurface =
 			this.toneValue === "positive"
-				? "rgba(4, 120, 87, 0.12)"
+				? "color-mix(in srgb, var(--success) 14%, var(--card))"
 				: this.toneValue === "watch"
-					? "rgba(180, 83, 9, 0.12)"
-					: "rgba(185, 28, 28, 0.12)";
+					? "color-mix(in srgb, var(--warning) 14%, var(--card))"
+					: "color-mix(in srgb, var(--destructive) 12%, var(--card))";
 
 		this.innerHTML = `
       <div style="display:grid;gap:8px;padding:14px 16px;border-radius:20px;border:1px solid var(--border);background:color-mix(in srgb, var(--card) 88%, ${toneSurface});font-family:var(--font-sans, ui-sans-serif, system-ui, sans-serif);box-shadow:0 10px 30px rgba(15, 23, 42, 0.08);">
@@ -332,7 +333,7 @@ export function DomInteropPage() {
 							))}
 						</div>
 
-						<div className="rounded-2xl border border-border/60 bg-muted/45 p-4">
+						<div className="app-muted-surface p-4">
 							<p className="text-muted-foreground text-xs font-semibold tracking-[0.18em] uppercase">
 								Active head state
 							</p>
@@ -342,10 +343,10 @@ export function DomInteropPage() {
 							</p>
 						</div>
 
-						<pre className="overflow-x-auto rounded-2xl border border-border/70 bg-foreground p-4 text-xs leading-6 text-background shadow-inner">
+						<CodeBlock>
 							{`<title>{head.title}</title>
 <meta name="description" content={head.description} />`}
-						</pre>
+						</CodeBlock>
 					</CardContent>
 				</Card>
 
@@ -374,11 +375,11 @@ export function DomInteropPage() {
 							<Badge variant="outline">No forwardRef wrapper</Badge>
 						</div>
 
-						<pre className="overflow-x-auto rounded-2xl border border-border/70 bg-foreground p-4 text-xs leading-6 text-background shadow-inner">
+						<CodeBlock>
 							{`function FocusField({ ref, ...props }) {
   return <input ref={ref} {...props} />
 }`}
-						</pre>
+						</CodeBlock>
 					</CardContent>
 				</Card>
 
@@ -402,13 +403,13 @@ export function DomInteropPage() {
 						{showTrackedTarget ? (
 							<div
 								ref={trackRefLifecycle}
-								className="text-muted-foreground rounded-2xl border border-dashed border-border/80 bg-muted/45 p-4 text-sm"
+								className="app-muted-surface border-dashed p-4 text-sm text-muted-foreground"
 							>
 								Tracked node mounted. Unmount it to trigger the cleanup return
 								value from the ref callback.
 							</div>
 						) : (
-							<div className="text-muted-foreground rounded-2xl border border-border/60 bg-background/70 p-4 text-sm">
+							<div className="app-surface p-4 text-sm text-muted-foreground">
 								Target removed from the tree.
 							</div>
 						)}
@@ -426,7 +427,7 @@ export function DomInteropPage() {
 									refEvents.map((event) => (
 										<div
 											key={event.id}
-											className="text-muted-foreground rounded-xl border border-border/60 bg-muted/35 px-3 py-2 text-sm"
+											className="app-surface px-3 py-2 text-sm text-muted-foreground"
 										>
 											{event.label}
 										</div>
@@ -472,21 +473,18 @@ export function DomInteropPage() {
 							payload={payload}
 						/>
 
-						<div className="text-muted-foreground rounded-2xl border border-border/60 bg-background/70 p-4 text-sm">
+						<div className="app-surface p-4 text-sm text-muted-foreground">
 							<p className="text-foreground font-medium">
 								Other platform items
 							</p>
 							<div className="mt-3 space-y-3">
 								{platformNotes.map((note) => (
-									<div
-										key={note.title}
-										className="rounded-xl border border-border/60 bg-muted/40 p-3"
-									>
+									<div key={note.title} className="app-muted-surface p-3">
 										<p className="text-foreground font-medium">{note.title}</p>
 										<p className="mt-1 leading-6">{note.detail}</p>
-										<pre className="mt-3 overflow-x-auto rounded-xl bg-foreground p-3 text-xs leading-6 text-background shadow-inner">
+										<CodeBlock className="mt-3 rounded-xl p-3">
 											{note.code}
-										</pre>
+										</CodeBlock>
 									</div>
 								))}
 							</div>

@@ -1,5 +1,4 @@
 import {
-	type Column,
 	type ColumnDef,
 	type ColumnFiltersState,
 	flexRender,
@@ -7,13 +6,13 @@ import {
 	type PaginationState,
 	type SortingState,
 	useReactTable,
+	type VisibilityState,
 } from "@tanstack/react-table";
 import {
-	ArrowDown,
-	ArrowUp,
 	ArrowUpDown,
 	BadgeDollarSign,
 	Building2,
+	CircleAlert,
 	Filter,
 	Layers3,
 	type LucideIcon,
@@ -29,6 +28,9 @@ import {
 	useRef,
 	useState,
 } from "react";
+import { DataTableColumnHeader } from "@/components/data-table-column-header";
+import { DataTableViewOptions } from "@/components/data-table-view-options";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -72,11 +74,19 @@ import {
 } from "@/lib/customer-table";
 import { Temporal } from "@/lib/temporal";
 
+type CustomerColumnMeta = {
+	label?: string;
+	headerClassName?: string;
+	cellClassName?: string;
+};
+
 const columns: ColumnDef<CustomerRow>[] = [
 	{
 		accessorKey: "name",
+		meta: { label: "Customer" } satisfies CustomerColumnMeta,
+		enableHiding: false,
 		header: ({ column }) => (
-			<SortableColumnHeader column={column} title="Customer" />
+			<DataTableColumnHeader column={column} title="Customer" />
 		),
 		cell: ({ row }) => (
 			<div className="space-y-1">
@@ -89,8 +99,10 @@ const columns: ColumnDef<CustomerRow>[] = [
 	},
 	{
 		accessorKey: "company",
+		meta: { label: "Account" } satisfies CustomerColumnMeta,
+		enableHiding: false,
 		header: ({ column }) => (
-			<SortableColumnHeader column={column} title="Account" />
+			<DataTableColumnHeader column={column} title="Account" />
 		),
 		cell: ({ row }) => (
 			<div className="space-y-1">
@@ -105,8 +117,9 @@ const columns: ColumnDef<CustomerRow>[] = [
 	},
 	{
 		accessorKey: "status",
+		meta: { label: "Status" } satisfies CustomerColumnMeta,
 		header: ({ column }) => (
-			<SortableColumnHeader column={column} title="Status" />
+			<DataTableColumnHeader column={column} title="Status" />
 		),
 		cell: ({ row }) => (
 			<Badge variant={getStatusVariant(row.original.status)}>
@@ -116,8 +129,9 @@ const columns: ColumnDef<CustomerRow>[] = [
 	},
 	{
 		accessorKey: "plan",
+		meta: { label: "Plan" } satisfies CustomerColumnMeta,
 		header: ({ column }) => (
-			<SortableColumnHeader column={column} title="Plan" />
+			<DataTableColumnHeader column={column} title="Plan" />
 		),
 		cell: ({ row }) => (
 			<Badge variant="outline">{formatLabel(row.original.plan)}</Badge>
@@ -125,29 +139,48 @@ const columns: ColumnDef<CustomerRow>[] = [
 	},
 	{
 		accessorKey: "annualValue",
+		meta: {
+			label: "Annual Value",
+			headerClassName: "text-right",
+			cellClassName: "text-right",
+		} satisfies CustomerColumnMeta,
 		header: ({ column }) => (
-			<SortableColumnHeader column={column} title="Annual Value" />
+			<DataTableColumnHeader
+				column={column}
+				title="Annual Value"
+				className="justify-end"
+			/>
 		),
 		cell: ({ row }) => (
-			<div className="font-medium">
+			<div className="font-medium tabular-nums">
 				{formatCurrency(row.original.annualValue)}
 			</div>
 		),
 	},
 	{
 		accessorKey: "seats",
+		meta: {
+			label: "Seats",
+			headerClassName: "text-right",
+			cellClassName: "text-right",
+		} satisfies CustomerColumnMeta,
 		header: ({ column }) => (
-			<SortableColumnHeader column={column} title="Seats" />
+			<DataTableColumnHeader
+				column={column}
+				title="Seats"
+				className="justify-end"
+			/>
 		),
-		cell: ({ row }) => <div>{row.original.seats}</div>,
+		cell: ({ row }) => <div className="tabular-nums">{row.original.seats}</div>,
 	},
 	{
 		accessorKey: "lastSeenAt",
+		meta: { label: "Last Seen" } satisfies CustomerColumnMeta,
 		header: ({ column }) => (
-			<SortableColumnHeader column={column} title="Last Seen" />
+			<DataTableColumnHeader column={column} title="Last Seen" />
 		),
 		cell: ({ row }) => (
-			<div className="text-muted-foreground text-sm">
+			<div className="text-muted-foreground text-sm tabular-nums">
 				{formatRelativeDate(row.original.lastSeenAt)}
 			</div>
 		),
@@ -167,6 +200,9 @@ export function ServerTablePage() {
 	});
 	const [sorting, setSorting] = useState<SortingState>(defaultCustomerSorting);
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+		seats: false,
+	});
 	const [globalFilter, setGlobalFilter] = useState("");
 	const [debouncedGlobalFilter, setDebouncedGlobalFilter] = useState("");
 	const [refreshKey, setRefreshKey] = useState(0);
@@ -271,6 +307,7 @@ export function ServerTablePage() {
 			pagination,
 			sorting,
 			columnFilters,
+			columnVisibility,
 			globalFilter,
 		},
 		onPaginationChange: setPagination,
@@ -281,11 +318,13 @@ export function ServerTablePage() {
 			);
 		},
 		onColumnFiltersChange: setColumnFilters,
+		onColumnVisibilityChange: setColumnVisibility,
 		onGlobalFilterChange: setGlobalFilter,
 	});
 
 	const totalRows = response?.meta.totalRows ?? 0;
 	const pageCount = response?.meta.pageCount ?? 1;
+	const visibleColumnCount = table.getVisibleLeafColumns().length;
 	const startRow =
 		totalRows === 0 ? 0 : pagination.pageIndex * pagination.pageSize + 1;
 	const endRow = Math.min(
@@ -396,6 +435,8 @@ export function ServerTablePage() {
 						</div>
 
 						<div className="flex flex-wrap items-center gap-2">
+							<DataTableViewOptions table={table} />
+
 							{activeFilters ? (
 								<Button
 									type="button"
@@ -431,7 +472,7 @@ export function ServerTablePage() {
 						</div>
 					</div>
 
-					<div className="grid gap-3 lg:grid-cols-[minmax(0,1.4fr)_200px_200px]">
+					<div className="grid gap-3 xl:grid-cols-[minmax(0,1.6fr)_220px_220px_auto]">
 						<div className="relative">
 							<Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
 							<Input
@@ -500,27 +541,42 @@ export function ServerTablePage() {
 								))}
 							</SelectContent>
 						</Select>
+
+						<div className="flex items-center xl:justify-end">
+							<Badge variant="outline" className="justify-center px-3 py-2">
+								{formatNumber(totalRows)} matching accounts
+							</Badge>
+						</div>
 					</div>
 				</CardHeader>
 
 				<CardContent className="space-y-4 pt-6">
 					{error ? (
-						<div className="rounded-2xl border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-							{error}
-						</div>
+						<Alert variant="destructive">
+							<CircleAlert />
+							<div className="space-y-1">
+								<AlertTitle>Unable to load customers</AlertTitle>
+								<AlertDescription>{error}</AlertDescription>
+							</div>
+						</Alert>
 					) : null}
 
-					<div className="rounded-[1.5rem] border border-border/60 bg-card/75">
+					<div className="app-surface overflow-hidden rounded-[1.5rem]">
 						<Table>
 							<TableCaption className="px-4 pb-4 text-left">
 								Rows {startRow}-{endRow} of {formatNumber(totalRows)} accounts
 								in the current view.
 							</TableCaption>
-							<TableHeader className="bg-muted/45">
+							<TableHeader className="bg-muted/30">
 								{table.getHeaderGroups().map((headerGroup) => (
 									<TableRow key={headerGroup.id}>
 										{headerGroup.headers.map((header) => (
-											<TableHead key={header.id}>
+											<TableHead
+												key={header.id}
+												className={
+													getColumnMeta(header.column.columnDef).headerClassName
+												}
+											>
 												{header.isPlaceholder
 													? null
 													: flexRender(
@@ -536,7 +592,7 @@ export function ServerTablePage() {
 								{isLoading ? (
 									skeletonRowIds.map((rowId) => (
 										<TableRow key={rowId}>
-											<TableCell colSpan={columns.length}>
+											<TableCell colSpan={visibleColumnCount}>
 												<div className="bg-muted h-5 animate-pulse rounded-md" />
 											</TableCell>
 										</TableRow>
@@ -545,7 +601,12 @@ export function ServerTablePage() {
 									table.getRowModel().rows.map((row) => (
 										<TableRow key={row.id}>
 											{row.getVisibleCells().map((cell) => (
-												<TableCell key={cell.id}>
+												<TableCell
+													key={cell.id}
+													className={
+														getColumnMeta(cell.column.columnDef).cellClassName
+													}
+												>
 													{flexRender(
 														cell.column.columnDef.cell,
 														cell.getContext(),
@@ -557,8 +618,8 @@ export function ServerTablePage() {
 								) : (
 									<TableRow>
 										<TableCell
-											colSpan={columns.length}
-											className="text-muted-foreground py-12 text-center text-sm"
+											colSpan={visibleColumnCount}
+											className="text-muted-foreground h-24 text-center text-sm"
 										>
 											No accounts match this view.
 										</TableCell>
@@ -631,37 +692,8 @@ export function ServerTablePage() {
 	);
 }
 
-function SortableColumnHeader({
-	column,
-	title,
-}: {
-	column: Column<CustomerRow, unknown>;
-	title: string;
-}) {
-	return (
-		<Button
-			type="button"
-			variant="ghost"
-			size="sm"
-			className="-ml-3 h-8 px-3 text-muted-foreground hover:text-foreground"
-			onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-		>
-			{title}
-			<SortIndicator direction={column.getIsSorted()} />
-		</Button>
-	);
-}
-
-function SortIndicator({ direction }: { direction: false | "asc" | "desc" }) {
-	if (direction === "asc") {
-		return <ArrowUp className="size-4" />;
-	}
-
-	if (direction === "desc") {
-		return <ArrowDown className="size-4" />;
-	}
-
-	return <ArrowUpDown className="size-4 opacity-60" />;
+function getColumnMeta(columnDef: ColumnDef<CustomerRow>) {
+	return (columnDef.meta as CustomerColumnMeta | undefined) ?? {};
 }
 
 function SummaryCard({

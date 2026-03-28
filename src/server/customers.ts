@@ -12,6 +12,7 @@ import {
 import db from "@/db";
 import { customersTable } from "@/db/schema";
 import {
+	type CustomerAutocompleteResponse,
 	type CustomerListResponse,
 	type CustomerPlan,
 	type CustomerStatus,
@@ -23,6 +24,10 @@ import {
 	getCustomerFilterValue,
 	parseCustomersRequest,
 } from "@/lib/customer-table";
+
+const DEFAULT_AUTOCOMPLETE_LIMIT = 8;
+const MAX_AUTOCOMPLETE_LIMIT = 12;
+const MAX_AUTOCOMPLETE_QUERY_LENGTH = 60;
 
 const sortableColumns = {
 	name: customersTable.name,
@@ -130,6 +135,80 @@ export function listCustomers(request: Request): CustomerListResponse {
 	};
 }
 
+export function autocompleteCustomers(
+	request: Request,
+): CustomerAutocompleteResponse {
+	const url = new URL(request.url);
+	const query =
+		url.searchParams
+			.get("query")
+			?.trim()
+			.slice(0, MAX_AUTOCOMPLETE_QUERY_LENGTH) ?? "";
+	const limit = clampInteger(
+		Number(url.searchParams.get("limit")),
+		1,
+		MAX_AUTOCOMPLETE_LIMIT,
+		DEFAULT_AUTOCOMPLETE_LIMIT,
+	);
+
+	if (!query) {
+		return {
+			items: [],
+			meta: {
+				query: "",
+				limit,
+				total: 0,
+			},
+		};
+	}
+
+	const whereClause = buildCustomerWhereClause({
+		search: query,
+		status: "",
+		plan: "",
+	});
+	const prefixPattern = `${query}%`;
+	const total = Number(
+		db.select({ value: count() }).from(customersTable).where(whereClause).get()
+			?.value ?? 0,
+	);
+	const relevanceRank = sql<number>`case
+		when ${customersTable.name} like ${prefixPattern} then 0
+		when ${customersTable.company} like ${prefixPattern} then 1
+		when ${customersTable.email} like ${prefixPattern} then 2
+		else 3
+	end`;
+	const items = db
+		.select({
+			id: customersTable.id,
+			name: customersTable.name,
+			email: customersTable.email,
+			company: customersTable.company,
+			status: customersTable.status,
+			plan: customersTable.plan,
+			country: customersTable.country,
+			lastSeenAt: customersTable.lastSeenAt,
+		})
+		.from(customersTable)
+		.where(whereClause)
+		.orderBy(
+			asc(relevanceRank),
+			desc(customersTable.lastSeenAt),
+			asc(customersTable.name),
+		)
+		.limit(limit)
+		.all();
+
+	return {
+		items,
+		meta: {
+			query,
+			limit,
+			total,
+		},
+	};
+}
+
 function buildCustomerWhereClause({
 	search,
 	status,
@@ -186,4 +265,17 @@ function toFacetRecord<T extends readonly string[]>(
 	}
 
 	return record;
+}
+
+function clampInteger(
+	value: number,
+	min: number,
+	max: number,
+	fallback: number,
+) {
+	if (!Number.isFinite(value)) {
+		return fallback;
+	}
+
+	return Math.min(Math.max(Math.trunc(value), min), max);
 }

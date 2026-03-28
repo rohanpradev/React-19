@@ -44,10 +44,7 @@ function AsyncBriefCard() {
 			<CardContent>
 				<ul className="space-y-3 text-sm text-muted-foreground">
 					{brief.bullets.map((bullet) => (
-						<li
-							key={bullet}
-							className="rounded-2xl border border-border/60 p-3"
-						>
+						<li key={bullet} className="app-surface p-3">
 							{bullet}
 						</li>
 					))}
@@ -148,7 +145,7 @@ export function ReactUsePage() {
 
 							<ConditionalContextNote visible={showContextNote} />
 
-							<div className="rounded-2xl border border-border/60 p-4 text-sm text-muted-foreground">
+							<div className="app-muted-surface p-4 text-sm text-muted-foreground">
 								<p className="font-medium text-foreground">Why this matters</p>
 								<p className="mt-2">
 									The Promise on the left is created outside render, matching
