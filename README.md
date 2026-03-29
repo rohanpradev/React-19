@@ -14,6 +14,7 @@ This project is a Bun-powered React 19 playground with two main goals:
 - TanStack Table
 - Drizzle ORM
 - SQLite via Bun
+- Better Auth
 - shadcn-style UI components
 - Temporal via `@js-temporal/polyfill`
 
@@ -47,11 +48,13 @@ bun dev
 ```
 
 The app serves the frontend and API from Bun. The default landing page is `/react-19`.
+The auth entrypoint is `/auth`, and protected routes redirect back to the requested page after sign-in.
 
 Notable API routes:
 
 - `/api/customers` for the full server-side table payload
 - `/api/customers/autocomplete` for lightweight customer search suggestions
+- `/api/auth/*` for Better Auth session and email/password endpoints
 
 ## Database Behavior
 
@@ -65,8 +68,39 @@ On startup, Bun will:
 
 1. run Drizzle migrations from `./drizzle`
 2. seed demo customer data if the database is empty
+3. create Better Auth tables in the same SQLite database once the auth migration exists
 
 You do not need to run a separate database process.
+
+## Authentication
+
+The app uses Better Auth with Bun's built-in SQLite driver while continuing to use Drizzle for application data and schema management.
+
+- Create an account or sign in at `/auth`
+- The customer APIs require an active Better Auth session
+- Auth tables live in the same `mydb.sqlite` file as the customer data
+
+Recommended production environment variables:
+
+- `BETTER_AUTH_SECRET`
+- `BETTER_AUTH_URL`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `GITHUB_CLIENT_ID`
+- `GITHUB_CLIENT_SECRET`
+
+OAuth redirect URLs to configure with the providers:
+
+- Google: `https://your-domain.com/api/auth/callback/google`
+- GitHub: `https://your-domain.com/api/auth/callback/github`
+
+Official docs used for the integration:
+
+- https://better-auth.com/docs/adapters/sqlite#bun-built-in-sqlite
+- https://better-auth.com/docs/authentication/google
+- https://better-auth.com/docs/authentication/github
+- https://better-auth.com/docs/authentication/email-password
+- https://better-auth.com/docs/installation
 
 ## Reset Local State
 

@@ -1,6 +1,12 @@
 import { serve } from "bun";
+import { auth } from "@/auth/server";
 import { initializeDatabase } from "./db/init";
 import index from "./index.html";
+import {
+	authProvidersResponse,
+	requireRequestSession,
+	unauthorizedResponse,
+} from "./server/auth";
 import { autocompleteCustomers, listCustomers } from "./server/customers";
 
 initializeDatabase();
@@ -8,6 +14,14 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 
 const server = serve({
 	routes: {
+		"/api/auth": auth.handler,
+		"/api/auth/*": auth.handler,
+		"/api/auth-providers": {
+			GET() {
+				return authProvidersResponse();
+			},
+		},
+
 		"/api/hello": {
 			async GET(_req) {
 				return Response.json({
@@ -31,13 +45,25 @@ const server = serve({
 		},
 
 		"/api/customers": {
-			GET(req) {
+			async GET(req) {
+				const session = await requireRequestSession(req);
+
+				if (!session) {
+					return unauthorizedResponse();
+				}
+
 				return Response.json(listCustomers(req));
 			},
 		},
 
 		"/api/customers/autocomplete": {
-			GET(req) {
+			async GET(req) {
+				const session = await requireRequestSession(req);
+
+				if (!session) {
+					return unauthorizedResponse();
+				}
+
 				return Response.json(autocompleteCustomers(req));
 			},
 		},

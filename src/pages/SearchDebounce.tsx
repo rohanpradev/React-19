@@ -9,6 +9,7 @@ import {
 	Workflow,
 } from "lucide-react";
 import { useCallback, useDeferredValue, useEffect, useState } from "react";
+import { redirectToAuth } from "@/auth/redirects";
 import { FeatureIntro } from "@/components/feature-intro";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -87,6 +88,11 @@ export function SearchDebounce() {
 				const request = await fetch(`/api/customers/autocomplete?${params}`, {
 					signal,
 				});
+
+				if (request.status === 401) {
+					redirectToAuth();
+					return;
+				}
 
 				if (!request.ok) {
 					throw new Error(`Search failed with status ${request.status}`);

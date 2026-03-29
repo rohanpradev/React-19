@@ -28,6 +28,7 @@ import {
 	useRef,
 	useState,
 } from "react";
+import { redirectToAuth } from "@/auth/redirects";
 import { DataTableColumnHeader } from "@/components/data-table-column-header";
 import { DataTableViewOptions } from "@/components/data-table-view-options";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -240,6 +241,11 @@ export function ServerTablePage() {
 				const request = await fetch(requestUrl, {
 					signal: controller.signal,
 				});
+
+				if (request.status === 401) {
+					redirectToAuth();
+					return;
+				}
 
 				if (!request.ok) {
 					throw new Error(`Request failed with status ${request.status}`);

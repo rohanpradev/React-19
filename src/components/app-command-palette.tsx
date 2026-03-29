@@ -56,6 +56,24 @@ const docsLinks: DocsLink[] = [
 		href: "https://bun.sh/docs/bundler/fullstack",
 		keywords: ["bun", "serve", "routes", "html imports"],
 	},
+	{
+		label: "Better Auth Bun SQLite",
+		description: "Official Bun built-in SQLite adapter guidance.",
+		href: "https://better-auth.com/docs/adapters/sqlite#bun-built-in-sqlite",
+		keywords: ["better auth", "bun", "sqlite", "auth"],
+	},
+	{
+		label: "Better Auth Google",
+		description: "Official Google OAuth provider setup.",
+		href: "https://better-auth.com/docs/authentication/google",
+		keywords: ["better auth", "google", "oauth", "auth"],
+	},
+	{
+		label: "Better Auth GitHub",
+		description: "Official GitHub OAuth provider setup.",
+		href: "https://better-auth.com/docs/authentication/github",
+		keywords: ["better auth", "github", "oauth", "auth"],
+	},
 ];
 
 export function AppCommandPalette({

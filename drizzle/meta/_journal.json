@@ -8,6 +8,13 @@
       "when": 1773893016730,
       "tag": "0000_orange_loa",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1774775987479,
+      "tag": "0001_silky_lorna_dane",
+      "breakpoints": true
     }
   ]
 }

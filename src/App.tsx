@@ -1,4 +1,5 @@
 import { BookOpenText, Layers3, Rocket } from "lucide-react";
+import type { ReactNode } from "react";
 import {
 	Navigate,
 	NavLink,
@@ -6,13 +7,21 @@ import {
 	Routes,
 	useLocation,
 } from "react-router-dom";
+import { authClient } from "@/auth/client";
+import {
+	buildAuthHref,
+	getDefaultAuthRedirectPath,
+	sanitizeRedirectPath,
+} from "@/auth/redirects";
 import { AppCommandPalette } from "@/components/app-command-palette";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { UserMenu } from "@/components/user-menu";
 import { appIdentity, learningStages, navItems } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import { ActionsPage } from "@/pages/Actions";
+import { AuthPage } from "@/pages/Auth";
 import { DomInteropPage } from "@/pages/DomInterop";
 import { FormActionsPage } from "@/pages/FormActions";
 import { UseOptimisticPage } from "@/pages/Optimistic";
@@ -43,6 +52,35 @@ const showcaseStats = [
 
 export function App() {
 	const location = useLocation();
+	const { data: authSession, isPending } = authClient.useSession();
+	const isAuthRoute = location.pathname === "/auth";
+	const nextPath = sanitizeRedirectPath(
+		new URLSearchParams(location.search).get("next") ??
+			getDefaultAuthRedirectPath(),
+	);
+	const currentPath = `${location.pathname}${location.search}${location.hash}`;
+
+	if (isPending) {
+		return <AuthLoadingScreen />;
+	}
+
+	if (!authSession && !isAuthRoute) {
+		return <Navigate to={buildAuthHref(currentPath)} replace />;
+	}
+
+	if (authSession && isAuthRoute) {
+		return <Navigate to={nextPath} replace />;
+	}
+
+	if (isAuthRoute) {
+		return <AuthPage />;
+	}
+
+	if (!authSession) {
+		return <Navigate to={buildAuthHref(currentPath)} replace />;
+	}
+
+	const session = authSession;
 	const activeLink =
 		navItems.find(({ path }) => location.pathname === path) ?? navItems[0];
 	const ActiveIcon = activeLink.icon;
@@ -76,6 +114,24 @@ export function App() {
 								<Badge variant="secondary">React 19.2</Badge>
 								<Badge variant="outline">shadcn/ui</Badge>
 								<Badge variant="outline">Bun full-stack</Badge>
+							</div>
+
+							<div className="mt-5 rounded-[1.4rem] border border-sidebar-border/60 bg-background/46 p-3">
+								<div className="space-y-1 px-1">
+									<p className="text-xs font-medium tracking-[0.16em] text-muted-foreground uppercase">
+										Signed in
+									</p>
+									<p className="truncate text-sm font-medium text-sidebar-foreground">
+										{session.user.name}
+									</p>
+									<p className="truncate text-sm leading-6 text-muted-foreground">
+										{session.user.email}
+									</p>
+								</div>
+								<UserMenu
+									session={session}
+									className="mt-3 w-full justify-between rounded-[1rem]"
+								/>
 							</div>
 
 							<div className="mt-5 rounded-[1.4rem] border border-sidebar-border/60 bg-background/46 p-3">
@@ -283,8 +339,12 @@ export function App() {
 						</div>
 
 						<div className="relative mt-5 space-y-3 lg:hidden">
-							<div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+							<div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-center">
 								<AppCommandPalette buttonClassName="w-full sm:min-w-0" />
+								<UserMenu
+									session={session}
+									className="justify-between sm:min-w-[220px]"
+								/>
 								<ThemeToggle className="justify-self-start sm:justify-self-end" />
 							</div>
 
@@ -337,6 +397,33 @@ export function App() {
 					</main>
 				</div>
 			</div>
+		</div>
+	);
+}
+
+function AuthLoadingScreen() {
+	return (
+		<div className="flex min-h-screen items-center justify-center p-6">
+			<SurfaceCard>
+				<div className="space-y-3 text-center">
+					<Badge variant="secondary">Checking session</Badge>
+					<h1 className="font-display text-3xl text-foreground">
+						Loading private workspace
+					</h1>
+					<p className="max-w-md text-sm leading-7 text-muted-foreground">
+						Better Auth is resolving your current session before the app shell
+						opens.
+					</p>
+				</div>
+			</SurfaceCard>
+		</div>
+	);
+}
+
+function SurfaceCard({ children }: { children: ReactNode }) {
+	return (
+		<div className="w-full max-w-xl rounded-[2rem] border border-border/65 bg-background/78 p-8 shadow-2xl shadow-black/[0.08] backdrop-blur-xl dark:shadow-black/[0.3]">
+			{children}
 		</div>
 	);
 }
