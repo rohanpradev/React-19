@@ -1,10 +1,4 @@
-import {
-	index,
-	integer,
-	sqliteTable,
-	text,
-	uniqueIndex,
-} from "drizzle-orm/sqlite-core";
+import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 export const authUsersTable = sqliteTable("user", {
 	id: text().primaryKey(),
@@ -54,10 +48,7 @@ export const authAccountsTable = sqliteTable(
 	},
 	(table) => [
 		index("account_user_id_idx").on(table.userId),
-		uniqueIndex("account_provider_account_uidx").on(
-			table.providerId,
-			table.accountId,
-		),
+		uniqueIndex("account_provider_account_uidx").on(table.providerId, table.accountId),
 	],
 );
 

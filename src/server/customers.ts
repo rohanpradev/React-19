@@ -1,14 +1,4 @@
-import {
-	and,
-	asc,
-	count,
-	desc,
-	eq,
-	like,
-	or,
-	type SQL,
-	sql,
-} from "drizzle-orm";
+import { and, asc, count, desc, eq, like, or, type SQL, sql } from "drizzle-orm";
 import db from "@/db";
 import { customersTable } from "@/db/schema";
 import {
@@ -50,12 +40,10 @@ export function listCustomers(request: Request): CustomerListResponse {
 		plan,
 	});
 	const totalRows = Number(
-		db.select({ value: count() }).from(customersTable).where(whereClause).get()
-			?.value ?? 0,
+		db.select({ value: count() }).from(customersTable).where(whereClause).get()?.value ?? 0,
 	);
 	const pageCount = totalRows === 0 ? 1 : Math.ceil(totalRows / query.pageSize);
-	const pageIndex =
-		totalRows === 0 ? 0 : Math.min(query.pageIndex, Math.max(pageCount - 1, 0));
+	const pageIndex = totalRows === 0 ? 0 : Math.min(query.pageIndex, Math.max(pageCount - 1, 0));
 
 	const rows = db
 		.select()
@@ -116,8 +104,7 @@ export function listCustomers(request: Request): CustomerListResponse {
 			totalRows,
 			pageCount,
 			search: query.search,
-			sorting:
-				query.sorting.length > 0 ? query.sorting : defaultCustomerSorting,
+			sorting: query.sorting.length > 0 ? query.sorting : defaultCustomerSorting,
 			filters: {
 				status,
 				plan,
@@ -135,15 +122,9 @@ export function listCustomers(request: Request): CustomerListResponse {
 	};
 }
 
-export function autocompleteCustomers(
-	request: Request,
-): CustomerAutocompleteResponse {
+export function autocompleteCustomers(request: Request): CustomerAutocompleteResponse {
 	const url = new URL(request.url);
-	const query =
-		url.searchParams
-			.get("query")
-			?.trim()
-			.slice(0, MAX_AUTOCOMPLETE_QUERY_LENGTH) ?? "";
+	const query = url.searchParams.get("query")?.trim().slice(0, MAX_AUTOCOMPLETE_QUERY_LENGTH) ?? "";
 	const limit = clampInteger(
 		Number(url.searchParams.get("limit")),
 		1,
@@ -169,8 +150,7 @@ export function autocompleteCustomers(
 	});
 	const prefixPattern = `${query}%`;
 	const total = Number(
-		db.select({ value: count() }).from(customersTable).where(whereClause).get()
-			?.value ?? 0,
+		db.select({ value: count() }).from(customersTable).where(whereClause).get()?.value ?? 0,
 	);
 	const relevanceRank = sql<number>`case
 		when ${customersTable.name} like ${prefixPattern} then 0
@@ -191,11 +171,7 @@ export function autocompleteCustomers(
 		})
 		.from(customersTable)
 		.where(whereClause)
-		.orderBy(
-			asc(relevanceRank),
-			desc(customersTable.lastSeenAt),
-			asc(customersTable.name),
-		)
+		.orderBy(asc(relevanceRank), desc(customersTable.lastSeenAt), asc(customersTable.name))
 		.limit(limit)
 		.all();
 
@@ -267,12 +243,7 @@ function toFacetRecord<T extends readonly string[]>(
 	return record;
 }
 
-function clampInteger(
-	value: number,
-	min: number,
-	max: number,
-	fallback: number,
-) {
+function clampInteger(value: number, min: number, max: number, fallback: number) {
 	if (!Number.isFinite(value)) {
 		return fallback;
 	}

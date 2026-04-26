@@ -2,17 +2,9 @@ import { createContext, type ReactNode, Suspense, use, useState } from "react";
 import { FeatureIntro } from "@/components/feature-intro";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-const HighlightContext = createContext(
-	"Conditional context reads are allowed with use.",
-);
+const HighlightContext = createContext("Conditional context reads are allowed with use.");
 
 const releaseBriefPromise = new Promise<{
 	title: string;
@@ -37,9 +29,7 @@ function AsyncBriefCard() {
 		<Card className="border-border/60">
 			<CardHeader>
 				<CardTitle>{brief.title}</CardTitle>
-				<CardDescription>
-					This card is reading a Promise during render.
-				</CardDescription>
+				<CardDescription>Read during render.</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<ul className="space-y-3 text-sm text-muted-foreground">
@@ -72,9 +62,7 @@ function SuspensePanel({ children }: { children: ReactNode }) {
 		<Suspense
 			fallback={
 				<Card className="border-border/60">
-					<CardContent className="p-6 text-sm text-muted-foreground">
-						Resolving the Promise with Suspense...
-					</CardContent>
+					<CardContent className="p-6 text-sm text-muted-foreground">Loading...</CardContent>
 				</Card>
 			}
 		>
@@ -91,22 +79,15 @@ export function ReactUsePage() {
 			<FeatureIntro
 				eyebrow="React 19"
 				title="Render-time use"
-				summary="The new use API reads a Promise or context during render. It integrates with Suspense for async work, and unlike most Hooks it can be called conditionally."
+				summary="Read a Promise or context during render, with Suspense handling the async branch."
 				points={[
 					{
-						title: "Promises suspend the component",
-						detail:
-							"When use reads a pending Promise, React pauses that branch and renders the nearest Suspense fallback until the Promise resolves.",
+						title: "Promise read",
+						detail: "Pending work falls through to Suspense.",
 					},
 					{
-						title: "Context reads can be conditional",
-						detail:
-							"use can read context after an early return or inside branches where useContext would not be allowed.",
-					},
-					{
-						title: "This page uses two React 19 APIs together",
-						detail:
-							"The Promise is cached outside render, and the provider below uses the new shorter <Context value={...}> syntax.",
+						title: "Conditional context",
+						detail: "Context can be read inside a branch.",
 					},
 				]}
 				links={[
@@ -130,9 +111,7 @@ export function ReactUsePage() {
 					<Card className="border-border/60">
 						<CardHeader>
 							<CardTitle>Conditional context read</CardTitle>
-							<CardDescription>
-								This demo flips a branch before calling use on context.
-							</CardDescription>
+							<CardDescription>Toggle the branch below.</CardDescription>
 						</CardHeader>
 						<CardContent className="space-y-4">
 							<Button
@@ -144,15 +123,6 @@ export function ReactUsePage() {
 							</Button>
 
 							<ConditionalContextNote visible={showContextNote} />
-
-							<div className="app-muted-surface p-4 text-sm text-muted-foreground">
-								<p className="font-medium text-foreground">Why this matters</p>
-								<p className="mt-2">
-									The Promise on the left is created outside render, matching
-									the release-note guidance, and the provider itself is using
-									React 19's new shorthand syntax.
-								</p>
-							</div>
 						</CardContent>
 					</Card>
 				</div>

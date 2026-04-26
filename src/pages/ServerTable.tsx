@@ -21,26 +21,14 @@ import {
 	UsersRound,
 	X,
 } from "lucide-react";
-import {
-	type Dispatch,
-	type SetStateAction,
-	useEffect,
-	useRef,
-	useState,
-} from "react";
+import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from "react";
 import { redirectToAuth } from "@/auth/redirects";
 import { DataTableColumnHeader } from "@/components/data-table-column-header";
 import { DataTableViewOptions } from "@/components/data-table-view-options";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
 	Select,
@@ -86,15 +74,11 @@ const columns: ColumnDef<CustomerRow>[] = [
 		accessorKey: "name",
 		meta: { label: "Customer" } satisfies CustomerColumnMeta,
 		enableHiding: false,
-		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title="Customer" />
-		),
+		header: ({ column }) => <DataTableColumnHeader column={column} title="Customer" />,
 		cell: ({ row }) => (
 			<div className="space-y-1">
 				<div className="text-foreground font-medium">{row.original.name}</div>
-				<div className="text-muted-foreground text-xs">
-					{row.original.email}
-				</div>
+				<div className="text-muted-foreground text-xs">{row.original.email}</div>
 			</div>
 		),
 	},
@@ -102,26 +86,18 @@ const columns: ColumnDef<CustomerRow>[] = [
 		accessorKey: "company",
 		meta: { label: "Account" } satisfies CustomerColumnMeta,
 		enableHiding: false,
-		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title="Account" />
-		),
+		header: ({ column }) => <DataTableColumnHeader column={column} title="Account" />,
 		cell: ({ row }) => (
 			<div className="space-y-1">
-				<div className="text-foreground font-medium">
-					{row.original.company}
-				</div>
-				<div className="text-muted-foreground text-xs">
-					{row.original.country}
-				</div>
+				<div className="text-foreground font-medium">{row.original.company}</div>
+				<div className="text-muted-foreground text-xs">{row.original.country}</div>
 			</div>
 		),
 	},
 	{
 		accessorKey: "status",
 		meta: { label: "Status" } satisfies CustomerColumnMeta,
-		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title="Status" />
-		),
+		header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
 		cell: ({ row }) => (
 			<Badge variant={getStatusVariant(row.original.status)}>
 				{formatLabel(row.original.status)}
@@ -131,12 +107,8 @@ const columns: ColumnDef<CustomerRow>[] = [
 	{
 		accessorKey: "plan",
 		meta: { label: "Plan" } satisfies CustomerColumnMeta,
-		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title="Plan" />
-		),
-		cell: ({ row }) => (
-			<Badge variant="outline">{formatLabel(row.original.plan)}</Badge>
-		),
+		header: ({ column }) => <DataTableColumnHeader column={column} title="Plan" />,
+		cell: ({ row }) => <Badge variant="outline">{formatLabel(row.original.plan)}</Badge>,
 	},
 	{
 		accessorKey: "annualValue",
@@ -146,16 +118,10 @@ const columns: ColumnDef<CustomerRow>[] = [
 			cellClassName: "text-right",
 		} satisfies CustomerColumnMeta,
 		header: ({ column }) => (
-			<DataTableColumnHeader
-				column={column}
-				title="Annual Value"
-				className="justify-end"
-			/>
+			<DataTableColumnHeader column={column} title="Annual Value" className="justify-end" />
 		),
 		cell: ({ row }) => (
-			<div className="font-medium tabular-nums">
-				{formatCurrency(row.original.annualValue)}
-			</div>
+			<div className="font-medium tabular-nums">{formatCurrency(row.original.annualValue)}</div>
 		),
 	},
 	{
@@ -166,20 +132,14 @@ const columns: ColumnDef<CustomerRow>[] = [
 			cellClassName: "text-right",
 		} satisfies CustomerColumnMeta,
 		header: ({ column }) => (
-			<DataTableColumnHeader
-				column={column}
-				title="Seats"
-				className="justify-end"
-			/>
+			<DataTableColumnHeader column={column} title="Seats" className="justify-end" />
 		),
 		cell: ({ row }) => <div className="tabular-nums">{row.original.seats}</div>,
 	},
 	{
 		accessorKey: "lastSeenAt",
 		meta: { label: "Last Seen" } satisfies CustomerColumnMeta,
-		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title="Last Seen" />
-		),
+		header: ({ column }) => <DataTableColumnHeader column={column} title="Last Seen" />,
 		cell: ({ row }) => (
 			<div className="text-muted-foreground text-sm tabular-nums">
 				{formatRelativeDate(row.original.lastSeenAt)}
@@ -268,18 +228,11 @@ export function ServerTablePage() {
 					};
 				});
 			} catch (caughtError) {
-				if (
-					caughtError instanceof DOMException &&
-					caughtError.name === "AbortError"
-				) {
+				if (caughtError instanceof DOMException && caughtError.name === "AbortError") {
 					return;
 				}
 
-				setError(
-					caughtError instanceof Error
-						? caughtError.message
-						: "Unable to load customers.",
-				);
+				setError(caughtError instanceof Error ? caughtError.message : "Unable to load customers.");
 			} finally {
 				if (!controller.signal.aborted) {
 					hasLoadedRef.current = true;
@@ -331,20 +284,12 @@ export function ServerTablePage() {
 	const totalRows = response?.meta.totalRows ?? 0;
 	const pageCount = response?.meta.pageCount ?? 1;
 	const visibleColumnCount = table.getVisibleLeafColumns().length;
-	const startRow =
-		totalRows === 0 ? 0 : pagination.pageIndex * pagination.pageSize + 1;
-	const endRow = Math.min(
-		(pagination.pageIndex + 1) * pagination.pageSize,
-		totalRows,
-	);
+	const startRow = totalRows === 0 ? 0 : pagination.pageIndex * pagination.pageSize + 1;
+	const endRow = Math.min((pagination.pageIndex + 1) * pagination.pageSize, totalRows);
 	const activeFilters = globalFilter.length > 0 || columnFilters.length > 0;
 	const statusFilter =
-		(response?.meta.filters.status ??
-			readFilterValue(columnFilters, "status")) ||
-		"";
-	const planFilter =
-		(response?.meta.filters.plan ?? readFilterValue(columnFilters, "plan")) ||
-		"";
+		(response?.meta.filters.status ?? readFilterValue(columnFilters, "status")) || "";
+	const planFilter = (response?.meta.filters.plan ?? readFilterValue(columnFilters, "plan")) || "";
 	const statusFacets = response?.facets.status ?? emptyFacets.status;
 	const planFacets = response?.facets.plan ?? emptyFacets.plan;
 	const skeletonRowIds = Array.from(
@@ -366,10 +311,9 @@ export function ServerTablePage() {
 							Revenue Ops Console
 						</h1>
 						<p className="max-w-3xl text-sm leading-7 text-muted-foreground sm:text-base">
-							A working account queue for renewals, expansion, and risk review.
-							Search, filters, sorting, counts, and pagination are resolved by
-							the API so the client only renders the slice the team is acting
-							on.
+							A working account queue for renewals, expansion, and risk review. Search, filters,
+							sorting, counts, and pagination are resolved by the API so the client only renders the
+							slice the team is acting on.
 						</p>
 					</div>
 				</div>
@@ -381,9 +325,7 @@ export function ServerTablePage() {
 								<Layers3 className="size-5" />
 							</span>
 							<div>
-								<p className="text-foreground text-sm font-medium">
-									Query orchestration
-								</p>
+								<p className="text-foreground text-sm font-medium">Query orchestration</p>
 								<p className="text-muted-foreground text-sm">
 									The browser holds only view state. The API resolves the data.
 								</p>
@@ -434,9 +376,9 @@ export function ServerTablePage() {
 						<div className="space-y-1">
 							<CardTitle>Portfolio View</CardTitle>
 							<CardDescription>
-								Use this table to isolate trial accounts, spot churn signals,
-								and compare plan mix without shipping the full dataset to the
-								browser. Hold Shift while sorting to stack sort rules.
+								Use this table to isolate trial accounts, spot churn signals, and compare plan mix
+								without shipping the full dataset to the browser. Hold Shift while sorting to stack
+								sort rules.
 							</CardDescription>
 						</div>
 
@@ -452,9 +394,7 @@ export function ServerTablePage() {
 										setGlobalFilter("");
 										setColumnFilters([]);
 										setPagination((current) =>
-											current.pageIndex === 0
-												? current
-												: { ...current, pageIndex: 0 },
+											current.pageIndex === 0 ? current : { ...current, pageIndex: 0 },
 										);
 									}}
 								>
@@ -470,9 +410,7 @@ export function ServerTablePage() {
 								onClick={() => setRefreshKey((value) => value + 1)}
 								disabled={isRefreshing}
 							>
-								<RefreshCw
-									className={`size-4 ${isRefreshing ? "animate-spin" : ""}`}
-								/>
+								<RefreshCw className={`size-4 ${isRefreshing ? "animate-spin" : ""}`} />
 								Refresh
 							</Button>
 						</div>
@@ -486,9 +424,7 @@ export function ServerTablePage() {
 								onChange={(event) => {
 									setGlobalFilter(event.target.value);
 									setPagination((current) =>
-										current.pageIndex === 0
-											? current
-											: { ...current, pageIndex: 0 },
+										current.pageIndex === 0 ? current : { ...current, pageIndex: 0 },
 									);
 								}}
 								placeholder="Search contact, email, company, or market"
@@ -511,9 +447,7 @@ export function ServerTablePage() {
 								<SelectValue placeholder="Status" />
 							</SelectTrigger>
 							<SelectContent>
-								<SelectItem value="all">
-									Any status ({formatNumber(totalRows)})
-								</SelectItem>
+								<SelectItem value="all">Any status ({formatNumber(totalRows)})</SelectItem>
 								{customerStatuses.map((status) => (
 									<SelectItem key={status} value={status}>
 										{formatLabel(status)} ({formatNumber(statusFacets[status])})
@@ -537,9 +471,7 @@ export function ServerTablePage() {
 								<SelectValue placeholder="Plan" />
 							</SelectTrigger>
 							<SelectContent>
-								<SelectItem value="all">
-									Any plan ({formatNumber(totalRows)})
-								</SelectItem>
+								<SelectItem value="all">Any plan ({formatNumber(totalRows)})</SelectItem>
 								{customerPlans.map((plan) => (
 									<SelectItem key={plan} value={plan}>
 										{formatLabel(plan)} ({formatNumber(planFacets[plan])})
@@ -570,8 +502,7 @@ export function ServerTablePage() {
 					<div className="app-surface overflow-hidden rounded-[1.5rem]">
 						<Table>
 							<TableCaption className="px-4 pb-4 text-left">
-								Rows {startRow}-{endRow} of {formatNumber(totalRows)} accounts
-								in the current view.
+								Rows {startRow}-{endRow} of {formatNumber(totalRows)} accounts in the current view.
 							</TableCaption>
 							<TableHeader className="bg-muted/30">
 								{table.getHeaderGroups().map((headerGroup) => (
@@ -579,16 +510,11 @@ export function ServerTablePage() {
 										{headerGroup.headers.map((header) => (
 											<TableHead
 												key={header.id}
-												className={
-													getColumnMeta(header.column.columnDef).headerClassName
-												}
+												className={getColumnMeta(header.column.columnDef).headerClassName}
 											>
 												{header.isPlaceholder
 													? null
-													: flexRender(
-															header.column.columnDef.header,
-															header.getContext(),
-														)}
+													: flexRender(header.column.columnDef.header, header.getContext())}
 											</TableHead>
 										))}
 									</TableRow>
@@ -609,14 +535,9 @@ export function ServerTablePage() {
 											{row.getVisibleCells().map((cell) => (
 												<TableCell
 													key={cell.id}
-													className={
-														getColumnMeta(cell.column.columnDef).cellClassName
-													}
+													className={getColumnMeta(cell.column.columnDef).cellClassName}
 												>
-													{flexRender(
-														cell.column.columnDef.cell,
-														cell.getContext(),
-													)}
+													{flexRender(cell.column.columnDef.cell, cell.getContext())}
 												</TableCell>
 											))}
 										</TableRow>
@@ -640,13 +561,9 @@ export function ServerTablePage() {
 							<Badge variant="outline">
 								Page {pagination.pageIndex + 1} of {formatNumber(pageCount)}
 							</Badge>
-							<Badge variant="outline">
-								Order: {formatSortSummary(sorting)}
-							</Badge>
+							<Badge variant="outline">Order: {formatSortSummary(sorting)}</Badge>
 							{debouncedGlobalFilter ? (
-								<Badge variant="outline">
-									Query: "{debouncedGlobalFilter}"
-								</Badge>
+								<Badge variant="outline">Query: "{debouncedGlobalFilter}"</Badge>
 							) : null}
 						</div>
 
@@ -722,9 +639,7 @@ function SummaryCard({
 						<Icon className="size-5" />
 					</span>
 				</div>
-				<p className="text-foreground text-3xl font-semibold tracking-tight">
-					{value}
-				</p>
+				<p className="text-foreground text-3xl font-semibold tracking-tight">{value}</p>
 				<p className="text-muted-foreground text-sm leading-6">{description}</p>
 			</CardContent>
 		</Card>
@@ -759,15 +674,10 @@ function setNamedFilter(
 
 		return [...remainingFilters, { id: filterId, value }];
 	});
-	setPagination((current) =>
-		current.pageIndex === 0 ? current : { ...current, pageIndex: 0 },
-	);
+	setPagination((current) => (current.pageIndex === 0 ? current : { ...current, pageIndex: 0 }));
 }
 
-function readFilterValue(
-	filters: ColumnFiltersState,
-	filterId: "status" | "plan",
-) {
+function readFilterValue(filters: ColumnFiltersState, filterId: "status" | "plan") {
 	const activeFilter = filters.find((filter) => filter.id === filterId);
 	return typeof activeFilter?.value === "string" ? activeFilter.value : "";
 }
@@ -790,20 +700,14 @@ function toServerFilters(filters: ColumnFiltersState): CustomerTableFilters {
 			continue;
 		}
 
-		if (
-			entry.id === "status" &&
-			customerStatuses.includes(entry.value as CustomerStatus)
-		) {
+		if (entry.id === "status" && customerStatuses.includes(entry.value as CustomerStatus)) {
 			normalizedFilters.push({
 				id: "status",
 				value: entry.value as CustomerStatus,
 			});
 		}
 
-		if (
-			entry.id === "plan" &&
-			customerPlans.includes(entry.value as CustomerPlan)
-		) {
+		if (entry.id === "plan" && customerPlans.includes(entry.value as CustomerPlan)) {
 			normalizedFilters.push({
 				id: "plan",
 				value: entry.value as CustomerPlan,

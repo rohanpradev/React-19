@@ -1,42 +1,60 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.4/schema.json",
-  "vcs": {
-    "enabled": true,
-    "clientKind": "git",
-    "useIgnoreFile": true
-  },
-  "files": {
-    "ignoreUnknown": false
-  },
-  "formatter": {
-    "enabled": true,
-    "indentStyle": "tab"
-  },
-  "linter": {
-    "enabled": true,
-    "domains": {
-      "react": "recommended"
-    },
-    "rules": {
-      "recommended": true
-    }
-  },
-  "javascript": {
-    "formatter": {
-      "quoteStyle": "double"
-    }
-  },
-  "assist": {
-    "enabled": true,
-    "actions": {
-      "source": {
-        "organizeImports": "on"
-      }
-    }
-  },
-  "css": {
-    "parser": {
-      "tailwindDirectives": true
-    }
-  }
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true
+	},
+	"files": {
+		"includes": ["**", "!dist", "!drizzle", "!*.sqlite", "!*.sqlite-shm", "!*.sqlite-wal"],
+		"ignoreUnknown": true
+	},
+	"formatter": {
+		"enabled": true,
+		"includes": [
+			"src/**",
+			"styles/**",
+			"build.ts",
+			"drizzle.config.ts",
+			"biome.json",
+			"package.json",
+			"tsconfig.json"
+		],
+		"indentStyle": "tab",
+		"lineWidth": 100
+	},
+	"linter": {
+		"enabled": true,
+		"includes": ["src/**", "styles/**", "build.ts", "drizzle.config.ts"],
+		"domains": {
+			"project": "recommended",
+			"react": "recommended"
+		},
+		"rules": {
+			"recommended": true,
+			"style": {
+				"useImportType": "error"
+			}
+		}
+	},
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "double"
+		}
+	},
+	"assist": {
+		"enabled": true,
+		"includes": ["src/**", "styles/**", "build.ts", "drizzle.config.ts"],
+		"actions": {
+			"recommended": true,
+			"source": {
+				"organizeImports": "on"
+			}
+		}
+	},
+	"css": {
+		"parser": {
+			"tailwindDirectives": true
+		}
+	}
 }

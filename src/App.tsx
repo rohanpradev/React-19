@@ -1,21 +1,13 @@
-import { BookOpenText, Layers3, Rocket } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import type { ReactNode } from "react";
-import {
-	Navigate,
-	NavLink,
-	Route,
-	Routes,
-	useLocation,
-} from "react-router-dom";
-import { authClient } from "@/auth/client";
-import {
-	buildAuthHref,
-	getDefaultAuthRedirectPath,
-	sanitizeRedirectPath,
-} from "@/auth/redirects";
+import { Navigate, NavLink, Outlet, Route, Routes, useLocation } from "react-router-dom";
+import { type AuthSession, authClient } from "@/auth/client";
+import { buildAuthHref, getDefaultAuthRedirectPath, sanitizeRedirectPath } from "@/auth/redirects";
 import { AppCommandPalette } from "@/components/app-command-palette";
+import { TechPill } from "@/components/tech-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { UserMenu } from "@/components/user-menu";
 import { appIdentity, learningStages, navItems } from "@/lib/navigation";
@@ -32,31 +24,12 @@ import { ServerTablePage } from "@/pages/ServerTable";
 
 import "./index.css";
 
-const showcaseStats = [
-	{
-		label: "React 19 demos",
-		value: "6 core routes",
-		icon: Rocket,
-	},
-	{
-		label: "UI surfaces",
-		value: "shadcn shell + palette",
-		icon: Layers3,
-	},
-	{
-		label: "Runtime",
-		value: "Bun routes + HTML imports",
-		icon: BookOpenText,
-	},
-] as const;
-
 export function App() {
 	const location = useLocation();
 	const { data: authSession, isPending } = authClient.useSession();
 	const isAuthRoute = location.pathname === "/auth";
 	const nextPath = sanitizeRedirectPath(
-		new URLSearchParams(location.search).get("next") ??
-			getDefaultAuthRedirectPath(),
+		new URLSearchParams(location.search).get("next") ?? getDefaultAuthRedirectPath(),
 	);
 	const currentPath = `${location.pathname}${location.search}${location.hash}`;
 
@@ -80,274 +53,138 @@ export function App() {
 		return <Navigate to={buildAuthHref(currentPath)} replace />;
 	}
 
-	const session = authSession;
-	const activeLink =
-		navItems.find(({ path }) => location.pathname === path) ?? navItems[0];
+	return (
+		<Routes>
+			<Route element={<WorkspaceLayout session={authSession} />}>
+				<Route path="/" element={<Navigate to="/react-19" replace />} />
+				<Route path="/react-19" element={<React19OverviewPage />} />
+				<Route path="/form-actions" element={<FormActionsPage />} />
+				<Route path="/revenue-ops" element={<ServerTablePage />} />
+				<Route path="/react-use" element={<ReactUsePage />} />
+				<Route path="/dom-interop" element={<DomInteropPage />} />
+				<Route path="/search-debounce" element={<SearchDebounce />} />
+				<Route path="/actions" element={<ActionsPage />} />
+				<Route path="/optimistic" element={<UseOptimisticPage />} />
+			</Route>
+		</Routes>
+	);
+}
+
+function WorkspaceLayout({ session }: { session: AuthSession }) {
+	const location = useLocation();
+	const activeLink = navItems.find(({ path }) => location.pathname === path) ?? navItems[0];
+	const activeLinkIndex = navItems.findIndex(({ path }) => path === activeLink.path);
+	const nextLink = navItems[(activeLinkIndex + 1) % navItems.length] ?? navItems[0];
 	const ActiveIcon = activeLink.icon;
 	const IdentityIcon = appIdentity.icon;
 
 	return (
 		<div className="min-h-screen w-full">
-			<div className="mx-auto grid min-h-screen max-w-[1560px] gap-4 p-3 sm:p-4 lg:grid-cols-[340px_minmax(0,1fr)] lg:gap-6 lg:p-6">
-				<aside className="hidden lg:block">
-					<div className="sticky top-6 flex max-h-[calc(100vh-3rem)] flex-col gap-5 overflow-y-auto rounded-[2.2rem] border border-sidebar-border/70 bg-sidebar/80 p-5 shadow-2xl shadow-black/[0.06] backdrop-blur-xl dark:shadow-black/[0.32]">
-						<div className="shrink-0 rounded-[1.8rem] border border-sidebar-border/60 bg-background/58 p-5">
-							<div className="flex min-w-0 items-start gap-3">
-								<div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/12 text-primary">
-									<IdentityIcon className="size-6" />
+			<div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+				<div className="absolute top-0 right-[-8rem] h-80 w-80 rounded-full bg-primary/10 blur-3xl" />
+				<div className="absolute bottom-[-10rem] left-[-4rem] h-72 w-72 rounded-full bg-accent/18 blur-3xl" />
+			</div>
+
+			<div className="mx-auto grid min-h-screen max-w-[1480px] gap-4 p-4 xl:grid-cols-[260px_minmax(0,1fr)] xl:gap-6 xl:p-6">
+				<aside className="hidden xl:block">
+					<div className="app-panel sticky top-6 flex h-[calc(100vh-3rem)] flex-col p-4">
+						<div className="border-b border-border/60 px-2 pb-4">
+							<div className="flex items-center gap-3">
+								<div className="flex size-10 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
+									<IdentityIcon className="size-5" />
 								</div>
-								<div className="min-w-0 space-y-1">
-									<p className="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
-										{appIdentity.label}
-									</p>
-									<h2 className="font-display text-2xl text-sidebar-foreground">
+								<div className="min-w-0">
+									<p className="truncate text-sm font-semibold text-foreground">
 										{appIdentity.title}
-									</h2>
+									</p>
+									<p className="truncate text-xs text-muted-foreground">{appIdentity.label}</p>
 								</div>
-							</div>
-
-							<p className="mt-4 text-sm leading-6 text-muted-foreground">
-								{appIdentity.description}
-							</p>
-
-							<div className="mt-4 flex flex-wrap gap-2">
-								<Badge variant="secondary">React 19.2</Badge>
-								<Badge variant="outline">shadcn/ui</Badge>
-								<Badge variant="outline">Bun full-stack</Badge>
-							</div>
-
-							<div className="mt-5 rounded-[1.4rem] border border-sidebar-border/60 bg-background/46 p-3">
-								<div className="space-y-1 px-1">
-									<p className="text-xs font-medium tracking-[0.16em] text-muted-foreground uppercase">
-										Signed in
-									</p>
-									<p className="truncate text-sm font-medium text-sidebar-foreground">
-										{session.user.name}
-									</p>
-									<p className="truncate text-sm leading-6 text-muted-foreground">
-										{session.user.email}
-									</p>
-								</div>
-								<UserMenu
-									session={session}
-									className="mt-3 w-full justify-between rounded-[1rem]"
-								/>
-							</div>
-
-							<div className="mt-5 rounded-[1.4rem] border border-sidebar-border/60 bg-background/46 p-3">
-								<div className="space-y-1 px-1">
-									<p className="text-xs font-medium tracking-[0.16em] text-muted-foreground uppercase">
-										Appearance
-									</p>
-									<p className="text-sm leading-6 text-muted-foreground">
-										Theme controls stay in the sidebar on desktop so the content
-										area stays clean.
-									</p>
-								</div>
-								<ThemeToggle className="mt-3 w-full justify-between" />
 							</div>
 						</div>
 
-						<div className="rounded-[1.8rem] border border-sidebar-border/60 bg-background/52 p-3">
-							<div className="px-3 pb-3">
-								<p className="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
-									Learning routes
-								</p>
-								<p className="mt-2 text-sm leading-6 text-muted-foreground">
-									Move from release overview to focused demos and the applied
-									full-stack page.
-								</p>
-							</div>
+						<nav className="mt-4 flex-1 space-y-1 overflow-y-auto">
+							{navItems.map((link) => {
+								const Icon = link.icon;
 
-							<nav className="space-y-2 pb-2">
-								{navItems.map((link) => {
-									const Icon = link.icon;
-
-									return (
-										<NavLink
-											key={link.path}
-											to={link.path}
-											className={({ isActive }) =>
-												cn(
-													"group flex items-start gap-3 rounded-[1.4rem] border border-transparent px-4 py-3 transition-all duration-200",
-													isActive
-														? "border-sidebar-primary/20 bg-sidebar-primary text-sidebar-primary-foreground shadow-lg shadow-black/[0.16]"
-														: "text-sidebar-foreground hover:border-sidebar-border/70 hover:bg-sidebar-accent/80",
-												)
-											}
-										>
-											<div className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-2xl bg-background/40 text-current transition-colors group-hover:bg-background/60">
-												<Icon className="size-5" />
-											</div>
-											<div className="min-w-0 space-y-1">
-												<div className="flex flex-wrap items-center gap-2">
-													<p className="font-medium">{link.label}</p>
-													<Badge
-														variant="outline"
-														className="border-current/20 bg-background/40 text-[10px] text-current/75"
-													>
-														{learningStages[link.stage]}
-													</Badge>
-												</div>
-												<p className="text-sm leading-5 text-current/70">
-													{link.blurb}
-												</p>
-												<div className="flex flex-wrap gap-2 pt-1">
-													{link.apiLabels.slice(0, 2).map((api) => (
-														<span
-															key={api}
-															className="rounded-full border border-current/15 bg-background/35 px-2 py-1 text-[10px] font-medium tracking-[0.12em] text-current/70 uppercase"
-														>
-															{api}
-														</span>
-													))}
-												</div>
-											</div>
-										</NavLink>
-									);
-								})}
-							</nav>
-						</div>
-
-						<div className="shrink-0 rounded-[1.8rem] border border-sidebar-border/60 bg-background/58 p-5">
-							<p className="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
-								Quick access
-							</p>
-							<p className="mt-2 text-sm leading-6 text-muted-foreground">
-								Jump to demos, docs, and theme actions without leaving the
-								current route.
-							</p>
-							<AppCommandPalette buttonClassName="mt-4 w-full sm:min-w-0" />
-
-							<div className="mt-4 grid gap-3">
-								{showcaseStats.map((stat) => {
-									const Icon = stat.icon;
-
-									return (
-										<div
-											key={stat.label}
-											className="rounded-[1.3rem] border border-sidebar-border/60 bg-background/60 p-4"
-										>
-											<div className="flex items-center gap-3">
-												<div className="flex size-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-													<Icon className="size-5" />
-												</div>
-												<div>
-													<p className="text-sm font-medium text-sidebar-foreground">
-														{stat.value}
-													</p>
-													<p className="text-xs text-muted-foreground">
-														{stat.label}
-													</p>
-												</div>
-											</div>
+								return (
+									<NavLink
+										key={link.path}
+										to={link.path}
+										className={({ isActive }) =>
+											cn(
+												"flex items-center gap-3 rounded-[1rem] px-3 py-3 transition-colors",
+												isActive
+													? "bg-primary text-primary-foreground"
+													: "text-foreground hover:bg-muted/70",
+											)
+										}
+									>
+										<div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-background/70">
+											<Icon className="size-4.5" />
 										</div>
-									);
-								})}
-							</div>
-						</div>
+										<div className="min-w-0">
+											<p className="truncate text-sm font-medium">{link.label}</p>
+											<p className="truncate text-xs text-current/70">{link.releaseArea}</p>
+										</div>
+									</NavLink>
+								);
+							})}
+						</nav>
 					</div>
 				</aside>
 
-				<div className="flex min-w-0 flex-col gap-4 lg:gap-6">
-					<header className="relative overflow-hidden rounded-[2.1rem] border border-border/65 bg-background/74 p-5 shadow-xl shadow-black/[0.05] backdrop-blur-xl sm:p-6 lg:p-7 dark:shadow-black/[0.28]">
-						<div className="pointer-events-none absolute inset-0">
-							<div className="absolute top-0 right-0 h-52 w-52 rounded-full bg-primary/12 blur-3xl" />
-							<div className="absolute bottom-0 left-0 h-40 w-40 rounded-full bg-accent/16 blur-3xl" />
-						</div>
-
-						<div className="relative grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px] xl:items-start">
-							<div className="space-y-5">
-								<div className="flex items-start gap-4">
-									<div className="flex size-14 shrink-0 items-center justify-center rounded-[1.4rem] bg-primary/12 text-primary shadow-sm shadow-black/[0.08]">
-										<ActiveIcon className="size-7" />
+				<div className="min-w-0 space-y-4 xl:space-y-6">
+					<header className="space-y-4">
+						<div className="app-panel p-4 sm:p-5">
+							<div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+								<div className="space-y-4">
+									<div className="flex flex-wrap items-center gap-2">
+										<span className="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
+											{activeLink.releaseArea}
+										</span>
+										<Badge variant="secondary">{learningStages[activeLink.stage]}</Badge>
 									</div>
-									<div className="min-w-0 space-y-3">
-										<div className="flex flex-wrap items-center gap-2">
-											<Badge variant="secondary">Active route</Badge>
-											<Badge variant="outline">{activeLink.releaseArea}</Badge>
-											<Badge variant="outline">
-												{learningStages[activeLink.stage]}
-											</Badge>
-											<p className="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
-												React 19 + Bun sandbox
-											</p>
-										</div>
 
-										<div className="space-y-2">
-											<h1 className="font-display text-4xl leading-none text-foreground sm:text-5xl">
+									<div className="flex items-start gap-4">
+										<div className="flex size-12 shrink-0 items-center justify-center rounded-[1rem] bg-primary text-primary-foreground">
+											<ActiveIcon className="size-6" />
+										</div>
+										<div className="min-w-0">
+											<h1 className="font-display text-3xl leading-none text-foreground sm:text-4xl">
 												{activeLink.label}
 											</h1>
-											<p className="max-w-3xl text-sm leading-7 text-muted-foreground sm:text-base">
-												{activeLink.blurb} Each route is treated like a focused
-												studio module, so the shell stays out of the way and the
-												page content can do the teaching.
+											<p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
+												{activeLink.blurb}
 											</p>
 										</div>
 									</div>
-								</div>
 
-								<div className="flex flex-wrap gap-2">
-									{activeLink.apiLabels.map((api) => (
-										<Badge
-											key={api}
-											variant="outline"
-											className="rounded-full bg-background/72 px-3 py-1"
-										>
-											{api}
-										</Badge>
-									))}
-								</div>
-							</div>
-
-							<div className="hidden xl:block">
-								<div className="app-surface rounded-[1.65rem] p-5">
-									<p className="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
-										Route lens
-									</p>
-
-									<div className="mt-4 grid gap-3">
-										<div className="rounded-[1.2rem] border border-border/60 bg-background/65 p-4">
-											<p className="text-xs font-medium tracking-[0.16em] text-muted-foreground uppercase">
-												Learning stage
-											</p>
-											<p className="mt-2 font-medium text-foreground">
-												{learningStages[activeLink.stage]}
-											</p>
-										</div>
-
-										<div className="rounded-[1.2rem] border border-border/60 bg-background/65 p-4">
-											<p className="text-xs font-medium tracking-[0.16em] text-muted-foreground uppercase">
-												Release area
-											</p>
-											<p className="mt-2 font-medium text-foreground">
-												{activeLink.releaseArea}
-											</p>
-										</div>
-
-										<div className="rounded-[1.2rem] border border-border/60 bg-background/65 p-4">
-											<p className="text-xs font-medium tracking-[0.16em] text-muted-foreground uppercase">
-												APIs in focus
-											</p>
-											<p className="mt-2 text-sm leading-6 text-muted-foreground">
-												{activeLink.apiLabels.join(" / ")}
-											</p>
-										</div>
+									<div className="flex flex-wrap gap-2">
+										<TechPill name="react" />
+										<TechPill name="bun" />
+										<TechPill name="shadcn" />
+										<TechPill name="react-router" />
 									</div>
+								</div>
+
+								<div className="flex flex-col gap-3 xl:items-end">
+									<div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap xl:justify-end">
+										<AppCommandPalette buttonClassName="sm:min-w-[220px]" />
+										<ThemeToggle />
+										<UserMenu session={session} className="justify-between sm:min-w-[220px]" />
+									</div>
+
+									<Button asChild variant="ghost" className="px-0 text-sm">
+										<NavLink to={nextLink.path}>
+											Next: {nextLink.label}
+											<ArrowRight className="size-4" />
+										</NavLink>
+									</Button>
 								</div>
 							</div>
 						</div>
 
-						<div className="relative mt-5 space-y-3 lg:hidden">
-							<div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-center">
-								<AppCommandPalette buttonClassName="w-full sm:min-w-0" />
-								<UserMenu
-									session={session}
-									className="justify-between sm:min-w-[220px]"
-								/>
-								<ThemeToggle className="justify-self-start sm:justify-self-end" />
-							</div>
-
+						<div className="xl:hidden">
 							<ScrollArea className="w-full whitespace-nowrap">
 								<div className="flex gap-2 pb-1">
 									{navItems.map((link) => {
@@ -359,10 +196,10 @@ export function App() {
 												to={link.path}
 												className={({ isActive }) =>
 													cn(
-														"inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm transition-all duration-200",
+														"inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm transition-colors",
 														isActive
-															? "border-primary/20 bg-primary text-primary-foreground shadow-sm shadow-black/[0.14]"
-															: "border-border/70 bg-background/80 text-muted-foreground hover:bg-accent/70 hover:text-accent-foreground",
+															? "border-primary bg-primary text-primary-foreground"
+															: "border-border/70 bg-background/80 text-muted-foreground hover:bg-muted/70 hover:text-foreground",
 													)
 												}
 											>
@@ -376,24 +213,8 @@ export function App() {
 						</div>
 					</header>
 
-					<main className="relative min-w-0 flex-1 overflow-hidden rounded-[2rem] border border-border/65 bg-background/72 p-4 shadow-2xl shadow-black/[0.06] backdrop-blur-xl sm:p-6 lg:p-8 dark:shadow-black/[0.32]">
-						<div className="pointer-events-none absolute inset-0">
-							<div className="absolute top-0 right-0 h-56 w-56 rounded-full bg-primary/12 blur-3xl" />
-							<div className="absolute bottom-0 left-0 h-56 w-56 rounded-full bg-accent/18 blur-3xl" />
-						</div>
-						<div className="relative">
-							<Routes>
-								<Route path="/" element={<Navigate to="/react-19" replace />} />
-								<Route path="/react-19" element={<React19OverviewPage />} />
-								<Route path="/form-actions" element={<FormActionsPage />} />
-								<Route path="/revenue-ops" element={<ServerTablePage />} />
-								<Route path="/react-use" element={<ReactUsePage />} />
-								<Route path="/dom-interop" element={<DomInteropPage />} />
-								<Route path="/search-debounce" element={<SearchDebounce />} />
-								<Route path="/actions" element={<ActionsPage />} />
-								<Route path="/optimistic" element={<UseOptimisticPage />} />
-							</Routes>
-						</div>
+					<main className="app-panel min-w-0 p-4 sm:p-6 lg:p-8">
+						<Outlet />
 					</main>
 				</div>
 			</div>
@@ -407,12 +228,9 @@ function AuthLoadingScreen() {
 			<SurfaceCard>
 				<div className="space-y-3 text-center">
 					<Badge variant="secondary">Checking session</Badge>
-					<h1 className="font-display text-3xl text-foreground">
-						Loading private workspace
-					</h1>
+					<h1 className="font-display text-3xl text-foreground">Loading private workspace</h1>
 					<p className="max-w-md text-sm leading-7 text-muted-foreground">
-						Better Auth is resolving your current session before the app shell
-						opens.
+						Better Auth is resolving your current session before the app shell opens.
 					</p>
 				</div>
 			</SurfaceCard>
@@ -421,11 +239,7 @@ function AuthLoadingScreen() {
 }
 
 function SurfaceCard({ children }: { children: ReactNode }) {
-	return (
-		<div className="w-full max-w-xl rounded-[2rem] border border-border/65 bg-background/78 p-8 shadow-2xl shadow-black/[0.08] backdrop-blur-xl dark:shadow-black/[0.3]">
-			{children}
-		</div>
-	);
+	return <div className="app-panel w-full max-w-xl p-8">{children}</div>;
 }
 
 export default App;

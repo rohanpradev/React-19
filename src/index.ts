@@ -2,11 +2,7 @@ import { serve } from "bun";
 import { auth } from "@/auth/server";
 import { initializeDatabase } from "./db/init";
 import index from "./index.html";
-import {
-	authProvidersResponse,
-	requireRequestSession,
-	unauthorizedResponse,
-} from "./server/auth";
+import { authProvidersResponse, requireRequestSession, unauthorizedResponse } from "./server/auth";
 import { autocompleteCustomers, listCustomers } from "./server/customers";
 
 initializeDatabase();

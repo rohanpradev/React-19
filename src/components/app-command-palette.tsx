@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useTheme } from "@/components/theme-provider";
+import { themePresetOptions, useTheme } from "@/components/theme-provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -76,15 +76,11 @@ const docsLinks: DocsLink[] = [
 	},
 ];
 
-export function AppCommandPalette({
-	buttonClassName,
-}: {
-	buttonClassName?: string;
-}) {
+export function AppCommandPalette({ buttonClassName }: { buttonClassName?: string }) {
 	const [open, setOpen] = useState(false);
 	const location = useLocation();
 	const navigate = useNavigate();
-	const { setTheme } = useTheme();
+	const { setPreset, setTheme } = useTheme();
 
 	useEffect(() => {
 		const onKeyDown = (event: KeyboardEvent) => {
@@ -151,29 +147,19 @@ export function AppCommandPalette({
 									<div className="min-w-0 flex-1 space-y-1">
 										<div className="flex flex-wrap items-center gap-2">
 											<p className="font-medium">{item.label}</p>
-											{isActive ? (
-												<Badge variant="secondary">Current</Badge>
-											) : null}
+											{isActive ? <Badge variant="secondary">Current</Badge> : null}
 										</div>
-										<p className="text-sm leading-5 text-muted-foreground">
-											{item.blurb}
-										</p>
+										<p className="text-sm leading-5 text-muted-foreground">{item.blurb}</p>
 										<div className="flex flex-wrap gap-2">
 											<Badge variant="outline">{item.releaseArea}</Badge>
 											{item.apiLabels.map((api) => (
-												<Badge
-													key={api}
-													variant="outline"
-													className="text-[11px]"
-												>
+												<Badge key={api} variant="outline" className="text-[11px]">
 													{api}
 												</Badge>
 											))}
 										</div>
 									</div>
-									<CommandShortcut>
-										{learningStages[item.stage]}
-									</CommandShortcut>
+									<CommandShortcut>{learningStages[item.stage]}</CommandShortcut>
 								</CommandItem>
 							);
 						})}
@@ -198,9 +184,7 @@ export function AppCommandPalette({
 								</div>
 								<div className="min-w-0 flex-1 space-y-1">
 									<p className="font-medium">{link.label}</p>
-									<p className="text-sm leading-5 text-muted-foreground">
-										{link.description}
-									</p>
+									<p className="text-sm leading-5 text-muted-foreground">{link.description}</p>
 								</div>
 								<ArrowUpRight className="mt-1 size-4 text-muted-foreground" />
 							</CommandItem>
@@ -237,6 +221,27 @@ export function AppCommandPalette({
 							<LaptopMinimal className="size-4" />
 							System theme
 						</CommandItem>
+					</CommandGroup>
+
+					<CommandSeparator />
+
+					<CommandGroup heading="Theme Presets">
+						{themePresetOptions.map((option) => (
+							<CommandItem
+								key={option.value}
+								value={`${option.label} ${option.description} theme preset`}
+								onSelect={() => {
+									setPreset(option.value);
+									setOpen(false);
+								}}
+							>
+								<span
+									className="size-3 rounded-full border border-black/10"
+									style={{ backgroundImage: option.swatch }}
+								/>
+								{option.label} preset
+							</CommandItem>
+						))}
 					</CommandGroup>
 				</CommandList>
 			</CommandDialog>

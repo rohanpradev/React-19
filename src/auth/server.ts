@@ -2,8 +2,7 @@ import { betterAuth } from "better-auth";
 import { configuredSocialProviders } from "@/auth/social-providers";
 import { sqlite } from "@/db";
 
-const authBaseUrl =
-	Bun.env.BETTER_AUTH_URL ?? `http://localhost:${Bun.env.PORT ?? "3000"}`;
+const authBaseUrl = Bun.env.BETTER_AUTH_URL ?? `http://localhost:${Bun.env.PORT ?? "3000"}`;
 const hasSocialProviders = Object.keys(configuredSocialProviders).length > 0;
 
 export const auth = betterAuth({

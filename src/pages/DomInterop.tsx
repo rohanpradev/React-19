@@ -11,13 +11,7 @@ import { CodeBlock } from "@/components/code-block";
 import { FeatureIntro } from "@/components/feature-intro";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Temporal } from "@/lib/temporal";
@@ -38,19 +32,14 @@ const headModes = {
 	launch: {
 		label: "Launch briefing",
 		title: "Launch briefing | React 19 platform lab",
-		description:
-			"Head tags are rendered directly from the page component for the launch brief.",
+		description: "Head tags are rendered directly from the page component for the launch brief.",
 	},
 	audit: {
 		label: "Interop audit",
 		title: "Interop audit | React 19 platform lab",
-		description:
-			"Head metadata switches with the UI state without a separate title manager.",
+		description: "Head metadata switches with the UI state without a separate title manager.",
 	},
-} as const satisfies Record<
-	HeadMode,
-	{ label: string; title: string; description: string }
->;
+} as const satisfies Record<HeadMode, { label: string; title: string; description: string }>;
 
 const toneLabels = {
 	positive: "Healthy expansion motion",
@@ -247,24 +236,9 @@ export function DomInteropPage() {
 	}, []);
 
 	const payload: OpsSignalPayload = {
-		region:
-			signalTone === "positive"
-				? "North America"
-				: signalTone === "watch"
-					? "EMEA"
-					: "APAC",
-		owner:
-			signalTone === "positive"
-				? "R. Vega"
-				: signalTone === "watch"
-					? "M. Chen"
-					: "T. Lewis",
-		trend:
-			signalTone === "positive"
-				? "up"
-				: signalTone === "watch"
-					? "steady"
-					: "down",
+		region: signalTone === "positive" ? "North America" : signalTone === "watch" ? "EMEA" : "APAC",
+		owner: signalTone === "positive" ? "R. Vega" : signalTone === "watch" ? "M. Chen" : "T. Lewis",
+		trend: signalTone === "positive" ? "up" : signalTone === "watch" ? "steady" : "down",
 	};
 
 	return (
@@ -275,22 +249,19 @@ export function DomInteropPage() {
 			<FeatureIntro
 				eyebrow="React 19"
 				title="DOM and Interoperability"
-				summary="The React 19 release was not only about hooks. It also tightened how components interact with the document head, refs, and custom elements so common platform work can stay in plain React."
+				summary="A few platform changes in React 19 make head tags, refs, and custom elements less awkward."
 				points={[
 					{
-						title: "Head tags live in the tree",
-						detail:
-							"title, meta, link, style, and script can be rendered from components and React will place them where the browser expects them.",
+						title: "Head tags",
+						detail: "Title and meta can be rendered directly in the tree.",
 					},
 					{
-						title: "Refs are simpler",
-						detail:
-							"Function components can receive ref as a normal prop, and ref callbacks can now return cleanup functions.",
+						title: "Simpler refs",
+						detail: "Refs can be passed as props and cleaned up inline.",
 					},
 					{
-						title: "Web component support improved",
-						detail:
-							"React 19 assigns matching custom-element properties on the client instead of forcing everything through attributes.",
+						title: "Custom elements",
+						detail: "Matching properties are assigned correctly on the client.",
 					},
 				]}
 				links={[
@@ -313,11 +284,7 @@ export function DomInteropPage() {
 				<Card className="border-border/60">
 					<CardHeader>
 						<SectionTitle section="head" />
-						<CardDescription>
-							This page is rendering its own <code>&lt;title&gt;</code> and{" "}
-							<code>&lt;meta&gt;</code> tags right now. Change the mode and the
-							tab title will change with it.
-						</CardDescription>
+						<CardDescription>Switch modes to update the page metadata.</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-4">
 						<div className="flex flex-wrap gap-2">
@@ -338,9 +305,7 @@ export function DomInteropPage() {
 								Active head state
 							</p>
 							<p className="text-foreground mt-3 font-medium">{head.title}</p>
-							<p className="text-muted-foreground mt-2 text-sm leading-6">
-								{head.description}
-							</p>
+							<p className="text-muted-foreground mt-2 text-sm leading-6">{head.description}</p>
 						</div>
 
 						<CodeBlock>
@@ -354,9 +319,7 @@ export function DomInteropPage() {
 					<CardHeader>
 						<SectionTitle section="ref" />
 						<CardDescription>
-							The input below is wrapped in a function component that accepts{" "}
-							<code>ref</code> directly. There is no <code>forwardRef</code>{" "}
-							layer in between.
+							No <code>forwardRef</code> wrapper here.
 						</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-4">
@@ -386,10 +349,7 @@ export function DomInteropPage() {
 				<Card className="border-border/60">
 					<CardHeader>
 						<SectionTitle section="cleanup" />
-						<CardDescription>
-							React 19 lets a ref callback return cleanup logic. Toggle the
-							target to see attach and cleanup events logged.
-						</CardDescription>
+						<CardDescription>Toggle the node to record attach and cleanup.</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-4">
 						<Button
@@ -405,8 +365,8 @@ export function DomInteropPage() {
 								ref={trackRefLifecycle}
 								className="app-muted-surface border-dashed p-4 text-sm text-muted-foreground"
 							>
-								Tracked node mounted. Unmount it to trigger the cleanup return
-								value from the ref callback.
+								Tracked node mounted. Unmount it to trigger the cleanup return value from the ref
+								callback.
 							</div>
 						) : (
 							<div className="app-surface p-4 text-sm text-muted-foreground">
@@ -415,9 +375,7 @@ export function DomInteropPage() {
 						)}
 
 						<div className="space-y-2">
-							<p className="text-foreground text-sm font-medium">
-								Lifecycle log
-							</p>
+							<p className="text-foreground text-sm font-medium">Lifecycle log</p>
 							<div className="space-y-2">
 								{refEvents.length === 0 ? (
 									<p className="text-muted-foreground text-sm">
@@ -441,11 +399,7 @@ export function DomInteropPage() {
 				<Card className="border-border/60">
 					<CardHeader>
 						<SectionTitle section="interop" />
-						<CardDescription>
-							The element below receives string, number, and object data as
-							properties. In React 19, matching custom-element properties are
-							assigned correctly on the client.
-						</CardDescription>
+						<CardDescription>Pass props into a custom element.</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-4">
 						<div className="flex flex-wrap gap-2">
@@ -456,9 +410,7 @@ export function DomInteropPage() {
 									variant={signalTone === tone ? "default" : "outline"}
 									onClick={() => {
 										setSignalTone(tone);
-										setSignalScore(
-											tone === "positive" ? 82 : tone === "watch" ? 61 : 39,
-										);
+										setSignalScore(tone === "positive" ? 82 : tone === "watch" ? 61 : 39);
 									}}
 								>
 									{toneLabels[tone]}
@@ -474,17 +426,12 @@ export function DomInteropPage() {
 						/>
 
 						<div className="app-surface p-4 text-sm text-muted-foreground">
-							<p className="text-foreground font-medium">
-								Other platform items
-							</p>
+							<p className="text-foreground font-medium">Other platform items</p>
 							<div className="mt-3 space-y-3">
 								{platformNotes.map((note) => (
 									<div key={note.title} className="app-muted-surface p-3">
 										<p className="text-foreground font-medium">{note.title}</p>
-										<p className="mt-1 leading-6">{note.detail}</p>
-										<CodeBlock className="mt-3 rounded-xl p-3">
-											{note.code}
-										</CodeBlock>
+										<CodeBlock className="mt-3 rounded-xl p-3">{note.code}</CodeBlock>
 									</div>
 								))}
 							</div>

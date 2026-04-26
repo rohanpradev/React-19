@@ -14,13 +14,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export function UserMenu({
-	session,
-	className,
-}: {
-	session: AuthSession;
-	className?: string;
-}) {
+export function UserMenu({ session, className }: { session: AuthSession; className?: string }) {
 	const navigate = useNavigate();
 	const [isSigningOut, setIsSigningOut] = useState(false);
 	const initials = getInitials(session.user.name, session.user.email);
@@ -49,9 +43,7 @@ export function UserMenu({
 						{initials}
 					</span>
 					<span className="hidden min-w-0 flex-1 text-left sm:block">
-						<span className="block truncate text-sm font-medium">
-							{session.user.name}
-						</span>
+						<span className="block truncate text-sm font-medium">{session.user.name}</span>
 						<span className="block truncate text-xs text-muted-foreground">
 							{session.user.email}
 						</span>
@@ -62,9 +54,7 @@ export function UserMenu({
 			<DropdownMenuContent align="end" className="w-72">
 				<DropdownMenuLabel className="space-y-1">
 					<p className="truncate font-medium">{session.user.name}</p>
-					<p className="truncate text-xs font-normal text-muted-foreground">
-						{session.user.email}
-					</p>
+					<p className="truncate text-xs font-normal text-muted-foreground">{session.user.email}</p>
 				</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<div className="px-2 pb-2">

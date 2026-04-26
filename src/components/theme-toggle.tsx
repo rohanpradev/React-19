@@ -1,10 +1,5 @@
-import {
-	LaptopMinimal,
-	type LucideIcon,
-	MoonStar,
-	SunMedium,
-} from "lucide-react";
-import { type Theme, useTheme } from "@/components/theme-provider";
+import { LaptopMinimal, type LucideIcon, MoonStar, SunMedium } from "lucide-react";
+import { type Theme, themePresetOptions, useTheme } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
 
 const themeOptions: {
@@ -18,7 +13,7 @@ const themeOptions: {
 ];
 
 export function ThemeToggle({ className }: { className?: string }) {
-	const { theme, resolvedTheme, setTheme } = useTheme();
+	const { theme, resolvedTheme, preset, setPreset, setTheme } = useTheme();
 
 	return (
 		<div
@@ -47,6 +42,34 @@ export function ThemeToggle({ className }: { className?: string }) {
 							)}
 						>
 							<Icon className="size-4" />
+						</button>
+					);
+				})}
+			</div>
+
+			<div className="hidden flex-wrap gap-1 rounded-[1rem] bg-muted/35 p-1 2xl:flex">
+				{themePresetOptions.map((option) => {
+					const isActive = preset === option.value;
+
+					return (
+						<button
+							key={option.value}
+							type="button"
+							onClick={() => setPreset(option.value)}
+							title={option.description}
+							aria-label={`${option.label} preset`}
+							aria-pressed={isActive}
+							className={cn(
+								"inline-flex min-w-0 flex-1 items-center gap-2 rounded-[0.85rem] border border-transparent px-2.5 py-2 text-left text-xs font-medium text-muted-foreground transition-all duration-200 hover:bg-background/80 hover:text-foreground",
+								isActive &&
+									"border-primary/20 bg-background text-foreground shadow-sm shadow-black/[0.1]",
+							)}
+						>
+							<span
+								className="size-3 shrink-0 rounded-full border border-black/10"
+								style={{ backgroundImage: option.swatch }}
+							/>
+							<span className="truncate">{option.label}</span>
 						</button>
 					);
 				})}

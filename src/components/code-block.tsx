@@ -1,10 +1,7 @@
 import type * as React from "react";
 import { cn } from "@/lib/utils";
 
-export function CodeBlock({
-	className,
-	...props
-}: React.ComponentProps<"pre">) {
+export function CodeBlock({ className, ...props }: React.ComponentProps<"pre">) {
 	return (
 		<pre
 			className={cn(

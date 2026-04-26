@@ -1,16 +1,6 @@
-export const customerStatuses = [
-	"active",
-	"paused",
-	"trial",
-	"churned",
-] as const;
+export const customerStatuses = ["active", "paused", "trial", "churned"] as const;
 
-export const customerPlans = [
-	"starter",
-	"growth",
-	"business",
-	"enterprise",
-] as const;
+export const customerPlans = ["starter", "growth", "business", "enterprise"] as const;
 
 export const customerFilterIds = ["status", "plan"] as const;
 
@@ -94,14 +84,7 @@ export type CustomerListResponse = {
 
 export type CustomerAutocompleteItem = Pick<
 	CustomerRow,
-	| "id"
-	| "name"
-	| "email"
-	| "company"
-	| "status"
-	| "plan"
-	| "country"
-	| "lastSeenAt"
+	"id" | "name" | "email" | "company" | "status" | "plan" | "country" | "lastSeenAt"
 >;
 
 export type CustomerAutocompleteResponse = {
@@ -141,14 +124,8 @@ export function isCustomerPlan(value: string): value is CustomerPlan {
 export function buildCustomersSearchParams(query: CustomerTableQuery) {
 	const params = new URLSearchParams();
 
-	params.set(
-		"pageIndex",
-		String(clampInteger(query.pageIndex, 0, MAX_PAGE_INDEX, 0)),
-	);
-	params.set(
-		"pageSize",
-		String(clampInteger(query.pageSize, 5, MAX_PAGE_SIZE, DEFAULT_PAGE_SIZE)),
-	);
+	params.set("pageIndex", String(clampInteger(query.pageIndex, 0, MAX_PAGE_INDEX, 0)));
+	params.set("pageSize", String(clampInteger(query.pageSize, 5, MAX_PAGE_SIZE, DEFAULT_PAGE_SIZE)));
 
 	const normalizedSearch = query.search.trim().slice(0, MAX_SEARCH_LENGTH);
 	if (normalizedSearch) {
@@ -170,24 +147,16 @@ export function buildCustomersQueryString(query: CustomerTableQuery) {
 	return buildCustomersSearchParams(query).toString();
 }
 
-export function parseCustomersSearchParams(
-	searchParams: URLSearchParams,
-): CustomerTableQuery {
+export function parseCustomersSearchParams(searchParams: URLSearchParams): CustomerTableQuery {
 	return {
-		pageIndex: clampInteger(
-			Number(searchParams.get("pageIndex")),
-			0,
-			MAX_PAGE_INDEX,
-			0,
-		),
+		pageIndex: clampInteger(Number(searchParams.get("pageIndex")), 0, MAX_PAGE_INDEX, 0),
 		pageSize: clampInteger(
 			Number(searchParams.get("pageSize")),
 			5,
 			MAX_PAGE_SIZE,
 			DEFAULT_PAGE_SIZE,
 		),
-		search:
-			searchParams.get("search")?.trim().slice(0, MAX_SEARCH_LENGTH) ?? "",
+		search: searchParams.get("search")?.trim().slice(0, MAX_SEARCH_LENGTH) ?? "",
 		sorting: parseCustomerSorting(searchParams.get("sorting")),
 		filters: parseCustomerFilters(searchParams.get("filters")),
 	};
@@ -199,10 +168,7 @@ export function parseCustomersRequest(request: Request) {
 }
 
 export function createFacetRecord<T extends readonly string[]>(values: T) {
-	return Object.fromEntries(values.map((value) => [value, 0])) as Record<
-		T[number],
-		number
-	>;
+	return Object.fromEntries(values.map((value) => [value, 0])) as Record<T[number], number>;
 }
 
 export function getCustomerFilterValue(
@@ -213,10 +179,7 @@ export function getCustomerFilterValue(
 	filters: CustomerTableFilters,
 	id: "plan",
 ): CustomerPlan | "";
-export function getCustomerFilterValue(
-	filters: CustomerTableFilters,
-	id: CustomerFilterId,
-) {
+export function getCustomerFilterValue(filters: CustomerTableFilters, id: CustomerFilterId) {
 	const activeFilter = filters.find((filter) => filter.id === id);
 	return activeFilter?.value ?? "";
 }
@@ -247,9 +210,7 @@ function parseCustomerSorting(rawValue: string | null) {
 		});
 	}
 
-	return normalizedSorting.length > 0
-		? normalizedSorting
-		: defaultCustomerSorting;
+	return normalizedSorting.length > 0 ? normalizedSorting : defaultCustomerSorting;
 }
 
 function parseCustomerFilters(rawValue: string | null) {
@@ -302,12 +263,7 @@ function safeJsonParse(rawValue: string | null) {
 	}
 }
 
-function clampInteger(
-	value: number,
-	min: number,
-	max: number,
-	fallback: number,
-) {
+function clampInteger(value: number, min: number, max: number, fallback: number) {
 	if (!Number.isFinite(value)) {
 		return fallback;
 	}

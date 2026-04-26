@@ -9,8 +9,7 @@ const alertVariants = cva(
 			variant: {
 				default: "border-border/70 bg-background/82 text-foreground",
 				info: "border-primary/15 bg-primary/10 text-foreground [&>svg]:text-primary",
-				success:
-					"border-success/15 bg-success/10 text-foreground [&>svg]:text-success",
+				success: "border-success/15 bg-success/10 text-foreground [&>svg]:text-success",
 				destructive:
 					"border-destructive/20 bg-destructive/10 text-destructive [&_[data-slot=alert-description]]:text-destructive/85",
 			},
@@ -47,10 +46,7 @@ function AlertTitle({ className, ...props }: React.ComponentProps<"div">) {
 	);
 }
 
-function AlertDescription({
-	className,
-	...props
-}: React.ComponentProps<"div">) {
+function AlertDescription({ className, ...props }: React.ComponentProps<"div">) {
 	return (
 		<div
 			data-slot="alert-description"

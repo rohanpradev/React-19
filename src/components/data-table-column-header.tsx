@@ -1,11 +1,5 @@
 import type { Column } from "@tanstack/react-table";
-import {
-	ArrowDown,
-	ArrowUp,
-	ArrowUpDown,
-	EyeOff,
-	MoreHorizontal,
-} from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, EyeOff, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -41,9 +35,7 @@ export function DataTableColumnHeader<TData, TValue>({
 					variant="ghost"
 					size="sm"
 					className="-ml-3 h-8 px-3 text-muted-foreground hover:text-foreground"
-					onClick={(event) =>
-						column.toggleSorting(column.getIsSorted() === "asc", event.shiftKey)
-					}
+					onClick={(event) => column.toggleSorting(column.getIsSorted() === "asc", event.shiftKey)}
 				>
 					<span>{title}</span>
 					{column.getIsSorted() === "desc" ? (

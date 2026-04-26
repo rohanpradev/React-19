@@ -15,14 +15,8 @@ function getColumnLabel<TData>(tableColumn: Column<TData, unknown>) {
 	return meta?.label ?? tableColumn.id;
 }
 
-export function DataTableViewOptions<TData>({
-	table,
-}: {
-	table: Table<TData>;
-}) {
-	const hideableColumns = table
-		.getAllColumns()
-		.filter((column) => column.getCanHide());
+export function DataTableViewOptions<TData>({ table }: { table: Table<TData> }) {
+	const hideableColumns = table.getAllColumns().filter((column) => column.getCanHide());
 
 	if (hideableColumns.length === 0) {
 		return null;

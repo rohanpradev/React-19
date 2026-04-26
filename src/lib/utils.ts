@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
-export type DebouncedFunction<T extends (...args: any[]) => any> = {
+export type DebouncedFunction<T extends (...args: unknown[]) => unknown> = {
 	(...args: Parameters<T>): void;
 	cancel: () => void;
 	flush: () => ReturnType<T> | undefined;

@@ -1,32 +1,14 @@
-import {
-	ArrowUpRight,
-	KeyRound,
-	Loader2,
-	LockKeyhole,
-	ShieldCheck,
-} from "lucide-react";
+import { ArrowUpRight, KeyRound, Loader2, LockKeyhole, ShieldCheck } from "lucide-react";
 import type { ReactNode } from "react";
 import { useActionState, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { authClient } from "@/auth/client";
-import {
-	getDefaultAuthRedirectPath,
-	sanitizeRedirectPath,
-} from "@/auth/redirects";
-import type {
-	SocialProviderAvailability,
-	SocialProviderId,
-} from "@/auth/social-providers";
+import { getDefaultAuthRedirectPath, sanitizeRedirectPath } from "@/auth/redirects";
+import type { SocialProviderAvailability, SocialProviderId } from "@/auth/social-providers";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -73,26 +55,19 @@ const authDocsLinks = [
 export function AuthPage() {
 	const [searchParams] = useSearchParams();
 	const navigate = useNavigate();
-	const nextPath = sanitizeRedirectPath(
-		searchParams.get("next") ?? getDefaultAuthRedirectPath(),
-	);
-	const requestedMode: AuthMode =
-		searchParams.get("mode") === "sign-up" ? "sign-up" : "sign-in";
+	const nextPath = sanitizeRedirectPath(searchParams.get("next") ?? getDefaultAuthRedirectPath());
+	const requestedMode: AuthMode = searchParams.get("mode") === "sign-up" ? "sign-up" : "sign-in";
 	const [mode, setMode] = useState<AuthMode>(requestedMode);
-	const [providers, setProviders] =
-		useState<SocialProviderAvailability>(emptySocialProviders);
+	const [providers, setProviders] = useState<SocialProviderAvailability>(emptySocialProviders);
 	const [isLoadingProviders, setIsLoadingProviders] = useState(true);
 	const [socialError, setSocialError] = useState<string | null>(null);
-	const [activeSocialProvider, setActiveSocialProvider] =
-		useState<SocialProviderId | null>(null);
+	const [activeSocialProvider, setActiveSocialProvider] = useState<SocialProviderId | null>(null);
 	const oauthError = getOAuthErrorMessage(
 		searchParams.get("error"),
 		searchParams.get("error_description"),
 	);
 	const appOrigin =
-		typeof window === "undefined"
-			? "http://localhost:3000"
-			: window.location.origin;
+		typeof window === "undefined" ? "http://localhost:3000" : window.location.origin;
 
 	useEffect(() => {
 		setMode(requestedMode);
@@ -110,9 +85,7 @@ export function AuthPage() {
 				});
 
 				if (!response.ok) {
-					throw new Error(
-						`Unable to load auth providers (${response.status}).`,
-					);
+					throw new Error(`Unable to load auth providers (${response.status}).`);
 				}
 
 				const payload = (await response.json()) as SocialProvidersPayload;
@@ -128,9 +101,7 @@ export function AuthPage() {
 				if (!controller.signal.aborted) {
 					setProviders(emptySocialProviders);
 					setSocialError(
-						error instanceof Error
-							? error.message
-							: "Unable to load social sign-in providers.",
+						error instanceof Error ? error.message : "Unable to load social sign-in providers.",
 					);
 				}
 			} finally {
@@ -200,10 +171,9 @@ export function AuthPage() {
 								Private access for the Bun + React lab.
 							</h1>
 							<p className="max-w-3xl text-base leading-8 text-muted-foreground sm:text-lg">
-								The app now uses Better Auth on the same `bun:sqlite` connection
-								that already backs your Drizzle data. Email/password, Google,
-								and GitHub all land in the same account system, and the customer
-								APIs stay protected server-side.
+								The app now uses Better Auth on the same `bun:sqlite` connection that already backs
+								your Drizzle data. Email/password, Google, and GitHub all land in the same account
+								system, and the customer APIs stay protected server-side.
 							</p>
 						</div>
 
@@ -233,9 +203,8 @@ export function AuthPage() {
 							</p>
 							<p className="mt-3 text-sm leading-7 text-muted-foreground">
 								After authentication, you will continue to{" "}
-								<span className="font-medium text-foreground">{nextPath}</span>.
-								The redirect is restricted to in-app paths so auth cannot be
-								used as an open redirect.
+								<span className="font-medium text-foreground">{nextPath}</span>. The redirect is
+								restricted to in-app paths so auth cannot be used as an open redirect.
 							</p>
 						</div>
 
@@ -316,9 +285,7 @@ export function AuthPage() {
 								<Alert variant="destructive">
 									<div className="space-y-1">
 										<AlertTitle>Authentication could not continue</AlertTitle>
-										<AlertDescription>
-											{socialError ?? oauthError}
-										</AlertDescription>
+										<AlertDescription>{socialError ?? oauthError}</AlertDescription>
 									</div>
 								</Alert>
 							) : null}
@@ -392,21 +359,15 @@ function SocialAuthSection({
 
 			{!isLoading && !hasEnabledProvider ? (
 				<div className="rounded-[1.2rem] border border-border/65 bg-muted/24 p-4 text-sm leading-6 text-muted-foreground">
-					Social sign-in becomes available after setting the Google or GitHub
-					oauth environment variables on the server.
+					Social sign-in becomes available after setting the Google or GitHub oauth environment
+					variables on the server.
 				</div>
 			) : null}
 		</div>
 	);
 }
 
-function ProviderMonogram({
-	label,
-	className,
-}: {
-	label: string;
-	className?: string;
-}) {
+function ProviderMonogram({ label, className }: { label: string; className?: string }) {
 	return (
 		<span
 			className={`flex size-5 items-center justify-center rounded-full border border-current/15 bg-muted/40 text-[10px] font-bold ${className ?? ""}`}
@@ -443,11 +404,7 @@ function SocialButton({
 			disabled={isDisabled}
 			onClick={() => void onClick(provider)}
 		>
-			{isPending || isLoading ? (
-				<Loader2 className="size-4 animate-spin" />
-			) : (
-				icon
-			)}
+			{isPending || isLoading ? <Loader2 className="size-4 animate-spin" /> : icon}
 			<span className="flex-1 text-left">
 				{isLoading
 					? "Checking provider..."
@@ -474,10 +431,7 @@ function SignInForm({ nextPath }: { nextPath: string }) {
 			if (result.error) {
 				return {
 					status: "error",
-					message: getAuthErrorMessage(
-						result.error,
-						"Unable to sign in with those credentials.",
-					),
+					message: getAuthErrorMessage(result.error, "Unable to sign in with those credentials."),
 				} satisfies AuthActionState;
 			}
 
@@ -554,10 +508,7 @@ function SignUpForm({ nextPath }: { nextPath: string }) {
 			if (result.error) {
 				return {
 					status: "error",
-					message: getAuthErrorMessage(
-						result.error,
-						"Unable to create that account.",
-					),
+					message: getAuthErrorMessage(result.error, "Unable to create that account."),
 				} satisfies AuthActionState;
 			}
 
@@ -649,9 +600,7 @@ function FeatureCard({
 				</span>
 				<div>
 					<p className="font-medium text-foreground">{title}</p>
-					<p className="mt-2 text-sm leading-6 text-muted-foreground">
-						{detail}
-					</p>
+					<p className="mt-2 text-sm leading-6 text-muted-foreground">{detail}</p>
 				</div>
 			</div>
 		</div>
@@ -681,10 +630,7 @@ function getAuthErrorMessage(
 	return error.message?.trim() || fallback;
 }
 
-function getOAuthErrorMessage(
-	error: string | null,
-	description: string | null,
-) {
+function getOAuthErrorMessage(error: string | null, description: string | null) {
 	if (!error) {
 		return null;
 	}
@@ -696,10 +642,8 @@ function getOAuthErrorMessage(
 			email_not_found:
 				"The provider did not return an email address. Check the provider app permissions and account email visibility.",
 			invalid_code: "The provider callback could not be validated.",
-			no_callback_url:
-				"No application redirect target was preserved for this sign-in.",
-			oauth_provider_not_found:
-				"The selected oauth provider is not configured on this server.",
+			no_callback_url: "No application redirect target was preserved for this sign-in.",
+			oauth_provider_not_found: "The selected oauth provider is not configured on this server.",
 			unable_to_get_user_info:
 				"The provider authentication succeeded, but Better Auth could not fetch the profile data needed to create or sign in the user.",
 		}[normalized] ?? "The oauth sign-in flow could not be completed.";

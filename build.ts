@@ -86,9 +86,7 @@ function parseArgs(): CliConfig {
 		const nextArg = args[index + 1];
 		const isBooleanFlag =
 			!arg.includes("=") &&
-			(index === args.length - 1 ||
-				nextArg === undefined ||
-				nextArg.startsWith("--"));
+			(index === args.length - 1 || nextArg === undefined || nextArg.startsWith("--"));
 
 		if (isBooleanFlag) {
 			config[toCamelCase(arg.slice(2))] = true;
@@ -146,9 +144,7 @@ console.log("\nStarting build process...\n");
 
 const cliConfig = parseArgs();
 const outdir =
-	typeof cliConfig.outdir === "string"
-		? cliConfig.outdir
-		: path.join(process.cwd(), "dist");
+	typeof cliConfig.outdir === "string" ? cliConfig.outdir : path.join(process.cwd(), "dist");
 const entrypoints =
 	typeof cliConfig.entrypoints === "string"
 		? [path.resolve(cliConfig.entrypoints)]

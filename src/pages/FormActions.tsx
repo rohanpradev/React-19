@@ -4,13 +4,7 @@ import { useFormStatus } from "react-dom";
 import { FeatureIntro } from "@/components/feature-intro";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,14 +17,11 @@ type InviteState = {
 
 const initialState: InviteState = {
 	status: "idle",
-	message: "Use the form to dispatch an action and return UI state from it.",
+	message: "Submit the form to run the action.",
 	lastEmail: "",
 };
 
-async function submitInvite(
-	_previousState: InviteState,
-	formData: FormData,
-): Promise<InviteState> {
+async function submitInvite(_previousState: InviteState, formData: FormData): Promise<InviteState> {
 	await new Promise((resolve) => setTimeout(resolve, 900));
 
 	const email = String(formData.get("email") ?? "").trim();
@@ -78,10 +69,7 @@ function SubmitButton() {
 }
 
 export function FormActionsPage() {
-	const [state, formAction, isPending] = useActionState(
-		submitInvite,
-		initialState,
-	);
+	const [state, formAction, isPending] = useActionState(submitInvite, initialState);
 	const stateConfig =
 		state.status === "error"
 			? {
@@ -107,22 +95,15 @@ export function FormActionsPage() {
 			<FeatureIntro
 				eyebrow="React 19"
 				title="Form Actions with useActionState"
-				summary="React 19 makes function-based form actions first-class. useActionState stores the value returned by the action, and useFormStatus lets nested UI react to the active submission without prop drilling."
+				summary="A form action that returns the next UI state and keeps pending status close to the submit button."
 				points={[
 					{
-						title: "Action return value becomes state",
-						detail:
-							"useActionState gives the action the previous state and replaces it with whatever the action returns next.",
+						title: "Returned state",
+						detail: "The action decides what comes back into the component.",
 					},
 					{
-						title: "Pending status stays near the button",
-						detail:
-							"useFormStatus reads the parent form submission so button and helper copy can update without threading flags through the tree.",
-					},
-					{
-						title: "Works naturally with form action props",
-						detail:
-							"Forms can call async functions directly, which keeps validation, pending UI, and returned state in one flow.",
+						title: "Local pending UI",
+						detail: "Nested controls can read form status without extra props.",
 					},
 				]}
 				links={[
@@ -145,10 +126,7 @@ export function FormActionsPage() {
 				<Card className="border-border/60">
 					<CardHeader>
 						<CardTitle>Security review request</CardTitle>
-						<CardDescription>
-							This form is intentionally uncontrolled so it behaves like a real
-							form action instead of a client-only submit handler.
-						</CardDescription>
+						<CardDescription>Uncontrolled form, server-style flow.</CardDescription>
 					</CardHeader>
 					<CardContent>
 						<form action={formAction} className="space-y-5">
@@ -190,10 +168,7 @@ export function FormActionsPage() {
 				<Card className="border-border/60">
 					<CardHeader>
 						<CardTitle>Returned action state</CardTitle>
-						<CardDescription>
-							The action decides what state comes back into the component after
-							each submission.
-						</CardDescription>
+						<CardDescription>Latest response from the action.</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-4">
 						<Alert variant={stateConfig.variant}>
@@ -208,16 +183,6 @@ export function FormActionsPage() {
 							<p className="font-medium text-foreground">Current hook values</p>
 							<p className="mt-2">isPending: {String(isPending)}</p>
 							<p>lastEmail: {state.lastEmail || "none yet"}</p>
-						</div>
-
-						<div className="app-surface p-4 text-sm text-muted-foreground">
-							<p className="font-medium text-foreground">
-								When to reach for this
-							</p>
-							<p className="mt-2">
-								Use this pattern when the submit function should own validation,
-								server work, and the next UI state as one unit.
-							</p>
 						</div>
 					</CardContent>
 				</Card>

@@ -4,13 +4,7 @@ import { FeatureIntro } from "@/components/feature-intro";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Temporal } from "@/lib/temporal";
@@ -34,9 +28,7 @@ async function reassignAccounts(owner: string) {
 
 export function ActionsPage() {
 	const [owner, setOwner] = useState("Ari Stone");
-	const [notice, setNotice] = useState(
-		"24 expansion accounts are currently selected.",
-	);
+	const [notice, setNotice] = useState("24 expansion accounts are currently selected.");
 	const [error, setError] = useState<string | null>(null);
 	const [lastRun, setLastRun] = useState<string | null>(null);
 	const [isPending, startTransition] = useTransition();
@@ -47,16 +39,18 @@ export function ActionsPage() {
 
 			try {
 				const result = await reassignAccounts(owner);
-				setNotice(
-					`${result.updatedCount} accounts were moved to ${result.owner}.`,
-				);
-				setLastRun(result.completedAt);
+				startTransition(() => {
+					setNotice(`${result.updatedCount} accounts were moved to ${result.owner}.`);
+					setLastRun(result.completedAt);
+				});
 			} catch (caughtError) {
-				setError(
-					caughtError instanceof Error
-						? caughtError.message
-						: "The action could not be completed.",
-				);
+				startTransition(() => {
+					setError(
+						caughtError instanceof Error
+							? caughtError.message
+							: "The action could not be completed.",
+					);
+				});
 			}
 		});
 	};
@@ -66,28 +60,25 @@ export function ActionsPage() {
 			<FeatureIntro
 				eyebrow="React 19"
 				title="Async Actions with startTransition"
-				summary="React 19 formalizes async transitions as Actions. They are a good fit for mutations that are not primarily form-driven but still need pending UI, error handling, and optimistic follow-up work."
+				summary="Use this when a button kicks off async work and the UI needs a pending state."
 				points={[
 					{
-						title: "Async work lives inside the transition",
-						detail:
-							"React treats the full async function as the unit of pending work instead of only the synchronous state update at the start.",
+						title: "Button-driven mutation",
+						detail: "Good fit when there is no form submit boundary.",
 					},
 					{
-						title: "Best for button-initiated mutations",
-						detail:
-							"This pattern is useful when the user is triggering a task from a button, menu, or command surface instead of a form action.",
-					},
-					{
-						title: "Pairs naturally with optimistic UI",
-						detail:
-							"useOptimistic can sit on top of the same flow when you want the screen to move before the request settles.",
+						title: "Pending state included",
+						detail: "The transition keeps the control disabled while work runs.",
 					},
 				]}
 				links={[
 					{
 						label: "React 19 release",
 						href: "https://react.dev/blog/2024/12/05/react-19",
+					},
+					{
+						label: "useTransition",
+						href: "https://react.dev/reference/react/useTransition",
 					},
 				]}
 			/>
@@ -96,10 +87,7 @@ export function ActionsPage() {
 				<Card className="border-border/60">
 					<CardHeader>
 						<CardTitle>Bulk owner reassignment</CardTitle>
-						<CardDescription>
-							This example keeps the workflow outside a form and uses an async
-							transition as the action boundary.
-						</CardDescription>
+						<CardDescription>Move selected accounts to a new owner.</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-5">
 						<div className="space-y-2">
@@ -139,10 +127,7 @@ export function ActionsPage() {
 				<Card className="border-border/60">
 					<CardHeader>
 						<CardTitle>Action state</CardTitle>
-						<CardDescription>
-							The UI can explain what just happened even though the mutation is
-							not modeled as a form action.
-						</CardDescription>
+						<CardDescription>Current run state.</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-4">
 						<Badge variant={isPending ? "secondary" : "outline"}>
@@ -153,15 +138,6 @@ export function ActionsPage() {
 							<p>Selected accounts: 24</p>
 							<p>Current assignee: {owner || "not set"}</p>
 							<p>Last completed: {lastRun ?? "not yet run"}</p>
-						</div>
-
-						<div className="app-muted-surface p-4 text-sm text-muted-foreground">
-							<p className="font-medium text-foreground">When to use this</p>
-							<p className="mt-2">
-								Reach for async actions when the user is clicking a control to
-								trigger a mutation, and reach for useActionState when the action
-								should be driven by a form.
-							</p>
 						</div>
 					</CardContent>
 				</Card>

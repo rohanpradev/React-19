@@ -93,22 +93,9 @@ const countries = [
 	"Brazil",
 ] as const;
 
-const weightedStatuses = [
-	"active",
-	"active",
-	"active",
-	"trial",
-	"paused",
-	"churned",
-] as const;
+const weightedStatuses = ["active", "active", "active", "trial", "paused", "churned"] as const;
 
-const weightedPlans = [
-	"starter",
-	"growth",
-	"growth",
-	"business",
-	"enterprise",
-] as const;
+const weightedPlans = ["starter", "growth", "growth", "business", "enterprise"] as const;
 
 const baseAnnualValueByPlan = {
 	starter: 3_600,
@@ -165,11 +152,7 @@ export function buildCustomerSeedRows(totalRows = 240): NewCustomer[] {
 			);
 		const seats =
 			baseSeatsByPlan[plan] +
-			between(
-				rowNumber * 47,
-				0,
-				plan === "enterprise" ? 220 : plan === "business" ? 60 : 24,
-			);
+			between(rowNumber * 47, 0, plan === "enterprise" ? 220 : plan === "business" ? 60 : 24);
 		const inactivityDays =
 			status === "churned"
 				? between(rowNumber * 53, 45, 210)

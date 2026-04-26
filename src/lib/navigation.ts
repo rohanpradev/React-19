@@ -11,11 +11,7 @@ import {
 	Workflow,
 } from "lucide-react";
 
-export type LearningStage =
-	| "foundation"
-	| "hands-on"
-	| "platform"
-	| "full-stack";
+export type LearningStage = "foundation" | "hands-on" | "platform" | "full-stack";
 
 export type NavItem = {
 	path: string;
