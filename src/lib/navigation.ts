@@ -2,6 +2,7 @@ import {
 	ChartColumnIncreasing,
 	FilePenLine,
 	FlaskConical,
+	BrainCircuit,
 	type LucideIcon,
 	Orbit,
 	PanelTopOpen,
@@ -33,13 +34,22 @@ export const appIdentity = {
 
 export const navItems: [NavItem, ...NavItem[]] = [
 	{
-		path: "/react-19",
-		label: "React 19 Overview",
+		path: "/overview",
+		label: "Overview",
 		blurb: "Release notes mapped to concrete pages in the app.",
 		icon: Sparkles,
 		stage: "foundation",
 		releaseArea: "Overview",
 		apiLabels: ["Actions", "use", "DOM APIs"],
+	},
+	{
+		path: "/architecture",
+		label: "Architecture Playbook",
+		blurb: "React 19.2, Router, platform, and microfrontend decisions for senior teams.",
+		icon: BrainCircuit,
+		stage: "platform",
+		releaseArea: "Architecture",
+		apiLabels: ["Activity", "Compiler", "Microfrontends"],
 	},
 	{
 		path: "/form-actions",
@@ -115,6 +125,13 @@ export const releaseCoverage = [
 		relatedPaths: ["/form-actions", "/actions", "/optimistic"],
 	},
 	{
+		title: "Architecture posture",
+		status: "Senior track",
+		detail:
+			"React 19.2, Router boundaries, platform standards, and microfrontend tradeoffs are captured as decision guides.",
+		relatedPaths: ["/architecture"],
+	},
+	{
 		title: "use",
 		status: "Interactive demo",
 		detail:
@@ -140,7 +157,7 @@ export const releaseCoverage = [
 		status: "Reference callout",
 		detail:
 			"These release-note items are captured in the overview and DOM pages so the project stays broad without adding filler routes.",
-		relatedPaths: ["/react-19", "/dom-interop"],
+		relatedPaths: ["/overview", "/dom-interop"],
 	},
 ] as const;
 

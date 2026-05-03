@@ -24,7 +24,7 @@ export function UserMenu({ session, className }: { session: AuthSession; classNa
 
 		try {
 			await authClient.signOut();
-			navigate(buildAuthHref("/react-19"), { replace: true });
+			navigate(buildAuthHref("/overview"), { replace: true });
 		} finally {
 			setIsSigningOut(false);
 		}

@@ -2,7 +2,14 @@ import type { CSSProperties } from "react";
 import { useTheme } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
 
-type TechLogoName = "react" | "bun" | "typescript" | "react-router" | "shadcn" | "better-auth";
+type TechLogoName =
+	| "react"
+	| "bun"
+	| "typescript"
+	| "react-router"
+	| "shadcn"
+	| "better-auth"
+	| "tanstack";
 
 type TechLogoSource =
 	| string
@@ -44,6 +51,10 @@ const techLogoSources: Record<TechLogoName, { label: string; source: TechLogoSou
 			light: "https://svgl.app/library/better-auth_light.svg",
 			dark: "https://svgl.app/library/better-auth_dark.svg",
 		},
+	},
+	tanstack: {
+		label: "TanStack",
+		source: "https://svgl.app/library/tanstack.svg",
 	},
 };
 

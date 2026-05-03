@@ -14,14 +14,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { learningStages, navItems, releaseCoverage } from "@/lib/navigation";
 
-const learningRoutes = navItems.filter((item) => item.path !== "/react-19");
+const learningRoutes = navItems.filter((item) => item.path !== "/overview");
 const navItemsByPath = Object.fromEntries(navItems.map((item) => [item.path, item]));
 
 const stackHighlights = [
 	{
-		title: "React 19 stable APIs",
-		description:
-			"Core features are mapped to runnable routes instead of long release-note summaries.",
+		title: "React 19.2 stable APIs",
+		description: "Core features and new architecture primitives are mapped to focused routes.",
 		icon: CheckCircle2,
 	},
 	{
@@ -44,10 +43,10 @@ const stackHighlights = [
 const docsStack = [
 	{
 		title: "React",
-		subtitle: "Release notes + API docs",
+		subtitle: "React 19.2 release + API docs",
 		description:
-			"The overview and demo pages are organized around the stable React 19 release post and the hook/component references it points to.",
-		href: "https://react.dev/blog/2024/12/05/react-19",
+			"The overview, demos, and architecture track follow the React 19.2 release post and the references it points to.",
+		href: "https://react.dev/blog/2025/10/01/react-19-2",
 		logo: "react",
 	},
 	{
@@ -80,13 +79,13 @@ const bunPractices = [
 	"`src/index.html` stays the frontend entry while Bun owns serving and bundling.",
 ] as const;
 
-export function React19OverviewPage() {
+export function OverviewPage() {
 	return (
 		<div className="space-y-6">
 			<FeatureIntro
-				eyebrow="React 19"
+				eyebrow="React 19.2"
 				title="Release Notes Tour"
-				summary="A quick map of the React 19 features this repo actually demonstrates. Start here, then move into the focused routes below."
+				summary="A quick map of the React 19.2 features this repo demonstrates, plus a senior architecture track for platform decisions."
 				points={[
 					{
 						title: "Learn from the release, not from random demos",
@@ -106,8 +105,8 @@ export function React19OverviewPage() {
 				]}
 				links={[
 					{
-						label: "React 19 release",
-						href: "https://react.dev/blog/2024/12/05/react-19",
+						label: "React 19.2 release",
+						href: "https://react.dev/blog/2025/10/01/react-19-2",
 					},
 					{
 						label: "shadcn docs",

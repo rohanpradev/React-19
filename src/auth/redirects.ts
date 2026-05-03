@@ -1,4 +1,4 @@
-const DEFAULT_AUTH_REDIRECT_PATH = "/react-19";
+const DEFAULT_AUTH_REDIRECT_PATH = "/overview";
 
 export function getDefaultAuthRedirectPath() {
 	return DEFAULT_AUTH_REDIRECT_PATH;

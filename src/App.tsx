@@ -13,11 +13,12 @@ import { UserMenu } from "@/components/user-menu";
 import { appIdentity, learningStages, navItems } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import { ActionsPage } from "@/pages/Actions";
+import { ArchitecturePlaybookPage } from "@/pages/ArchitecturePlaybook";
 import { AuthPage } from "@/pages/Auth";
 import { DomInteropPage } from "@/pages/DomInterop";
 import { FormActionsPage } from "@/pages/FormActions";
+import { OverviewPage } from "@/pages/OverviewPage";
 import { UseOptimisticPage } from "@/pages/Optimistic";
-import { React19OverviewPage } from "@/pages/React19OverviewPage";
 import { ReactUsePage } from "@/pages/ReactUse";
 import { SearchDebounce } from "@/pages/SearchDebounce";
 import { ServerTablePage } from "@/pages/ServerTable";
@@ -56,8 +57,10 @@ export function App() {
 	return (
 		<Routes>
 			<Route element={<WorkspaceLayout session={authSession} />}>
-				<Route path="/" element={<Navigate to="/react-19" replace />} />
-				<Route path="/react-19" element={<React19OverviewPage />} />
+				<Route path="/" element={<Navigate to="/overview" replace />} />
+				<Route path="/overview" element={<OverviewPage />} />
+				<Route path="/react-19" element={<Navigate to="/overview" replace />} />
+				<Route path="/architecture" element={<ArchitecturePlaybookPage />} />
 				<Route path="/form-actions" element={<FormActionsPage />} />
 				<Route path="/revenue-ops" element={<ServerTablePage />} />
 				<Route path="/react-use" element={<ReactUsePage />} />

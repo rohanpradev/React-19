@@ -1,13 +1,24 @@
 {
 	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"root": true,
 	"vcs": {
 		"enabled": true,
 		"clientKind": "git",
-		"useIgnoreFile": true
+		"useIgnoreFile": true,
+		"defaultBranch": "main"
 	},
 	"files": {
-		"includes": ["**", "!dist", "!drizzle", "!*.sqlite", "!*.sqlite-shm", "!*.sqlite-wal"],
-		"ignoreUnknown": true
+		"includes": [
+			"**",
+			"!!**/dist",
+			"!!**/coverage",
+			"!!**/.next",
+			"!!**/.turbo",
+			"!!**/drizzle",
+			"!!**/*.sqlite*"
+		],
+		"ignoreUnknown": true,
+		"maxSize": 1048576
 	},
 	"formatter": {
 		"enabled": true,
@@ -20,8 +31,12 @@
 			"package.json",
 			"tsconfig.json"
 		],
+		"formatWithErrors": false,
 		"indentStyle": "tab",
-		"lineWidth": 100
+		"lineWidth": 100,
+		"lineEnding": "lf",
+		"attributePosition": "auto",
+		"bracketSpacing": true
 	},
 	"linter": {
 		"enabled": true,
@@ -32,14 +47,36 @@
 		},
 		"rules": {
 			"recommended": true,
+			"correctness": {
+				"noUndeclaredDependencies": "error",
+				"noUnusedImports": "error"
+			},
 			"style": {
 				"useImportType": "error"
 			}
 		}
 	},
 	"javascript": {
+		"jsxRuntime": "transparent",
 		"formatter": {
-			"quoteStyle": "double"
+			"quoteStyle": "double",
+			"jsxQuoteStyle": "double",
+			"quoteProperties": "asNeeded",
+			"trailingCommas": "all",
+			"semicolons": "always",
+			"arrowParentheses": "always",
+			"bracketSameLine": false,
+			"operatorLinebreak": "after"
+		}
+	},
+	"json": {
+		"parser": {
+			"allowComments": true,
+			"allowTrailingCommas": true
+		},
+		"formatter": {
+			"trailingCommas": "none",
+			"lineWidth": 100
 		}
 	},
 	"assist": {
@@ -48,13 +85,42 @@
 		"actions": {
 			"recommended": true,
 			"source": {
-				"organizeImports": "on"
+				"organizeImports": {
+					"options": {
+						"groups": [
+							[":BUN:", ":NODE:"],
+							":BLANK_LINE:",
+							["react", "react/**", "react-*", "react-*/**"],
+							":BLANK_LINE:",
+							[":PACKAGE:", "!@/**"],
+							":BLANK_LINE:",
+							"@/**",
+							":BLANK_LINE:",
+							":PATH:"
+						]
+					}
+				}
 			}
 		}
 	},
 	"css": {
 		"parser": {
 			"tailwindDirectives": true
+		},
+		"formatter": {
+			"enabled": true,
+			"lineWidth": 100,
+			"quoteStyle": "double"
 		}
-	}
+	},
+	"overrides": [
+		{
+			"includes": ["**/*.{test,spec}.{js,jsx,ts,tsx}", "src/**/test/**", "src/**/tests/**"],
+			"linter": {
+				"domains": {
+					"test": "recommended"
+				}
+			}
+		}
+	]
 }

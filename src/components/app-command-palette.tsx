@@ -33,10 +33,28 @@ type DocsLink = {
 
 const docsLinks: DocsLink[] = [
 	{
-		label: "React 19 release",
-		description: "Stable release notes and adoption guidance.",
-		href: "https://react.dev/blog/2024/12/05/react-19",
-		keywords: ["react", "actions", "use", "metadata"],
+		label: "React 19.2 release",
+		description: "Activity, Effect Events, cacheSignal, performance tracks, and SSR updates.",
+		href: "https://react.dev/blog/2025/10/01/react-19-2",
+		keywords: ["react", "19.2", "activity", "effect event", "cache signal"],
+	},
+	{
+		label: "React Compiler",
+		description: "Compiler adoption, memoization strategy, and troubleshooting.",
+		href: "https://react.dev/learn/react-compiler",
+		keywords: ["react", "compiler", "memo", "performance"],
+	},
+	{
+		label: "React Router data routing",
+		description: "Route objects, nested layouts, loaders, actions, and route boundaries.",
+		href: "https://reactrouter.com/start/data/routing",
+		keywords: ["react router", "routing", "loader", "actions", "layouts"],
+	},
+	{
+		label: "Module Federation",
+		description: "Runtime sharing and microfrontend platform concepts.",
+		href: "https://module-federation.io/guide/start/",
+		keywords: ["microfrontend", "module federation", "remote", "host"],
 	},
 	{
 		label: "shadcn Command",
