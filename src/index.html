@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bun + React Lab</title>
+    <title>React Systems Studio</title>
+    <meta name="theme-color" content="#f8fafc" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <script>
       (() => {
@@ -21,11 +22,26 @@
                 ? "dark"
                 : "light"
               : theme;
+          document
+            .querySelector('meta[name="theme-color"]')
+            ?.setAttribute(
+              "content",
+              resolvedTheme === "dark" ? "#101828" : "#f8fafc",
+            );
 
           document.documentElement.classList.toggle(
             "dark",
             resolvedTheme === "dark",
           );
+          const storedPreset = localStorage.getItem(
+            "bun-react-theme-preset",
+          );
+          document.documentElement.dataset.preset =
+            storedPreset === "studio" ||
+            storedPreset === "ocean" ||
+            storedPreset === "graphite"
+              ? storedPreset
+              : "studio";
           document.documentElement.dataset.theme = resolvedTheme;
           document.documentElement.style.colorScheme = resolvedTheme;
         } catch {}
