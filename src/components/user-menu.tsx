@@ -1,6 +1,6 @@
 import { Loader2, LogOut, ShieldCheck } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { type AuthSession, authClient } from "@/auth/client";
 import { buildAuthHref } from "@/auth/redirects";
 import { Badge } from "@/components/ui/badge";

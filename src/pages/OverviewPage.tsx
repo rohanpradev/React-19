@@ -6,7 +6,7 @@ import {
 	type LucideIcon,
 	Server,
 } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink } from "react-router";
 import { FeatureIntro } from "@/components/feature-intro";
 import { TechLogo, TechPill } from "@/components/tech-logo";
 import { Badge } from "@/components/ui/badge";

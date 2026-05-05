@@ -27,7 +27,9 @@
 			"styles/**",
 			"build.ts",
 			"drizzle.config.ts",
+			".zed/**",
 			"biome.json",
+			"components.json",
 			"package.json",
 			"tsconfig.json"
 		],
@@ -40,7 +42,14 @@
 	},
 	"linter": {
 		"enabled": true,
-		"includes": ["src/**", "styles/**", "build.ts", "drizzle.config.ts"],
+		"includes": [
+			"src/**",
+			"styles/**",
+			"build.ts",
+			"drizzle.config.ts",
+			".zed/**",
+			"components.json"
+		],
 		"domains": {
 			"project": "recommended",
 			"react": "recommended"
@@ -81,7 +90,7 @@
 	},
 	"assist": {
 		"enabled": true,
-		"includes": ["src/**", "styles/**", "build.ts", "drizzle.config.ts"],
+		"includes": ["src/**", "styles/**", "build.ts", "drizzle.config.ts", ".zed/**"],
 		"actions": {
 			"recommended": true,
 			"source": {

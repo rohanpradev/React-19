@@ -1,84 +1,113 @@
-# Bun + React Lab
+# React Systems Studio
 
-This project is a Bun-powered React 19 playground with two main goals:
+A Bun-powered frontend systems workspace for current React, React Router Data Mode, shadcn-style UI, and full-stack learning patterns.
 
-- demonstrate React 19 features in focused pages
-- showcase a full-stack Bun + Drizzle + SQLite table with server-side pagination, sorting, filtering, and search
-- keep the shell and build pipeline aligned with current shadcn/ui and Bun full-stack patterns
+The app is intentionally compact: each route explains one advanced frontend idea with focused examples instead of long reference text. It is built to be useful for architects and senior frontend engineers evaluating modern React patterns, routing boundaries, state transitions, UI architecture, and Bun-backed data flows.
+
+## What This Covers
+
+- React 19.2 patterns: Actions, `useActionState`, `useFormStatus`, `useOptimistic`, `use`, Suspense, ref cleanup, document metadata, custom elements, and `useDeferredValue`.
+- React Router 7 Data Mode: `createBrowserRouter`, route objects, lazy route modules, redirects, route-level error handling, and an auth-aware app shell.
+- Frontend architecture: app shell design, progressive route loading, server state boundaries, optimistic mutations, microfrontend tradeoffs, platform APIs, and UI system decisions.
+- Full-stack Bun: one Bun server for HTML import frontend delivery, API routes, Better Auth, Drizzle ORM, SQLite, and server-side TanStack Table state.
+- Developer workflow: TypeScript 7 native preview through `tsgo`, Biome 2 formatting/lint/assist rules, Zed project settings, and a Bun build pipeline.
 
 ## Stack
 
-- Bun
-- React 19
-- React Router
-- TanStack Table
-- Drizzle ORM
-- SQLite via Bun
-- Better Auth
-- shadcn-style UI components
-- Temporal via `@js-temporal/polyfill`
+| Area | Tools |
+| --- | --- |
+| Runtime | Bun |
+| UI | React 19.2, React DOM, shadcn-style components, Radix UI, Tailwind CSS 4 |
+| Routing | React Router 7 Data Mode |
+| Data UI | TanStack Table |
+| Auth | Better Auth |
+| Database | SQLite through Bun, Drizzle ORM, Drizzle Kit |
+| Type Checking | TypeScript 7 native preview via `@typescript/native-preview` and `tsgo` |
+| Quality | Biome 2 formatter, linter, assist, and import organization |
+| Editor | Zed workspace settings in `.zed/settings.json` |
 
-## Pages
+## Routes
 
-- `/react-19` - React 19 overview
-- `/form-actions` - `useActionState` and `useFormStatus`
-- `/actions` - async actions with `startTransition`
-- `/optimistic` - `useOptimistic`
-- `/react-use` - `use` with Suspense and context
-- `/dom-interop` - document metadata, refs, and custom elements
-- `/search-debounce` - debounced customer autocomplete with `useDeferredValue`
-- `/revenue-ops` - server-side TanStack Table backed by Bun + Drizzle + SQLite
+| Route | Focus |
+| --- | --- |
+| `/overview` | Compact map of the React, Bun, routing, UI, and tooling coverage |
+| `/architecture` | Senior frontend architecture notes, React 19.2 posture, router boundaries, and microfrontend decisions |
+| `/form-actions` | Form mutations with `useActionState`, `useFormStatus`, pending states, and returned state |
+| `/actions` | Async Actions shaped with `startTransition` and clear mutation feedback |
+| `/optimistic` | `useOptimistic` with fast UI updates, success paths, and rollback handling |
+| `/react-use` | `use`, Suspense boundaries, promise reads, and conditional context reads |
+| `/dom-interop` | Metadata, refs, custom elements, assets, and React DOM interoperability |
+| `/search-debounce` | Debounced autocomplete with `useDeferredValue` and a real Bun API endpoint |
+| `/revenue-ops` | Server-side TanStack Table state backed by Bun, Drizzle, and SQLite |
+| `/auth` | Better Auth sign-in and account creation |
 
-The app shell includes a command palette on `Ctrl/Cmd+K` for navigating demos, docs, and theme actions.
+The previous `/react-19` route redirects to `/overview`.
 
-## Prerequisites
-
-- Bun installed locally
-
-## Install
+## Run Locally
 
 ```bash
 bun install
-```
-
-## Run
-
-```bash
 bun dev
 ```
 
-The app serves the frontend and API from Bun. The default landing page is `/react-19`.
-The auth entrypoint is `/auth`, and protected routes redirect back to the requested page after sign-in.
+The app serves the frontend and API from Bun. The default landing page is `/overview`.
+
+Authentication is required for the workspace routes. Unauthenticated users are sent to `/auth` and then redirected back to the requested page after sign-in.
+
+## Useful Scripts
+
+```bash
+bun dev
+bun start
+bun run build
+bun run check
+bun run check:write
+bun run typecheck
+bun run typecheck:diagnostics
+bun run typecheck:single
+bun run validate
+bun run db:generate
+bun run db:seed
+```
+
+`bun run validate` runs Biome checks, `tsgo` type checking, and the Bun build.
+
+## TypeScript 7 Native Preview
+
+This project uses `@typescript/native-preview`. The compiler binary is currently `tsgo`, which is why the scripts use `tsgo` instead of `tsc`.
+
+Zed is configured through `.zed/settings.json` to use the TypeScript native preview extension, Biome formatting, and project-specific language settings. No VS Code workspace settings are required.
+
+## Biome Setup
+
+The Biome config is VCS-aware and uses the Git ignore file. It enables formatting, linting, assist actions, React/project lint domains, import organization, Tailwind-aware CSS parsing, and focused test overrides.
+
+Primary commands:
+
+```bash
+bun run check
+bun run check:write
+```
+
+## API And Data
 
 Notable API routes:
 
-- `/api/customers` for the full server-side table payload
-- `/api/customers/autocomplete` for lightweight customer search suggestions
-- `/api/auth/*` for Better Auth session and email/password endpoints
+- `/api/customers` returns the server-side table payload.
+- `/api/customers/autocomplete` returns lightweight customer search suggestions.
+- `/api/auth/*` handles Better Auth session and email/password endpoints.
 
-## Database Behavior
-
-The app uses a local SQLite database file:
+The local SQLite files live in the project root:
 
 - `mydb.sqlite`
 - `mydb.sqlite-shm`
 - `mydb.sqlite-wal`
 
-On startup, Bun will:
-
-1. run Drizzle migrations from `./drizzle`
-2. seed demo customer data if the database is empty
-3. create Better Auth tables in the same SQLite database once the auth migration exists
-
-You do not need to run a separate database process.
+On startup, Bun runs Drizzle migrations from `./drizzle`, seeds customer demo data when needed, and uses the same SQLite database for Better Auth tables.
 
 ## Authentication
 
-The app uses Better Auth with Bun's built-in SQLite driver while continuing to use Drizzle for application data and schema management.
-
-- Create an account or sign in at `/auth`
-- The customer APIs require an active Better Auth session
-- Auth tables live in the same `mydb.sqlite` file as the customer data
+The app uses Better Auth with Bun's built-in SQLite driver while Drizzle manages the application schema.
 
 Recommended production environment variables:
 
@@ -89,41 +118,17 @@ Recommended production environment variables:
 - `GITHUB_CLIENT_ID`
 - `GITHUB_CLIENT_SECRET`
 
-OAuth redirect URLs to configure with the providers:
+OAuth redirect URLs:
 
 - Google: `https://your-domain.com/api/auth/callback/google`
 - GitHub: `https://your-domain.com/api/auth/callback/github`
 
-Official docs used for the integration:
-
-- https://better-auth.com/docs/adapters/sqlite#bun-built-in-sqlite
-- https://better-auth.com/docs/authentication/google
-- https://better-auth.com/docs/authentication/github
-- https://better-auth.com/docs/authentication/email-password
-- https://better-auth.com/docs/installation
-
 ## Reset Local State
 
-If you want a clean local run, stop Bun and delete these files from the project root:
-
-- `mydb.sqlite`
-- `mydb.sqlite-shm`
-- `mydb.sqlite-wal`
-
-The next `bun dev` will recreate the database and seed it again.
-
-## Useful Scripts
+Stop Bun and delete the local SQLite files if you want a clean seeded run:
 
 ```bash
-bun dev
-bun start
-bun run build
-bun run db:generate
-bun run db:seed
+Remove-Item .\mydb.sqlite, .\mydb.sqlite-shm, .\mydb.sqlite-wal -ErrorAction SilentlyContinue
 ```
 
-## Notes
-
-- The local development path is `bun dev`.
-- `bun run build` now bundles the Bun server entrypoint (`src/index.ts`) so the HTML-import frontend and API routes are packaged together.
-- Time handling in app code uses `Temporal` through `src/lib/temporal.ts`, which falls back to `@js-temporal/polyfill` when the runtime does not expose `globalThis.Temporal`.
+The next `bun dev` will recreate and seed the database.

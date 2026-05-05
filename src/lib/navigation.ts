@@ -1,8 +1,8 @@
 import {
+	BrainCircuit,
 	ChartColumnIncreasing,
 	FilePenLine,
 	FlaskConical,
-	BrainCircuit,
 	type LucideIcon,
 	Orbit,
 	PanelTopOpen,
@@ -25,10 +25,10 @@ export type NavItem = {
 };
 
 export const appIdentity = {
-	label: "Bun + React Lab",
-	title: "Interface Studio",
+	label: "Bun Frontend Systems",
+	title: "React Systems Studio",
 	description:
-		"A themed sandbox for React 19, server-side data flows, and polished component work built on shadcn-style tokens.",
+		"A clean learning workspace for modern React, Bun fullstack APIs, data flows, and production-grade UI patterns.",
 	icon: FlaskConical,
 };
 
@@ -36,7 +36,7 @@ export const navItems: [NavItem, ...NavItem[]] = [
 	{
 		path: "/overview",
 		label: "Overview",
-		blurb: "Release notes mapped to concrete pages in the app.",
+		blurb: "A compact map of the React, Bun, and UI patterns covered in this workspace.",
 		icon: Sparkles,
 		stage: "foundation",
 		releaseArea: "Overview",
@@ -45,7 +45,7 @@ export const navItems: [NavItem, ...NavItem[]] = [
 	{
 		path: "/architecture",
 		label: "Architecture Playbook",
-		blurb: "React 19.2, Router, platform, and microfrontend decisions for senior teams.",
+		blurb: "Senior React, Router, platform, and microfrontend decisions without filler.",
 		icon: BrainCircuit,
 		stage: "platform",
 		releaseArea: "Architecture",
@@ -54,7 +54,7 @@ export const navItems: [NavItem, ...NavItem[]] = [
 	{
 		path: "/form-actions",
 		label: "Form Actions",
-		blurb: "Function actions, pending state, and returned UI state.",
+		blurb: "Form mutations with pending, success, and returned state.",
 		icon: FilePenLine,
 		stage: "hands-on",
 		releaseArea: "Actions",
@@ -63,7 +63,7 @@ export const navItems: [NavItem, ...NavItem[]] = [
 	{
 		path: "/actions",
 		label: "Async Actions",
-		blurb: "Button-driven mutations with transitions and feedback.",
+		blurb: "Button mutations shaped with transitions and feedback.",
 		icon: Workflow,
 		stage: "hands-on",
 		releaseArea: "Actions",
@@ -72,7 +72,7 @@ export const navItems: [NavItem, ...NavItem[]] = [
 	{
 		path: "/optimistic",
 		label: "Optimistic UI",
-		blurb: "Immediate UI moves with clean success and rollback behavior.",
+		blurb: "Fast UI updates with clear success and rollback paths.",
 		icon: Rocket,
 		stage: "hands-on",
 		releaseArea: "Actions",
@@ -81,7 +81,7 @@ export const navItems: [NavItem, ...NavItem[]] = [
 	{
 		path: "/react-use",
 		label: "use + Suspense",
-		blurb: "Promises and conditional context reads during render.",
+		blurb: "Promise reads, Suspense boundaries, and conditional context.",
 		icon: Orbit,
 		stage: "hands-on",
 		releaseArea: "use API",
@@ -90,7 +90,7 @@ export const navItems: [NavItem, ...NavItem[]] = [
 	{
 		path: "/dom-interop",
 		label: "DOM + Head APIs",
-		blurb: "Metadata, refs, and custom element interop in React 19.",
+		blurb: "Metadata, refs, assets, and custom elements in React 19.",
 		icon: PanelTopOpen,
 		stage: "platform",
 		releaseArea: "DOM APIs",
@@ -99,7 +99,7 @@ export const navItems: [NavItem, ...NavItem[]] = [
 	{
 		path: "/search-debounce",
 		label: "Search + Deferred",
-		blurb: "Local customer autocomplete shaped with useDeferredValue and Bun.",
+		blurb: "Deferred search UX backed by a real Bun endpoint.",
 		icon: Search,
 		stage: "hands-on",
 		releaseArea: "Performance",
@@ -108,7 +108,7 @@ export const navItems: [NavItem, ...NavItem[]] = [
 	{
 		path: "/revenue-ops",
 		label: "Revenue Ops",
-		blurb: "Server-side table state powered by Bun, Drizzle, and SQLite.",
+		blurb: "Server-side table state with Bun, Drizzle, and SQLite.",
 		icon: ChartColumnIncreasing,
 		stage: "full-stack",
 		releaseArea: "Applied app",

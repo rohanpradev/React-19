@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -50,47 +50,47 @@
 }
 
 :root {
-	--radius: 0.95rem;
-	--font-sans: "Manrope", "Segoe UI", sans-serif;
-	--font-display: "Sora", "Segoe UI", sans-serif;
-	--background: hsl(38 45% 97%);
-	--foreground: hsl(220 37% 13%);
-	--card: hsl(0 0% 100%);
-	--card-foreground: hsl(220 37% 13%);
-	--popover: hsl(0 0% 100%);
-	--popover-foreground: hsl(220 37% 13%);
-	--primary: hsl(210 92% 44%);
-	--primary-foreground: hsl(210 40% 98%);
-	--secondary: hsl(206 42% 95%);
-	--secondary-foreground: hsl(220 40% 16%);
-	--muted: hsl(205 36% 94%);
-	--muted-foreground: hsl(217 19% 40%);
-	--accent: hsl(39 88% 90%);
-	--accent-foreground: hsl(220 40% 16%);
-	--destructive: hsl(0 72% 51%);
-	--success: hsl(161 70% 36%);
-	--success-foreground: hsl(210 40% 98%);
-	--warning: hsl(38 92% 50%);
-	--warning-foreground: hsl(26 83% 14%);
-	--border: hsl(210 31% 88%);
-	--input: hsl(210 31% 88%);
-	--ring: hsl(210 92% 44%);
-	--chart-1: hsl(210 92% 44%);
-	--chart-2: hsl(194 86% 43%);
-	--chart-3: hsl(161 70% 36%);
-	--chart-4: hsl(38 92% 50%);
-	--chart-5: hsl(14 82% 61%);
-	--sidebar: hsl(40 40% 98%);
-	--sidebar-foreground: hsl(220 37% 13%);
-	--sidebar-primary: hsl(210 92% 44%);
-	--sidebar-primary-foreground: hsl(210 40% 98%);
-	--sidebar-accent: hsl(205 38% 95%);
-	--sidebar-accent-foreground: hsl(220 40% 16%);
-	--sidebar-border: hsl(210 31% 88%);
-	--sidebar-ring: hsl(210 92% 44%);
-	--code-background: hsl(222 44% 12%);
-	--code-foreground: hsl(210 40% 96%);
-	--code-border: color-mix(in srgb, var(--primary) 18%, hsl(220 30% 18%));
+	--radius: 0.9rem;
+	--font-sans: "Plus Jakarta Sans", "Segoe UI", sans-serif;
+	--font-display: "Space Grotesk", "Segoe UI", sans-serif;
+	--background: oklch(0.985 0.012 84);
+	--foreground: oklch(0.18 0.035 253);
+	--card: oklch(0.998 0 0);
+	--card-foreground: oklch(0.18 0.035 253);
+	--popover: oklch(0.998 0 0);
+	--popover-foreground: oklch(0.18 0.035 253);
+	--primary: oklch(0.5 0.17 252);
+	--primary-foreground: oklch(0.99 0.006 255);
+	--secondary: oklch(0.955 0.018 250);
+	--secondary-foreground: oklch(0.22 0.035 253);
+	--muted: oklch(0.948 0.018 250);
+	--muted-foreground: oklch(0.48 0.035 253);
+	--accent: oklch(0.92 0.075 82);
+	--accent-foreground: oklch(0.24 0.045 253);
+	--destructive: oklch(0.58 0.22 28);
+	--success: oklch(0.58 0.13 160);
+	--success-foreground: oklch(0.99 0.006 160);
+	--warning: oklch(0.78 0.14 78);
+	--warning-foreground: oklch(0.25 0.055 52);
+	--border: oklch(0.89 0.017 250);
+	--input: oklch(0.89 0.017 250);
+	--ring: oklch(0.58 0.16 252);
+	--chart-1: oklch(0.5 0.17 252);
+	--chart-2: oklch(0.58 0.13 160);
+	--chart-3: oklch(0.62 0.16 205);
+	--chart-4: oklch(0.78 0.14 78);
+	--chart-5: oklch(0.64 0.18 32);
+	--sidebar: oklch(0.975 0.01 84);
+	--sidebar-foreground: oklch(0.18 0.035 253);
+	--sidebar-primary: oklch(0.5 0.17 252);
+	--sidebar-primary-foreground: oklch(0.99 0.006 255);
+	--sidebar-accent: oklch(0.94 0.018 250);
+	--sidebar-accent-foreground: oklch(0.22 0.035 253);
+	--sidebar-border: oklch(0.89 0.017 250);
+	--sidebar-ring: oklch(0.58 0.16 252);
+	--code-background: oklch(0.18 0.04 253);
+	--code-foreground: oklch(0.96 0.012 250);
+	--code-border: color-mix(in srgb, var(--primary) 18%, oklch(0.23 0.04 253));
 	--shell-glow-a: color-mix(in srgb, var(--primary) 16%, transparent);
 	--shell-glow-b: color-mix(in srgb, var(--accent) 54%, transparent);
 }
@@ -251,6 +251,10 @@
 }
 
 @layer components {
+	.skip-link {
+		@apply fixed top-3 left-3 z-50 -translate-y-16 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium shadow-lg transition-transform focus:translate-y-0 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+	}
+
 	.app-panel {
 		@apply rounded-[1.7rem] border border-border/70 bg-background/90 shadow-[0_18px_40px_-30px_rgba(15,23,42,0.18)] supports-[backdrop-filter]:backdrop-blur-xl dark:shadow-[0_24px_50px_-34px_rgba(2,6,23,0.72)];
 	}
@@ -280,4 +284,15 @@
 .font-display {
 	font-family: var(--font-display);
 	letter-spacing: -0.03em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	::before,
+	::after {
+		scroll-behavior: auto;
+		animation-duration: 0.01ms;
+		animation-iteration-count: 1;
+		transition-duration: 0.01ms;
+	}
 }
