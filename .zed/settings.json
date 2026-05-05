@@ -1,0 +1,112 @@
+{
+	"auto_install_extensions": {
+		"biome": true,
+		"tsgo": true
+	},
+	"format_on_save": "on",
+	"lsp": {
+		"biome": {
+			"settings": {
+				"require_config_file": true
+			}
+		},
+		"tsgo": {
+			"settings": {
+				"package_version": "7.0.0-dev.20260421.2"
+			}
+		},
+		"tailwindcss-language-server": {
+			"settings": {
+				"classFunctions": ["cn", "cva"],
+				"experimental": {
+					"classRegex": [
+						"cn\\(([^)]*)\\)",
+						"cva\\(([^)]*)\\)",
+						"\"className\"\\s*:\\s*\"([^\"]*)\""
+					]
+				}
+			}
+		}
+	},
+	"languages": {
+		"TypeScript": {
+			"language_servers": ["tsgo", "vtsls", "..."],
+			"formatter": {
+				"language_server": {
+					"name": "biome"
+				}
+			},
+			"code_actions_on_format": {
+				"source.fixAll.biome": true,
+				"source.organizeImports.biome": true
+			},
+			"prettier": {
+				"allowed": false
+			}
+		},
+		"TSX": {
+			"language_servers": ["tsgo", "vtsls", "..."],
+			"formatter": {
+				"language_server": {
+					"name": "biome"
+				}
+			},
+			"code_actions_on_format": {
+				"source.fixAll.biome": true,
+				"source.organizeImports.biome": true
+			},
+			"prettier": {
+				"allowed": false
+			}
+		},
+		"JavaScript": {
+			"formatter": {
+				"language_server": {
+					"name": "biome"
+				}
+			},
+			"code_actions_on_format": {
+				"source.fixAll.biome": true,
+				"source.organizeImports.biome": true
+			},
+			"prettier": {
+				"allowed": false
+			}
+		},
+		"JSX": {
+			"formatter": {
+				"language_server": {
+					"name": "biome"
+				}
+			},
+			"code_actions_on_format": {
+				"source.fixAll.biome": true,
+				"source.organizeImports.biome": true
+			},
+			"prettier": {
+				"allowed": false
+			}
+		},
+		"CSS": {
+			"formatter": {
+				"language_server": {
+					"name": "biome"
+				}
+			}
+		},
+		"JSON": {
+			"formatter": {
+				"language_server": {
+					"name": "biome"
+				}
+			}
+		},
+		"JSONC": {
+			"formatter": {
+				"language_server": {
+					"name": "biome"
+				}
+			}
+		}
+	}
+}

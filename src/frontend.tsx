@@ -7,9 +7,9 @@
 
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
+import { RouterProvider } from "react-router/dom";
 import { ThemeProvider } from "@/components/theme-provider";
-import { App } from "./App";
+import { router } from "@/router";
 
 const elem = document.getElementById("root");
 
@@ -19,9 +19,7 @@ if (!elem) {
 const app = (
 	<StrictMode>
 		<ThemeProvider>
-			<BrowserRouter>
-				<App />
-			</BrowserRouter>
+			<RouterProvider router={router} />
 		</ThemeProvider>
 	</StrictMode>
 );
