@@ -28,7 +28,7 @@ export const appIdentity = {
 	label: "Bun Frontend Systems",
 	title: "React Systems Studio",
 	description:
-		"A clean learning workspace for modern React, Bun fullstack APIs, data flows, and production-grade UI patterns.",
+		"A focused workspace for modern React, routing, UI systems, and Bun-backed data flows.",
 	icon: FlaskConical,
 };
 
@@ -36,7 +36,7 @@ export const navItems: [NavItem, ...NavItem[]] = [
 	{
 		path: "/overview",
 		label: "Overview",
-		blurb: "A compact map of the React, Bun, and UI patterns covered in this workspace.",
+		blurb: "The map of React, Router, Bun, and UI topics in this workspace.",
 		icon: Sparkles,
 		stage: "foundation",
 		releaseArea: "Overview",
@@ -45,7 +45,7 @@ export const navItems: [NavItem, ...NavItem[]] = [
 	{
 		path: "/architecture",
 		label: "Architecture Playbook",
-		blurb: "Senior React, Router, platform, and microfrontend decisions without filler.",
+		blurb: "Senior React, Router, platform, and microfrontend decisions.",
 		icon: BrainCircuit,
 		stage: "platform",
 		releaseArea: "Architecture",
@@ -72,7 +72,7 @@ export const navItems: [NavItem, ...NavItem[]] = [
 	{
 		path: "/optimistic",
 		label: "Optimistic UI",
-		blurb: "Fast UI updates with clear success and rollback paths.",
+		blurb: "Fast UI updates with success and rollback paths.",
 		icon: Rocket,
 		stage: "hands-on",
 		releaseArea: "Actions",
@@ -90,7 +90,7 @@ export const navItems: [NavItem, ...NavItem[]] = [
 	{
 		path: "/dom-interop",
 		label: "DOM + Head APIs",
-		blurb: "Metadata, refs, assets, and custom elements in React 19.",
+		blurb: "Metadata, refs, assets, and custom elements.",
 		icon: PanelTopOpen,
 		stage: "platform",
 		releaseArea: "DOM APIs",
@@ -99,7 +99,7 @@ export const navItems: [NavItem, ...NavItem[]] = [
 	{
 		path: "/search-debounce",
 		label: "Search + Deferred",
-		blurb: "Deferred search UX backed by a real Bun endpoint.",
+		blurb: "Deferred search UX backed by a Bun endpoint.",
 		icon: Search,
 		stage: "hands-on",
 		releaseArea: "Performance",

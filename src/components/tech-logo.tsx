@@ -91,7 +91,7 @@ export function TechPill({ name, className }: { name: TechLogoName; className?: 
 	return (
 		<div
 			className={cn(
-				"inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/82 px-3 py-1.5 text-xs font-medium text-foreground",
+				"inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/70 px-3 py-1.5 text-xs font-medium text-foreground shadow-sm shadow-black/[0.03] backdrop-blur-xl",
 				className,
 			)}
 		>

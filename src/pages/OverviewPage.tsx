@@ -3,283 +3,312 @@ import {
 	ArrowUpRight,
 	BookOpenText,
 	CheckCircle2,
+	Layers3,
 	type LucideIcon,
+	Route,
 	Server,
+	ShieldCheck,
+	Sparkles,
+	Workflow,
 } from "lucide-react";
 import { NavLink } from "react-router";
-import { FeatureIntro } from "@/components/feature-intro";
 import { TechLogo, TechPill } from "@/components/tech-logo";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { learningStages, navItems, releaseCoverage } from "@/lib/navigation";
+import { learningStages, navItems } from "@/lib/navigation";
 
 const learningRoutes = navItems.filter((item) => item.path !== "/overview");
-const navItemsByPath = Object.fromEntries(navItems.map((item) => [item.path, item]));
 
-const stackHighlights = [
+const learningTracks = (Object.keys(learningStages) as Array<keyof typeof learningStages>)
+	.map((stage) => ({
+		stage,
+		label: learningStages[stage],
+		items: learningRoutes.filter((item) => item.stage === stage),
+	}))
+	.filter((track) => track.items.length > 0);
+
+const studioStats = [
+	{ value: "19.2", label: "React APIs", detail: "Actions, use, DOM APIs" },
+	{ value: "7", label: "Router Data Mode", detail: "Lazy route modules" },
+	{ value: "Bun", label: "Full-stack runtime", detail: "APIs, build, SQLite" },
+	{ value: "TS7", label: "Native preview", detail: "tsgo type checks" },
+] as const;
+
+const systemCards = [
 	{
-		title: "React 19.2 stable APIs",
-		description: "Core features and new architecture primitives are mapped to focused routes.",
-		icon: CheckCircle2,
+		title: "React architecture",
+		description: "Transition-aware mutations, Suspense reads, optimistic paths, and DOM interop.",
+		icon: Sparkles,
+		logo: "react",
+		href: "/architecture",
 	},
 	{
-		title: "shadcn/ui composition",
-		description: "Shared primitives keep the UI consistent without overbuilding every screen.",
-		icon: BookOpenText,
+		title: "Routing shell",
+		description: "Data-router route objects, lazy boundaries, redirects, and error surfaces.",
+		icon: Route,
+		logo: "react-router",
+		href: "/architecture",
 	},
 	{
-		title: "Bun full-stack shape",
-		description:
-			"Bun remains visible in the product instead of disappearing behind frontend-only demos.",
+		title: "Bun data layer",
+		description: "One runtime for frontend delivery, API routes, Better Auth, Drizzle, and SQLite.",
 		icon: Server,
+		logo: "bun",
+		href: "/revenue-ops",
 	},
 ] as const satisfies {
 	title: string;
 	description: string;
 	icon: LucideIcon;
+	logo: "react" | "react-router" | "bun";
+	href: string;
 }[];
 
-const docsStack = [
+const docsLinks = [
 	{
-		title: "React",
-		subtitle: "React 19.2 release + API docs",
-		description:
-			"The overview, demos, and architecture track follow the React 19.2 release post and the references it points to.",
+		label: "React 19.2",
 		href: "https://react.dev/blog/2025/10/01/react-19-2",
 		logo: "react",
 	},
 	{
-		title: "shadcn/ui",
-		subtitle: "Current component patterns",
-		description:
-			"The UI layer leans on the current command/dialog/card primitives and the repo's Tailwind v4-style token setup in components.json.",
-		href: "https://ui.shadcn.com/docs/components/command",
+		label: "React Router",
+		href: "https://reactrouter.com/start/data/routing",
+		logo: "react-router",
+	},
+	{
+		label: "shadcn/ui",
+		href: "https://ui.shadcn.com/docs/theming",
 		logo: "shadcn",
 	},
 	{
-		title: "Bun",
-		subtitle: "Full-stack routes + HTML imports",
-		description:
-			"The server/runtime side mirrors Bun's current docs around routes, development mode, and HTML-import-based frontend bundling.",
+		label: "Bun full-stack",
 		href: "https://bun.sh/docs/bundler/fullstack",
 		logo: "bun",
 	},
-] as const satisfies {
-	title: string;
-	subtitle: string;
-	description: string;
-	href: string;
-	logo: "react" | "shadcn" | "bun";
-}[];
-
-const bunPractices = [
-	"`src/index.ts` uses Bun route objects and parameterized API handlers.",
-	"`bunfig.toml` enables the Tailwind plugin under `[serve.static]`.",
-	"`src/index.html` stays the frontend entry while Bun owns serving and bundling.",
 ] as const;
 
 export function OverviewPage() {
 	return (
 		<div className="space-y-6">
-			<FeatureIntro
-				eyebrow="React 19.2"
-				title="Release Notes Tour"
-				summary="A quick map of the React 19.2 features this repo demonstrates, plus a senior architecture track for platform decisions."
-				points={[
-					{
-						title: "Learn from the release, not from random demos",
-						detail:
-							"Each route is tagged by release area and learning stage so you can move from overview to hands-on examples in a deliberate order.",
-					},
-					{
-						title: "UI primitives now support the teaching goal",
-						detail:
-							"The command palette, badges, cards, and shell stats are all built from reusable shadcn-style primitives rather than bespoke one-off markup.",
-					},
-					{
-						title: "Bun is part of the story",
-						detail:
-							"The app exposes Bun's route model, HTML-import setup, and server-side data flow so the repo reads as a full-stack lab instead of only a frontend sandbox.",
-					},
-				]}
-				links={[
-					{
-						label: "React 19.2 release",
-						href: "https://react.dev/blog/2025/10/01/react-19-2",
-					},
-					{
-						label: "shadcn docs",
-						href: "https://ui.shadcn.com/docs/components/command",
-					},
-					{
-						label: "Bun fullstack docs",
-						href: "https://bun.sh/docs/bundler/fullstack",
-					},
-				]}
-			/>
+			<section className="app-hero p-5 sm:p-8 lg:p-10">
+				<div className="pointer-events-none absolute top-[-8rem] right-[-6rem] h-80 w-80 rounded-full bg-primary/14 blur-3xl" />
+				<div className="pointer-events-none absolute bottom-[-9rem] left-[-6rem] h-72 w-72 rounded-full bg-accent/45 blur-3xl" />
 
-			<div className="flex flex-wrap gap-2">
-				<TechPill name="react" />
-				<TechPill name="react-router" />
-				<TechPill name="bun" />
-				<TechPill name="shadcn" />
-				<TechPill name="typescript" />
-				<TechPill name="better-auth" />
+				<div className="relative grid gap-8 lg:grid-cols-[minmax(0,1fr)_390px] lg:items-end">
+					<div className="max-w-4xl space-y-6">
+						<div className="flex flex-wrap items-center gap-2">
+							<Badge variant="secondary" className="rounded-full">
+								Frontend architecture lab
+							</Badge>
+							<Badge variant="outline" className="rounded-full">
+								Bun + React 19.2
+							</Badge>
+						</div>
+
+						<div className="space-y-4">
+							<h1 className="font-display text-5xl leading-[0.9] text-foreground sm:text-6xl lg:text-7xl">
+								Modern React, without the clutter.
+							</h1>
+							<p className="max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
+								A focused workspace for React 19.2 features, router architecture, UI systems, and
+								Bun-backed data flows.
+							</p>
+						</div>
+
+						<div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+							<Button asChild size="lg" className="rounded-2xl">
+								<NavLink to="/architecture">
+									Start with architecture
+									<ArrowRight className="size-4" />
+								</NavLink>
+							</Button>
+							<Button asChild variant="outline" size="lg" className="rounded-2xl bg-card/70">
+								<NavLink to="/form-actions">
+									Open React demos
+									<ArrowRight className="size-4" />
+								</NavLink>
+							</Button>
+						</div>
+
+						<div className="flex flex-wrap gap-2">
+							<TechPill name="react" />
+							<TechPill name="react-router" />
+							<TechPill name="bun" />
+							<TechPill name="shadcn" />
+							<TechPill name="typescript" />
+						</div>
+					</div>
+
+					<div className="app-surface p-4 sm:p-5">
+						<div className="flex items-center justify-between">
+							<div>
+								<p className="text-xs font-semibold tracking-[0.18em] text-muted-foreground uppercase">
+									Live stack
+								</p>
+								<p className="mt-1 font-display text-2xl leading-none">Product-grade patterns</p>
+							</div>
+							<div className="flex size-11 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
+								<Layers3 className="size-5" />
+							</div>
+						</div>
+
+						<div className="mt-5 grid grid-cols-2 gap-2">
+							{[
+								["react", "React UI"],
+								["react-router", "Router"],
+								["bun", "Runtime"],
+								["shadcn", "UI system"],
+							].map(([logo, label]) => (
+								<div key={label} className="rounded-2xl border border-border/55 bg-muted/35 p-3">
+									<TechLogo
+										name={logo as "react" | "react-router" | "bun" | "shadcn"}
+										className="size-5"
+									/>
+									<p className="mt-3 text-sm font-medium">{label}</p>
+								</div>
+							))}
+						</div>
+
+						<div className="mt-4 rounded-2xl bg-foreground p-4 text-background">
+							<div className="flex items-center gap-2 text-xs font-semibold tracking-[0.16em] uppercase opacity-70">
+								<CheckCircle2 className="size-4" />
+								Validated workflow
+							</div>
+							<p className="mt-3 text-sm leading-6 opacity-85">
+								Biome, tsgo, and Bun build run together through `bun run validate`.
+							</p>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+				{studioStats.map((stat) => (
+					<div key={stat.label} className="app-surface p-4">
+						<p className="font-display text-3xl leading-none text-foreground">{stat.value}</p>
+						<p className="mt-3 text-sm font-semibold text-foreground">{stat.label}</p>
+						<p className="mt-1 text-xs leading-5 text-muted-foreground">{stat.detail}</p>
+					</div>
+				))}
 			</div>
 
-			<div className="grid gap-6 xl:grid-cols-[minmax(0,1.4fr)_360px]">
+			<div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
 				<Card className="border-border/60">
 					<CardHeader>
-						<CardTitle>React 19 coverage map</CardTitle>
-						<CardDescription>Where each release area shows up in the app.</CardDescription>
+						<CardTitle className="font-display text-3xl">Learning tracks</CardTitle>
+						<CardDescription>Grouped routes so the workspace feels intentional.</CardDescription>
 					</CardHeader>
-					<CardContent className="grid gap-4 md:grid-cols-2">
-						{releaseCoverage.map((item) => (
-							<div key={item.title} className="app-muted-surface p-4">
-								<div className="flex flex-wrap items-center gap-2">
-									<p className="font-medium text-foreground">{item.title}</p>
-									<Badge variant="secondary">{item.status}</Badge>
+					<CardContent className="space-y-3">
+						{learningTracks.map((track) => (
+							<div key={track.stage} className="app-muted-surface p-4">
+								<div className="flex items-center justify-between gap-3">
+									<p className="font-semibold text-foreground">{track.label}</p>
+									<Badge variant="outline" className="rounded-full">
+										{track.items.length} routes
+									</Badge>
 								</div>
-								<div className="mt-4 flex flex-wrap gap-2">
-									{item.relatedPaths.map((path) => {
-										const route = navItemsByPath[path];
-										if (!route) {
-											return null;
-										}
-
-										return (
-											<Button
-												key={path}
-												asChild
-												variant="outline"
-												size="sm"
-												className="rounded-full"
-											>
-												<NavLink to={path}>
-													{route.label}
-													<ArrowRight className="size-4" />
-												</NavLink>
-											</Button>
-										);
-									})}
+								<div className="mt-3 flex flex-wrap gap-2">
+									{track.items.map((route) => (
+										<Button
+											key={route.path}
+											asChild
+											variant="outline"
+											size="sm"
+											className="rounded-full bg-card/70"
+										>
+											<NavLink to={route.path}>{route.label}</NavLink>
+										</Button>
+									))}
 								</div>
 							</div>
 						))}
 					</CardContent>
 				</Card>
 
-				<div className="grid gap-4">
-					<Card className="border-border/60">
-						<CardHeader>
-							<CardTitle>Current stack adoption</CardTitle>
-							<CardDescription>Three choices driving the redesign.</CardDescription>
-						</CardHeader>
-						<CardContent className="space-y-3">
-							{stackHighlights.map((item) => {
-								const Icon = item.icon;
+				<div className="grid gap-4 md:grid-cols-3 xl:grid-cols-1">
+					{systemCards.map((item) => {
+						const Icon = item.icon;
 
-								return (
-									<div key={item.title} className="app-surface p-4">
-										<div className="flex items-start gap-3">
-											<div className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-												<Icon className="size-5" />
-											</div>
-											<div className="space-y-1">
-												<p className="font-medium text-foreground">{item.title}</p>
-												<p className="text-sm leading-6 text-muted-foreground">
-													{item.description}
-												</p>
-											</div>
+						return (
+							<Card key={item.title} className="group border-border/60">
+								<CardHeader className="space-y-4">
+									<div className="flex items-center justify-between">
+										<div className="flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+											<Icon className="size-5" />
 										</div>
+										<TechLogo name={item.logo} className="size-5 opacity-80" />
 									</div>
-								);
-							})}
-						</CardContent>
-					</Card>
-
-					<Card className="border-border/60">
-						<CardHeader>
-							<CardTitle>Bun practices in this repo</CardTitle>
-							<CardDescription>Implementation cues worth noticing.</CardDescription>
-						</CardHeader>
-						<CardContent className="space-y-3">
-							{bunPractices.map((practice) => (
-								<div
-									key={practice}
-									className="app-muted-surface p-3 text-sm leading-6 text-muted-foreground"
-								>
-									{practice}
-								</div>
-							))}
-						</CardContent>
-					</Card>
+									<div>
+										<CardTitle>{item.title}</CardTitle>
+										<CardDescription className="mt-2 leading-6">{item.description}</CardDescription>
+									</div>
+								</CardHeader>
+								<CardContent>
+									<Button asChild variant="ghost" size="sm" className="rounded-full px-0">
+										<NavLink to={item.href}>
+											View system
+											<ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+										</NavLink>
+									</Button>
+								</CardContent>
+							</Card>
+						);
+					})}
 				</div>
 			</div>
 
-			<div className="grid gap-4 lg:grid-cols-2">
-				{learningRoutes.map((route) => {
-					const Icon = route.icon;
-
-					return (
-						<Card
-							key={route.path}
-							className="group border-border/60 transition-all duration-200 hover:-translate-y-1 hover:border-primary/20"
+			<Card className="border-border/60">
+				<CardHeader className="md:flex-row md:items-center md:justify-between">
+					<div>
+						<CardTitle className="font-display text-3xl">Reference shelf</CardTitle>
+						<CardDescription>Primary docs kept one click away.</CardDescription>
+					</div>
+					<div className="hidden size-11 items-center justify-center rounded-2xl bg-accent/55 text-accent-foreground md:flex">
+						<BookOpenText className="size-5" />
+					</div>
+				</CardHeader>
+				<CardContent className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+					{docsLinks.map((doc) => (
+						<a
+							key={doc.href}
+							href={doc.href}
+							target="_blank"
+							rel="noreferrer"
+							className="group flex items-center justify-between gap-3 rounded-2xl border border-border/60 bg-muted/35 p-3 transition-colors hover:bg-muted/60"
 						>
-							<CardHeader>
-								<div className="mb-2 flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-									<Icon className="size-5" />
-								</div>
-								<div className="flex flex-wrap items-center gap-2">
-									<CardTitle>{route.label}</CardTitle>
-									<Badge variant="outline">{route.releaseArea}</Badge>
-									<Badge variant="secondary">{learningStages[route.stage]}</Badge>
-								</div>
-								<CardDescription>{route.blurb}</CardDescription>
-							</CardHeader>
-							<CardContent className="space-y-4">
-								<div className="flex flex-wrap gap-2">
-									{route.apiLabels.map((api) => (
-										<Badge key={api} variant="outline">
-											{api}
-										</Badge>
-									))}
-								</div>
-								<Button asChild variant="outline">
-									<NavLink to={route.path}>
-										Open page
-										<ArrowRight className="size-4" />
-									</NavLink>
-								</Button>
-							</CardContent>
-						</Card>
-					);
-				})}
-			</div>
+							<span className="flex min-w-0 items-center gap-3">
+								<TechLogo name={doc.logo} className="size-5" />
+								<span className="truncate text-sm font-medium">{doc.label}</span>
+							</span>
+							<ArrowUpRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+						</a>
+					))}
+				</CardContent>
+			</Card>
 
-			<div className="grid gap-4 lg:grid-cols-3">
-				{docsStack.map((item) => {
-					return (
-						<Card key={item.href} className="border-border/60">
-							<CardHeader>
-								<div className="mb-2 flex size-11 items-center justify-center rounded-2xl bg-accent/45 text-accent-foreground">
-									<TechLogo name={item.logo} className="size-5" />
-								</div>
-								<CardTitle>{item.title}</CardTitle>
-								<CardDescription>{item.subtitle}</CardDescription>
-							</CardHeader>
-							<CardContent className="space-y-4">
-								<p className="text-sm leading-6 text-muted-foreground">{item.description}</p>
-								<Button asChild variant="outline">
-									<a href={item.href} target="_blank" rel="noreferrer">
-										Open docs
-										<ArrowUpRight className="size-4" />
-									</a>
-								</Button>
-							</CardContent>
-						</Card>
-					);
-				})}
+			<div className="grid gap-3 md:grid-cols-3">
+				<div className="app-muted-surface p-4">
+					<Workflow className="size-5 text-primary" />
+					<p className="mt-3 text-sm font-semibold">Mutation patterns</p>
+					<p className="mt-1 text-xs leading-5 text-muted-foreground">
+						Actions, transitions, optimistic updates.
+					</p>
+				</div>
+				<div className="app-muted-surface p-4">
+					<ShieldCheck className="size-5 text-primary" />
+					<p className="mt-3 text-sm font-semibold">Private workspace</p>
+					<p className="mt-1 text-xs leading-5 text-muted-foreground">
+						Better Auth redirects and session gating.
+					</p>
+				</div>
+				<div className="app-muted-surface p-4">
+					<BookOpenText className="size-5 text-primary" />
+					<p className="mt-3 text-sm font-semibold">Reference-first</p>
+					<p className="mt-1 text-xs leading-5 text-muted-foreground">
+						Docs are linked without turning pages into articles.
+					</p>
+				</div>
 			</div>
 		</div>
 	);

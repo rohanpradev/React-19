@@ -7,21 +7,24 @@ type ResolvedTheme = "light" | "dark";
 export const themePresetOptions = [
 	{
 		value: "studio",
-		label: "Studio",
-		description: "Warm editorial surfaces with blue action color.",
-		swatch: "linear-gradient(135deg, hsl(210 92% 44%), hsl(39 88% 78%), hsl(205 36% 94%))",
+		label: "Atelier",
+		description: "Warm editorial canvas with an ink-blue action color.",
+		swatch:
+			"linear-gradient(135deg, oklch(0.43 0.105 238), oklch(0.875 0.105 82), oklch(0.982 0.012 84))",
 	},
 	{
 		value: "ocean",
-		label: "Ocean",
-		description: "Cool cyan palette with softer neutral surfaces.",
-		swatch: "linear-gradient(135deg, hsl(192 86% 40%), hsl(182 54% 76%), hsl(202 42% 93%))",
+		label: "Lagoon",
+		description: "Cool cyan palette with quiet product surfaces.",
+		swatch:
+			"linear-gradient(135deg, oklch(0.5 0.13 205), oklch(0.88 0.075 188), oklch(0.982 0.012 84))",
 	},
 	{
 		value: "graphite",
 		label: "Graphite",
-		description: "Neutral product palette with copper accents.",
-		swatch: "linear-gradient(135deg, hsl(221 28% 28%), hsl(24 62% 66%), hsl(205 22% 92%))",
+		description: "Neutral product palette with restrained copper accents.",
+		swatch:
+			"linear-gradient(135deg, oklch(0.32 0.035 248), oklch(0.83 0.1 48), oklch(0.94 0.018 92))",
 	},
 ] as const satisfies {
 	value: ThemePreset;

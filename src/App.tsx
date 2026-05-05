@@ -1,10 +1,10 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
 import { Navigate, NavLink, Outlet, useLocation, useNavigation } from "react-router";
 import { type AuthSession, authClient } from "@/auth/client";
 import { buildAuthHref, getDefaultAuthRedirectPath, sanitizeRedirectPath } from "@/auth/redirects";
 import { AppCommandPalette } from "@/components/app-command-palette";
-import { TechPill } from "@/components/tech-logo";
+import { TechLogo } from "@/components/tech-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -56,13 +56,6 @@ function WorkspaceLayout({ session }: { session: AuthSession }) {
 	const ActiveIcon = activeLink.icon;
 	const IdentityIcon = appIdentity.icon;
 	const isRoutePending = navigation.state !== "idle";
-	const navGroups = (Object.keys(learningStages) as Array<keyof typeof learningStages>)
-		.map((stage) => ({
-			stage,
-			label: learningStages[stage],
-			items: navItems.filter((item) => item.stage === stage),
-		}))
-		.filter((group) => group.items.length > 0);
 
 	return (
 		<div className="min-h-screen w-full text-foreground">
@@ -77,147 +70,135 @@ function WorkspaceLayout({ session }: { session: AuthSession }) {
 			</a>
 
 			<div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-				<div className="absolute top-[-9rem] right-[-8rem] h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
-				<div className="absolute bottom-[-12rem] left-[-8rem] h-96 w-96 rounded-full bg-accent/35 blur-3xl" />
-				<div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+				<div className="absolute top-[-11rem] right-[-8rem] h-[34rem] w-[34rem] rounded-full bg-primary/12 blur-3xl" />
+				<div className="absolute bottom-[-14rem] left-[-10rem] h-[32rem] w-[32rem] rounded-full bg-accent/45 blur-3xl" />
+				<div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/35 to-transparent" />
 			</div>
 
-			<div className="mx-auto grid min-h-screen max-w-[1500px] gap-5 p-3 sm:p-5 xl:grid-cols-[286px_minmax(0,1fr)] xl:p-6">
-				<aside className="hidden xl:block">
-					<div className="app-panel sticky top-6 flex h-[calc(100vh-3rem)] flex-col p-4">
-						<div className="px-2 pb-5">
-							<div className="flex items-center gap-3">
-								<div className="flex size-11 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm shadow-primary/20">
-									<IdentityIcon className="size-5" />
-								</div>
-								<div className="min-w-0">
-									<p className="truncate font-display text-base leading-none text-foreground">
-										{appIdentity.title}
-									</p>
-									<p className="mt-1 truncate text-xs text-muted-foreground">{appIdentity.label}</p>
-								</div>
-							</div>
-						</div>
+			<div className="mx-auto grid min-h-screen w-full max-w-[1680px] xl:grid-cols-[92px_minmax(0,1fr)]">
+				<aside className="hidden px-4 py-5 xl:block">
+					<div className="app-rail sticky top-5 flex h-[calc(100vh-2.5rem)] flex-col items-center p-3">
+						<NavLink
+							to="/overview"
+							className="group/nav relative flex size-[3.25rem] items-center justify-center rounded-[1.35rem] bg-foreground text-background shadow-lg shadow-black/10"
+							aria-label={appIdentity.title}
+						>
+							<IdentityIcon className="size-6" />
+							<span className="rail-tooltip group-hover/nav:opacity-100 group-focus-visible/nav:opacity-100">
+								{appIdentity.title}
+							</span>
+						</NavLink>
 
-						<nav className="flex-1 space-y-5 overflow-y-auto border-t border-border/70 pt-4">
-							{navGroups.map((group) => (
-								<div key={group.stage} className="space-y-1.5">
-									<p className="px-3 text-[11px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
-										{group.label}
-									</p>
-									{group.items.map((link) => {
-										const Icon = link.icon;
+						<nav className="mt-8 flex flex-1 flex-col items-center gap-2 overflow-visible">
+							{navItems.map((link) => {
+								const Icon = link.icon;
 
-										return (
-											<NavLink
-												key={link.path}
-												to={link.path}
-												className={({ isActive }) =>
-													cn(
-														"group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm transition-colors",
-														isActive
-															? "bg-foreground text-background shadow-sm"
-															: "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
-													)
-												}
-											>
-												<div className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-background/80 text-current ring-1 ring-border/60 group-[.active]:bg-background/12">
-													<Icon className="size-4" />
-												</div>
-												<div className="min-w-0">
-													<p className="truncate font-medium">{link.label}</p>
-													<p className="truncate text-[11px] text-current/62">{link.releaseArea}</p>
-												</div>
-											</NavLink>
-										);
-									})}
-								</div>
-							))}
+								return (
+									<NavLink
+										key={link.path}
+										to={link.path}
+										title={link.label}
+										aria-label={link.label}
+										className={({ isActive }) =>
+											cn(
+												"group/nav relative flex size-12 items-center justify-center rounded-[1.15rem] transition-all duration-200",
+												isActive
+													? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+													: "text-muted-foreground hover:bg-sidebar-accent hover:text-foreground",
+											)
+										}
+									>
+										<Icon className="size-5" />
+										<span className="rail-tooltip group-hover/nav:opacity-100 group-focus-visible/nav:opacity-100">
+											<span className="block font-medium">{link.label}</span>
+											<span className="mt-0.5 block text-[11px] text-muted-foreground">
+												{link.releaseArea}
+											</span>
+										</span>
+									</NavLink>
+								);
+							})}
 						</nav>
 
-						<div className="mt-4 border-t border-border/70 pt-4">
-							<div className="flex flex-wrap gap-2">
-								<TechPill name="react" />
-								<TechPill name="bun" />
-								<TechPill name="shadcn" />
-							</div>
+						<div className="flex flex-col items-center gap-2 border-t border-border/60 pt-4">
+							<TechLogo name="react" className="size-5 opacity-80" />
+							<TechLogo name="bun" className="size-5 opacity-80" />
+							<TechLogo name="shadcn" className="size-5 opacity-80" />
 						</div>
 					</div>
 				</aside>
 
-				<div className="min-w-0 space-y-4 xl:space-y-6">
-					<header className="space-y-3">
-						<div className="app-panel p-4 sm:p-5">
-							<div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-								<div className="flex min-w-0 items-start gap-3">
-									<div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
-										<ActiveIcon className="size-5" />
-									</div>
-									<div className="min-w-0">
-										<div className="flex flex-wrap items-center gap-2">
-											<Badge variant="secondary">{activeLink.releaseArea}</Badge>
-											<span className="text-xs text-muted-foreground">
-												{learningStages[activeLink.stage]}
-											</span>
-										</div>
-										<h1 className="mt-2 font-display text-2xl leading-none text-foreground sm:text-3xl">
-											{activeLink.label}
-										</h1>
-										<p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-											{activeLink.blurb}
-										</p>
-									</div>
+				<div className="min-w-0 px-3 py-3 sm:px-5 sm:py-5 xl:pr-6 xl:pl-0">
+					<header className="app-topbar sticky top-3 z-40 p-2.5 sm:p-3">
+						<div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+							<div className="flex min-w-0 items-center gap-3">
+								<div className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/15">
+									<ActiveIcon className="size-5" />
 								</div>
-
-								<div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap lg:justify-end">
-									<AppCommandPalette buttonClassName="sm:min-w-[220px]" />
-									<ThemeToggle />
-									<UserMenu session={session} className="justify-between sm:min-w-[220px]" />
-									<Button
-										asChild
-										variant="ghost"
-										className="justify-start px-2 text-sm sm:justify-center"
-									>
-										<NavLink to={nextLink.path}>
-											Next
-											<span className="max-w-32 truncate">{nextLink.label}</span>
-											<ArrowRight className="size-4" />
-										</NavLink>
-									</Button>
+								<div className="min-w-0">
+									<div className="flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.18em] text-muted-foreground uppercase">
+										<span>{learningStages[activeLink.stage]}</span>
+										<ChevronRight className="size-3.5" />
+										<span className="truncate">{activeLink.releaseArea}</span>
+									</div>
+									<p className="mt-1 truncate font-display text-xl leading-none text-foreground sm:text-2xl">
+										{activeLink.label}
+									</p>
 								</div>
 							</div>
-						</div>
 
-						<div className="xl:hidden">
-							<ScrollArea className="w-full whitespace-nowrap">
-								<div className="flex gap-2 pb-1">
-									{navItems.map((link) => {
-										const Icon = link.icon;
-
-										return (
-											<NavLink
-												key={link.path}
-												to={link.path}
-												className={({ isActive }) =>
-													cn(
-														"inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm transition-colors",
-														isActive
-															? "border-primary bg-primary text-primary-foreground"
-															: "border-border/70 bg-background/80 text-muted-foreground hover:bg-muted/70 hover:text-foreground",
-													)
-												}
-											>
-												<Icon className="size-4" />
-												{link.label}
-											</NavLink>
-										);
-									})}
-								</div>
-							</ScrollArea>
+							<div className="flex flex-wrap items-center gap-2 lg:justify-end">
+								<AppCommandPalette buttonClassName="min-w-0 flex-1 sm:flex-none sm:min-w-[210px]" />
+								<ThemeToggle />
+								<UserMenu
+									session={session}
+									showDetails={false}
+									className="size-11 rounded-2xl px-0"
+								/>
+								<Button
+									asChild
+									variant="ghost"
+									size="sm"
+									className="hidden rounded-xl px-3 lg:inline-flex"
+								>
+									<NavLink to={nextLink.path}>
+										Next
+										<ArrowRight className="size-4" />
+									</NavLink>
+								</Button>
+							</div>
 						</div>
 					</header>
 
-					<main id="main-content" className="min-w-0 pb-8">
+					<div className="pt-3 xl:hidden">
+						<ScrollArea className="w-full whitespace-nowrap">
+							<div className="flex gap-2 pb-1">
+								{navItems.map((link) => {
+									const Icon = link.icon;
+
+									return (
+										<NavLink
+											key={link.path}
+											to={link.path}
+											className={({ isActive }) =>
+												cn(
+													"inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-sm font-medium transition-colors",
+													isActive
+														? "border-primary bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+														: "border-border/70 bg-card/80 text-muted-foreground hover:bg-muted/70 hover:text-foreground",
+												)
+											}
+										>
+											<Icon className="size-4" />
+											{link.label}
+										</NavLink>
+									);
+								})}
+							</div>
+						</ScrollArea>
+					</div>
+
+					<main id="main-content" className="min-w-0 py-4 sm:py-6">
 						<Outlet />
 					</main>
 				</div>
