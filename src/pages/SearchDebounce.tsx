@@ -177,7 +177,7 @@ export function SearchDebounce() {
 						<div className="grid gap-3 md:grid-cols-3">
 							<div className="app-muted-surface p-4">
 								<div className="flex items-start gap-3">
-									<span className="flex size-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+									<span className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
 										<SearchIcon className="size-5" />
 									</span>
 									<div>
@@ -194,7 +194,7 @@ export function SearchDebounce() {
 
 							<div className="app-muted-surface p-4">
 								<div className="flex items-start gap-3">
-									<span className="flex size-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+									<span className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
 										<Clock3 className="size-5" />
 									</span>
 									<div>
@@ -211,7 +211,7 @@ export function SearchDebounce() {
 
 							<div className="app-muted-surface p-4">
 								<div className="flex items-start gap-3">
-									<span className="flex size-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+									<span className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
 										<TimerReset className="size-5" />
 									</span>
 									<div>
@@ -281,7 +281,7 @@ export function SearchDebounce() {
 					<CardContent className="space-y-3">
 						<div className="app-muted-surface p-4">
 							<div className="flex items-start gap-3">
-								<span className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+								<span className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
 									<Workflow className="size-4" />
 								</span>
 								<div>
@@ -295,7 +295,7 @@ export function SearchDebounce() {
 
 						<div className="app-muted-surface p-4">
 							<div className="flex items-start gap-3">
-								<span className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+								<span className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
 									<Server className="size-4" />
 								</span>
 								<div>
@@ -309,7 +309,7 @@ export function SearchDebounce() {
 
 						<div className="app-muted-surface p-4">
 							<div className="flex items-start gap-3">
-								<span className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+								<span className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
 									<Database className="size-4" />
 								</span>
 								<div>
@@ -386,7 +386,7 @@ export function SearchDebounce() {
 									className="flex flex-col items-start gap-2"
 								>
 									<div className="flex w-full items-start gap-3">
-										<div className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+										<div className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
 											<Building2 className="size-5" />
 										</div>
 										<div className="min-w-0 flex-1 space-y-2">

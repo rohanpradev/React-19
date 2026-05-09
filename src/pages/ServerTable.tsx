@@ -321,7 +321,7 @@ export function ServerTablePage() {
 				<Card className="border-border/60">
 					<CardContent className="space-y-4 pt-6">
 						<div className="flex items-center gap-3">
-							<span className="flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+							<span className="flex size-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
 								<Layers3 className="size-5" />
 							</span>
 							<div>
@@ -499,7 +499,7 @@ export function ServerTablePage() {
 						</Alert>
 					) : null}
 
-					<div className="app-surface overflow-hidden rounded-[1.5rem]">
+					<div className="app-surface overflow-hidden rounded-lg">
 						<Table>
 							<TableCaption className="px-4 pb-4 text-left">
 								Rows {startRow}-{endRow} of {formatNumber(totalRows)} accounts in the current view.
@@ -635,7 +635,7 @@ function SummaryCard({
 			<CardContent className="space-y-4 pt-6">
 				<div className="flex items-center justify-between gap-3">
 					<p className="text-muted-foreground text-sm font-medium">{label}</p>
-					<span className="flex size-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+					<span className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
 						<Icon className="size-5" />
 					</span>
 				</div>

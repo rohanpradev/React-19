@@ -28,7 +28,7 @@ function DialogOverlay({
 		<DialogPrimitive.Overlay
 			data-slot="dialog-overlay"
 			className={cn(
-				"data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-slate-950/55 backdrop-blur-sm",
+				"data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-slate-950/55",
 				className,
 			)}
 			{...props}
@@ -50,7 +50,7 @@ function DialogContent({
 			<DialogPrimitive.Content
 				data-slot="dialog-content"
 				className={cn(
-					"bg-background/96 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-[1.4rem] border border-border/70 p-6 shadow-[0_35px_120px_-45px_rgba(15,23,42,0.55)] duration-200 outline-none supports-[backdrop-filter]:backdrop-blur-xl sm:max-w-lg dark:shadow-[0_40px_120px_-45px_rgba(2,6,23,0.92)]",
+					"bg-background/96 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border border-border/70 p-6 shadow-[0_32px_92px_-45px_rgba(15,23,42,0.55)] duration-200 outline-none sm:max-w-lg dark:shadow-[0_32px_92px_-45px_rgba(2,6,23,0.92)]",
 					className,
 				)}
 				{...props}
@@ -59,7 +59,7 @@ function DialogContent({
 				{showCloseButton && (
 					<DialogPrimitive.Close
 						data-slot="dialog-close"
-						className="ring-offset-background focus:ring-ring absolute top-4 right-4 inline-flex size-8 items-center justify-center rounded-full border border-border/70 bg-background/75 text-muted-foreground opacity-90 transition-[color,background-color,opacity] hover:bg-accent hover:text-accent-foreground hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none"
+						className="ring-offset-background focus:ring-ring absolute top-4 right-4 inline-flex size-8 items-center justify-center rounded-md border border-border/70 bg-background/75 text-muted-foreground opacity-90 transition-[color,background-color,opacity] hover:bg-accent hover:text-accent-foreground hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none"
 					>
 						<XIcon />
 						<span className="sr-only">Close</span>

@@ -92,22 +92,15 @@ export function OverviewPage() {
 	return (
 		<div className="space-y-6">
 			<section className="app-hero p-5 sm:p-8 lg:p-10">
-				<div className="pointer-events-none absolute top-[-8rem] right-[-6rem] h-80 w-80 rounded-full bg-primary/14 blur-3xl" />
-				<div className="pointer-events-none absolute bottom-[-9rem] left-[-6rem] h-72 w-72 rounded-full bg-accent/45 blur-3xl" />
-
-				<div className="relative grid gap-8 lg:grid-cols-[minmax(0,1fr)_390px] lg:items-end">
+				<div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_390px] lg:items-end">
 					<div className="max-w-4xl space-y-6">
 						<div className="flex flex-wrap items-center gap-2">
-							<Badge variant="secondary" className="rounded-full">
-								Frontend architecture lab
-							</Badge>
-							<Badge variant="outline" className="rounded-full">
-								Bun + React 19.2
-							</Badge>
+							<Badge variant="secondary">Frontend architecture lab</Badge>
+							<Badge variant="outline">Bun + React 19.2</Badge>
 						</div>
 
 						<div className="space-y-4">
-							<h1 className="font-display text-5xl leading-[0.9] text-foreground sm:text-6xl lg:text-7xl">
+							<h1 className="font-display text-4xl leading-none text-foreground sm:text-5xl lg:text-6xl">
 								Modern React, without the clutter.
 							</h1>
 							<p className="max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
@@ -117,13 +110,13 @@ export function OverviewPage() {
 						</div>
 
 						<div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-							<Button asChild size="lg" className="rounded-2xl">
+							<Button asChild size="lg">
 								<NavLink to="/architecture">
 									Start with architecture
 									<ArrowRight className="size-4" />
 								</NavLink>
 							</Button>
-							<Button asChild variant="outline" size="lg" className="rounded-2xl bg-card/70">
+							<Button asChild variant="outline" size="lg" className="bg-card/70">
 								<NavLink to="/form-actions">
 									Open React demos
 									<ArrowRight className="size-4" />
@@ -148,7 +141,7 @@ export function OverviewPage() {
 								</p>
 								<p className="mt-1 font-display text-2xl leading-none">Product-grade patterns</p>
 							</div>
-							<div className="flex size-11 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
+							<div className="flex size-11 items-center justify-center rounded-lg bg-primary text-primary-foreground">
 								<Layers3 className="size-5" />
 							</div>
 						</div>
@@ -160,7 +153,7 @@ export function OverviewPage() {
 								["bun", "Runtime"],
 								["shadcn", "UI system"],
 							].map(([logo, label]) => (
-								<div key={label} className="rounded-2xl border border-border/55 bg-muted/35 p-3">
+								<div key={label} className="rounded-lg border border-border/55 bg-muted/35 p-3">
 									<TechLogo
 										name={logo as "react" | "react-router" | "bun" | "shadcn"}
 										className="size-5"
@@ -170,7 +163,7 @@ export function OverviewPage() {
 							))}
 						</div>
 
-						<div className="mt-4 rounded-2xl bg-foreground p-4 text-background">
+						<div className="mt-4 rounded-lg bg-foreground p-4 text-background">
 							<div className="flex items-center gap-2 text-xs font-semibold tracking-[0.16em] uppercase opacity-70">
 								<CheckCircle2 className="size-4" />
 								Validated workflow
@@ -204,9 +197,7 @@ export function OverviewPage() {
 							<div key={track.stage} className="app-muted-surface p-4">
 								<div className="flex items-center justify-between gap-3">
 									<p className="font-semibold text-foreground">{track.label}</p>
-									<Badge variant="outline" className="rounded-full">
-										{track.items.length} routes
-									</Badge>
+									<Badge variant="outline">{track.items.length} routes</Badge>
 								</div>
 								<div className="mt-3 flex flex-wrap gap-2">
 									{track.items.map((route) => (
@@ -215,7 +206,7 @@ export function OverviewPage() {
 											asChild
 											variant="outline"
 											size="sm"
-											className="rounded-full bg-card/70"
+											className="bg-card/70"
 										>
 											<NavLink to={route.path}>{route.label}</NavLink>
 										</Button>
@@ -234,7 +225,7 @@ export function OverviewPage() {
 							<Card key={item.title} className="group border-border/60">
 								<CardHeader className="space-y-4">
 									<div className="flex items-center justify-between">
-										<div className="flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+										<div className="flex size-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
 											<Icon className="size-5" />
 										</div>
 										<TechLogo name={item.logo} className="size-5 opacity-80" />
@@ -245,7 +236,7 @@ export function OverviewPage() {
 									</div>
 								</CardHeader>
 								<CardContent>
-									<Button asChild variant="ghost" size="sm" className="rounded-full px-0">
+									<Button asChild variant="ghost" size="sm" className="px-0">
 										<NavLink to={item.href}>
 											View system
 											<ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
@@ -264,7 +255,7 @@ export function OverviewPage() {
 						<CardTitle className="font-display text-3xl">Reference shelf</CardTitle>
 						<CardDescription>Primary docs kept one click away.</CardDescription>
 					</div>
-					<div className="hidden size-11 items-center justify-center rounded-2xl bg-accent/55 text-accent-foreground md:flex">
+					<div className="hidden size-11 items-center justify-center rounded-lg bg-accent/55 text-accent-foreground md:flex">
 						<BookOpenText className="size-5" />
 					</div>
 				</CardHeader>
@@ -275,7 +266,7 @@ export function OverviewPage() {
 							href={doc.href}
 							target="_blank"
 							rel="noreferrer"
-							className="group flex items-center justify-between gap-3 rounded-2xl border border-border/60 bg-muted/35 p-3 transition-colors hover:bg-muted/60"
+							className="group flex items-center justify-between gap-3 rounded-lg border border-border/60 bg-muted/35 p-3 transition-colors hover:bg-muted/60"
 						>
 							<span className="flex min-w-0 items-center gap-3">
 								<TechLogo name={doc.logo} className="size-5" />

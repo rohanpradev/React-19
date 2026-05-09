@@ -201,7 +201,7 @@ function SectionTitle({ section }: { section: keyof typeof cardIcons }) {
 
 	return (
 		<CardTitle className="flex items-center gap-3">
-			<span className="flex size-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+			<span className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
 				<Icon className="size-5" />
 			</span>
 			{label}
@@ -431,7 +431,7 @@ export function DomInteropPage() {
 								{platformNotes.map((note) => (
 									<div key={note.title} className="app-muted-surface p-3">
 										<p className="text-foreground font-medium">{note.title}</p>
-										<CodeBlock className="mt-3 rounded-xl p-3">{note.code}</CodeBlock>
+										<CodeBlock className="mt-3 rounded-lg p-3">{note.code}</CodeBlock>
 									</div>
 								))}
 							</div>

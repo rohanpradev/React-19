@@ -47,7 +47,7 @@ export function UserMenu({
 					className={className}
 					aria-label="Open account menu"
 				>
-					<span className="flex size-8 items-center justify-center rounded-full bg-primary/12 text-xs font-semibold text-primary">
+					<span className="flex size-8 items-center justify-center rounded-lg bg-primary/12 text-xs font-semibold text-primary">
 						{initials}
 					</span>
 					{showDetails ? (

@@ -19,7 +19,7 @@ export function RouteErrorBoundary() {
 		<div className="flex min-h-screen items-center justify-center p-6">
 			<Card className="w-full max-w-xl border-destructive/20">
 				<CardHeader>
-					<div className="mb-2 flex size-11 items-center justify-center rounded-2xl bg-destructive/10 text-destructive">
+					<div className="mb-2 flex size-11 items-center justify-center rounded-lg bg-destructive/10 text-destructive">
 						<AlertTriangle className="size-5" />
 					</div>
 					<CardTitle>{title}</CardTitle>

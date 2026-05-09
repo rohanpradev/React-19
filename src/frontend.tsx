@@ -16,6 +16,8 @@ const elem = document.getElementById("root");
 if (!elem) {
 	throw new Error('Root element "#root" was not found.');
 }
+
+const rootElement = elem;
 const app = (
 	<StrictMode>
 		<ThemeProvider>
@@ -24,13 +26,18 @@ const app = (
 	</StrictMode>
 );
 
-if (import.meta.hot) {
-	// With hot module reloading, `import.meta.hot.data` is persisted.
-	const existingRoot = import.meta.hot.data.root;
-	const root = existingRoot ?? createRoot(elem);
-	import.meta.hot.data.root = root;
-	root.render(app);
-} else {
+function renderApp() {
+	if (import.meta.hot) {
+		// With hot module reloading, `import.meta.hot.data` is persisted.
+		const existingRoot = import.meta.hot.data.root;
+		const root = existingRoot ?? createRoot(rootElement);
+		import.meta.hot.data.root = root;
+		root.render(app);
+		return;
+	}
+
 	// The hot module reloading API is not available in production.
-	createRoot(elem).render(app);
+	createRoot(rootElement).render(app);
 }
+
+renderApp();

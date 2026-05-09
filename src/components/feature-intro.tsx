@@ -23,11 +23,9 @@ type FeatureIntroProps = {
 export function FeatureIntro({ eyebrow, title, summary, points, links = [] }: FeatureIntroProps) {
 	return (
 		<section className="app-hero p-5 sm:p-7 lg:p-8">
-			<div className="pointer-events-none absolute top-0 right-0 h-48 w-48 rounded-full bg-primary/10 blur-3xl" />
-
-			<div className="relative grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(260px,0.38fr)] lg:items-end">
+			<div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(260px,0.38fr)] lg:items-end">
 				<div className="space-y-4">
-					<Badge variant="secondary" className="w-fit rounded-full">
+					<Badge variant="secondary" className="w-fit">
 						{eyebrow}
 					</Badge>
 
@@ -47,7 +45,7 @@ export function FeatureIntro({ eyebrow, title, summary, points, links = [] }: Fe
 								variant="outline"
 								size="sm"
 								asChild
-								className="h-9 rounded-full bg-card/70 px-3"
+								className="h-9 bg-card/70 px-3"
 							>
 								<a href={link.href} target="_blank" rel="noreferrer">
 									{link.label}
@@ -59,9 +57,9 @@ export function FeatureIntro({ eyebrow, title, summary, points, links = [] }: Fe
 				) : null}
 			</div>
 
-			<div className="relative mt-6 grid gap-2 sm:grid-cols-3">
+			<div className="mt-6 grid gap-2 sm:grid-cols-3">
 				{points.slice(0, 3).map((point) => (
-					<div key={point.title} className="rounded-2xl border border-border/55 bg-muted/35 p-3">
+					<div key={point.title} className="rounded-lg border border-border/55 bg-muted/35 p-3">
 						<p className="text-sm font-medium text-foreground" title={point.detail}>
 							{point.title}
 						</p>

@@ -170,8 +170,9 @@ const buildConfig: Bun.BuildConfig = {
 	outdir,
 	plugins: [plugin],
 	minify: true,
+	splitting: true,
 	target: "bun",
-	sourcemap: "linked",
+	sourcemap: "none",
 	define: {
 		"process.env.NODE_ENV": JSON.stringify("production"),
 	},

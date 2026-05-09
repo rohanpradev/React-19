@@ -118,7 +118,7 @@ export function AppCommandPalette({ buttonClassName }: { buttonClassName?: strin
 				type="button"
 				variant="outline"
 				className={cn(
-					"justify-between gap-3 rounded-2xl px-4 text-left sm:min-w-[240px]",
+					"justify-between gap-3 rounded-lg px-4 text-left sm:min-w-[240px]",
 					buttonClassName,
 				)}
 				onClick={() => setOpen(true)}
@@ -159,7 +159,7 @@ export function AppCommandPalette({ buttonClassName }: { buttonClassName?: strin
 									}}
 									className="items-start gap-3 py-3"
 								>
-									<div className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+									<div className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
 										<Icon className="size-5" />
 									</div>
 									<div className="min-w-0 flex-1 space-y-1">
@@ -197,7 +197,7 @@ export function AppCommandPalette({ buttonClassName }: { buttonClassName?: strin
 								}}
 								className="items-start gap-3 py-3"
 							>
-								<div className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-2xl bg-accent/40 text-accent-foreground">
+								<div className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent/40 text-accent-foreground">
 									<BookOpenText className="size-5" />
 								</div>
 								<div className="min-w-0 flex-1 space-y-1">
@@ -254,7 +254,7 @@ export function AppCommandPalette({ buttonClassName }: { buttonClassName?: strin
 								}}
 							>
 								<span
-									className="size-3 rounded-full border border-black/10"
+									className="size-3 rounded-md border border-black/10"
 									style={{ backgroundImage: option.swatch }}
 								/>
 								{option.label} preset

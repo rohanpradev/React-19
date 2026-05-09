@@ -27,7 +27,7 @@ export function ThemeToggle({ className }: { className?: string }) {
 	return (
 		<div
 			className={cn(
-				"inline-flex items-center gap-1 rounded-2xl border border-border/60 bg-card/75 p-1 shadow-sm shadow-black/[0.03] backdrop-blur-xl",
+				"inline-flex items-center gap-1 rounded-lg border border-border/60 bg-card/95 p-1 shadow-sm shadow-black/[0.03]",
 				className,
 			)}
 		>
@@ -44,7 +44,7 @@ export function ThemeToggle({ className }: { className?: string }) {
 						aria-label={option.label}
 						aria-pressed={isActive}
 						className={cn(
-							"inline-flex size-9 items-center justify-center rounded-xl text-muted-foreground transition-all duration-200 hover:bg-muted/70 hover:text-foreground",
+							"inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-all duration-200 hover:bg-muted/70 hover:text-foreground",
 							isActive && "bg-foreground text-background shadow-sm shadow-black/10",
 						)}
 					>
@@ -59,7 +59,7 @@ export function ThemeToggle({ className }: { className?: string }) {
 						type="button"
 						variant="ghost"
 						size="icon"
-						className="size-9 rounded-xl"
+						className="size-9 rounded-md"
 						aria-label="Choose color preset"
 					>
 						<Palette className="size-4" />
@@ -78,7 +78,7 @@ export function ThemeToggle({ className }: { className?: string }) {
 								className="items-start gap-3 py-3"
 							>
 								<span
-									className="mt-1 size-4 shrink-0 rounded-full border border-black/10"
+									className="mt-1 size-4 shrink-0 rounded-md border border-black/10"
 									style={{ backgroundImage: option.swatch }}
 								/>
 								<span className="min-w-0 flex-1">

@@ -17,7 +17,7 @@ function Command({ className, ...props }: React.ComponentProps<typeof CommandPri
 		<CommandPrimitive
 			data-slot="command"
 			className={cn(
-				"bg-popover text-popover-foreground flex h-full w-full flex-col overflow-hidden rounded-[1.4rem]",
+				"bg-popover text-popover-foreground flex h-full w-full flex-col overflow-hidden rounded-lg",
 				className,
 			)}
 			{...props}
@@ -46,14 +46,14 @@ function CommandDialog({
 			</DialogHeader>
 			<DialogContent
 				className={cn(
-					"overflow-hidden rounded-[1.55rem] border-border/70 p-0 shadow-[0_40px_120px_-48px_rgba(15,23,42,0.45)] dark:shadow-[0_40px_120px_-48px_rgba(2,6,23,0.92)]",
+					"overflow-hidden rounded-lg border-border/70 p-0 shadow-[0_32px_92px_-48px_rgba(15,23,42,0.45)] dark:shadow-[0_32px_92px_-48px_rgba(2,6,23,0.92)]",
 					className,
 				)}
 				showCloseButton={showCloseButton}
 			>
 				<Command
 					className={cn(
-						"[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-[11px] [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:tracking-[0.18em] [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-1 [&_[cmdk-item]]:rounded-xl [&_[cmdk-item]]:px-3 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:size-5",
+						"[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-[11px] [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:tracking-[0.18em] [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-1 [&_[cmdk-item]]:rounded-lg [&_[cmdk-item]]:px-3 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:size-5",
 					)}
 				>
 					{children}

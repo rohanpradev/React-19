@@ -151,109 +151,115 @@ export function AuthPage() {
 	}
 
 	return (
-		<div className="relative min-h-screen w-full overflow-hidden">
-			<div className="pointer-events-none absolute inset-0">
-				<div className="absolute top-[-8rem] left-[8%] h-72 w-72 rounded-full bg-primary/18 blur-3xl" />
-				<div className="absolute right-[-5rem] bottom-[-4rem] h-80 w-80 rounded-full bg-accent/30 blur-3xl" />
-			</div>
+		<main className="min-h-screen w-full bg-background">
+			<div className="mx-auto grid min-h-screen max-w-6xl gap-5 p-4 sm:p-6 lg:grid-cols-[minmax(0,1fr)_430px] lg:p-8">
+				<section
+					aria-labelledby="auth-intro-title"
+					className="order-2 flex min-w-0 flex-col justify-between rounded-lg border border-border/70 bg-card/95 p-5 shadow-[0_20px_60px_-48px_rgba(15,23,42,0.42)] sm:p-7 lg:order-1 lg:p-8 dark:shadow-[0_20px_60px_-48px_rgba(0,0,0,0.84)]"
+				>
+					<div className="space-y-7">
+						<div className="flex items-center gap-3">
+							<span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+								<ShieldCheck className="size-5" />
+							</span>
+							<div className="min-w-0">
+								<p className="text-xs font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+									React Systems Studio
+								</p>
+								<p className="mt-1 text-sm font-medium text-foreground">Private Bun workspace</p>
+							</div>
+						</div>
 
-			<div className="relative mx-auto grid min-h-screen max-w-[1400px] gap-8 p-4 lg:grid-cols-[minmax(0,1.08fr)_460px] lg:p-8">
-				<section className="flex min-w-0 flex-col justify-between rounded-[2.2rem] border border-border/65 bg-background/78 p-6 shadow-2xl shadow-black/[0.06] backdrop-blur-xl sm:p-8 lg:p-10 dark:shadow-black/[0.3]">
-					<div className="space-y-8">
 						<div className="flex flex-wrap items-center gap-2">
 							<Badge variant="secondary">Better Auth</Badge>
-							<Badge variant="outline">Google + GitHub oauth</Badge>
 							<Badge variant="outline">Bun built-in SQLite</Badge>
 						</div>
 
-						<div className="space-y-5">
-							<h1 className="font-display max-w-4xl text-5xl leading-none text-foreground sm:text-6xl">
-								Private access for the Bun + React lab.
+						<div className="space-y-4">
+							<h1
+								id="auth-intro-title"
+								className="font-display max-w-3xl text-4xl leading-none text-foreground sm:text-5xl"
+							>
+								Sign in to the React systems lab.
 							</h1>
-							<p className="max-w-3xl text-base leading-8 text-muted-foreground sm:text-lg">
-								The app now uses Better Auth on the same `bun:sqlite` connection that already backs
-								your Drizzle data. Email/password, Google, and GitHub all land in the same account
-								system, and the customer APIs stay protected server-side.
+							<p className="max-w-2xl text-base leading-7 text-muted-foreground">
+								One private workspace for React architecture demos, protected Bun APIs, and the
+								server-backed revenue console.
 							</p>
 						</div>
 
-						<div className="grid gap-4 md:grid-cols-3">
-							<FeatureCard
+						<div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+							<TrustItem
 								icon={ShieldCheck}
-								title="Protected Bun routes"
-								detail="Revenue and autocomplete APIs require a live Better Auth session before they touch customer data."
+								title="Protected APIs"
+								detail="Customer data stays behind a live session."
 							/>
-							<FeatureCard
+							<TrustItem
 								icon={LockKeyhole}
-								title="Same SQLite file"
-								detail="Auth and application tables share the existing Bun SQLite database instead of introducing another persistence layer."
+								title="Local SQLite"
+								detail="Auth and app tables share the Bun database."
 							/>
-							<FeatureCard
+							<TrustItem
 								icon={KeyRound}
-								title="Email and oauth ready"
-								detail="Email/password, Google, and GitHub all feed the same Better Auth account and session model."
+								title="Email + OAuth"
+								detail="Use local credentials or configured providers."
 							/>
 						</div>
 					</div>
 
-					<div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
-						<div className="rounded-[1.6rem] border border-border/65 bg-card/92 p-5">
+					<div className="mt-8 grid gap-3 text-sm text-muted-foreground md:grid-cols-2">
+						<div className="rounded-lg border border-border/65 bg-background/80 p-4">
 							<p className="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
-								Flow
+								Redirect
 							</p>
-							<p className="mt-3 text-sm leading-7 text-muted-foreground">
-								After authentication, you will continue to{" "}
-								<span className="font-medium text-foreground">{nextPath}</span>. The redirect is
-								restricted to in-app paths so auth cannot be used as an open redirect.
+							<p className="mt-2 leading-6">
+								After authentication, continue to{" "}
+								<span className="font-medium text-foreground">{nextPath}</span>.
 							</p>
 						</div>
 
-						<div className="rounded-[1.6rem] border border-border/65 bg-card/92 p-5">
-							<p className="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
-								OAuth callback URLs
-							</p>
-							<div className="mt-3 space-y-3 text-sm leading-6 text-muted-foreground">
-								<p>
-									Google:{" "}
-									<code className="rounded bg-muted/60 px-2 py-1 text-xs text-foreground">
-										{appOrigin}/api/auth/callback/google
-									</code>
-								</p>
-								<p>
-									GitHub:{" "}
-									<code className="rounded bg-muted/60 px-2 py-1 text-xs text-foreground">
-										{appOrigin}/api/auth/callback/github
-									</code>
-								</p>
+						<details className="rounded-lg border border-border/65 bg-background/80 p-4">
+							<summary className="cursor-pointer text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
+								Developer setup
+							</summary>
+							<div className="mt-3 grid gap-2">
+								<div className="space-y-1 text-xs leading-5">
+									<p>
+										Google:{" "}
+										<code className="rounded bg-muted/60 px-1.5 py-0.5 text-foreground">
+											{appOrigin}/api/auth/callback/google
+										</code>
+									</p>
+									<p>
+										GitHub:{" "}
+										<code className="rounded bg-muted/60 px-1.5 py-0.5 text-foreground">
+											{appOrigin}/api/auth/callback/github
+										</code>
+									</p>
+								</div>
+								<div className="flex flex-wrap gap-2">
+									{authDocsLinks.slice(0, 2).map((link) => (
+										<Button key={link.href} variant="outline" size="sm" asChild>
+											<a href={link.href} target="_blank" rel="noreferrer">
+												{link.label}
+												<ArrowUpRight className="size-4" />
+											</a>
+										</Button>
+									))}
+								</div>
 							</div>
-						</div>
-
-						<div className="rounded-[1.6rem] border border-border/65 bg-card/92 p-5 xl:col-span-2">
-							<p className="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
-								Official docs
-							</p>
-							<div className="mt-3 grid gap-2 sm:grid-cols-2">
-								{authDocsLinks.map((link) => (
-									<Button key={link.href} variant="outline" asChild>
-										<a href={link.href} target="_blank" rel="noreferrer">
-											{link.label}
-											<ArrowUpRight className="size-4" />
-										</a>
-									</Button>
-								))}
-							</div>
-						</div>
+						</details>
 					</div>
 				</section>
 
-				<section className="flex items-center">
-					<Card className="w-full border-border/70 bg-card/94 shadow-2xl shadow-black/[0.09] backdrop-blur-xl dark:shadow-black/[0.34]">
+				<section className="order-1 flex items-center lg:order-2" aria-labelledby="auth-form-title">
+					<Card className="w-full border-border/70 bg-card/95 shadow-[0_20px_60px_-48px_rgba(15,23,42,0.42)] dark:shadow-[0_20px_60px_-48px_rgba(0,0,0,0.84)]">
 						<CardHeader className="gap-4">
-							<div className="flex flex-wrap items-center gap-2">
+							<div className="grid grid-cols-2 gap-2 rounded-lg border border-border/65 bg-muted/35 p-1">
 								<Button
 									type="button"
 									size="sm"
-									variant={mode === "sign-in" ? "default" : "outline"}
+									variant={mode === "sign-in" ? "default" : "ghost"}
 									onClick={() => setMode("sign-in")}
 								>
 									Sign in
@@ -261,22 +267,22 @@ export function AuthPage() {
 								<Button
 									type="button"
 									size="sm"
-									variant={mode === "sign-up" ? "default" : "outline"}
+									variant={mode === "sign-up" ? "default" : "ghost"}
 									onClick={() => setMode("sign-up")}
 								>
 									Create account
 								</Button>
 							</div>
 							<div className="space-y-1">
-								<CardTitle>
+								<CardTitle id="auth-form-title">
 									{mode === "sign-in"
-										? "Access the private workspace"
-										: "Create your private workspace login"}
+										? "Access your workspace"
+										: "Create a workspace login"}
 								</CardTitle>
 								<CardDescription className="leading-6">
 									{mode === "sign-in"
-										? "Use your account to unlock the protected demos and customer APIs."
-										: "Create a local account or use oauth to enter through the same Better Auth user system."}
+										? "Use email or a configured provider."
+										: "Start with email or a configured provider."}
 								</CardDescription>
 							</div>
 						</CardHeader>
@@ -317,7 +323,7 @@ export function AuthPage() {
 					</Card>
 				</section>
 			</div>
-		</div>
+		</main>
 	);
 }
 
@@ -358,7 +364,7 @@ function SocialAuthSection({
 			</div>
 
 			{!isLoading && !hasEnabledProvider ? (
-				<div className="rounded-[1.2rem] border border-border/65 bg-muted/24 p-4 text-sm leading-6 text-muted-foreground">
+				<div className="rounded-lg border border-border/65 bg-muted/24 p-4 text-sm leading-6 text-muted-foreground">
 					Social sign-in becomes available after setting the Google or GitHub oauth environment
 					variables on the server.
 				</div>
@@ -370,7 +376,7 @@ function SocialAuthSection({
 function ProviderMonogram({ label, className }: { label: string; className?: string }) {
 	return (
 		<span
-			className={`flex size-5 items-center justify-center rounded-full border border-current/15 bg-muted/40 text-[10px] font-bold ${className ?? ""}`}
+			className={`flex size-5 items-center justify-center rounded-md border border-current/15 bg-muted/40 text-[10px] font-bold ${className ?? ""}`}
 		>
 			{label}
 		</span>
@@ -593,9 +599,9 @@ function FeatureCard({
 	detail: string;
 }) {
 	return (
-		<div className="rounded-[1.6rem] border border-border/65 bg-card/94 p-5">
+		<div className="rounded-lg border border-border/65 bg-background/80 p-5">
 			<div className="flex items-start gap-3">
-				<span className="flex size-11 items-center justify-center rounded-2xl bg-primary/12 text-primary">
+				<span className="flex size-11 items-center justify-center rounded-lg bg-primary/12 text-primary">
 					<Icon className="size-5" />
 				</span>
 				<div>

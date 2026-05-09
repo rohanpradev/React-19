@@ -272,7 +272,7 @@ export function ArchitecturePlaybookPage() {
 				<div className="grid gap-4">
 					<Card className="border-border/60">
 						<CardHeader>
-							<div className="flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+							<div className="flex size-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
 								<Network className="size-5" />
 							</div>
 							<CardTitle>Frontend radar</CardTitle>
@@ -331,7 +331,7 @@ export function ArchitecturePlaybookPage() {
 						return (
 							<div key={lane.title} className="app-surface p-4">
 								<div className="flex items-start gap-3">
-									<div className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+									<div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
 										<Icon className="size-5" />
 									</div>
 									<div className="min-w-0 space-y-2">
@@ -349,7 +349,7 @@ export function ArchitecturePlaybookPage() {
 			<div className="grid gap-4 xl:grid-cols-[430px_minmax(0,1fr)]">
 				<Card className="border-border/60">
 					<CardHeader>
-						<div className="flex size-11 items-center justify-center rounded-2xl bg-accent/45 text-accent-foreground">
+						<div className="flex size-11 items-center justify-center rounded-lg bg-accent/45 text-accent-foreground">
 							<Split className="size-5" />
 						</div>
 						<CardTitle>Microfrontend decision rule</CardTitle>
@@ -385,7 +385,7 @@ export function ArchitecturePlaybookPage() {
 									<div className="flex items-start gap-3">
 										<div
 											className={cn(
-												"flex size-8 shrink-0 items-center justify-center rounded-xl text-xs font-semibold",
+												"flex size-8 shrink-0 items-center justify-center rounded-lg text-xs font-semibold",
 												index % 2 === 0
 													? "bg-primary/10 text-primary"
 													: "bg-accent/45 text-accent-foreground",
@@ -404,7 +404,7 @@ export function ArchitecturePlaybookPage() {
 
 			<Card className="border-border/60">
 				<CardHeader>
-					<div className="flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+					<div className="flex size-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
 						<GitBranch className="size-5" />
 					</div>
 					<CardTitle>Architect-level review checklist</CardTitle>
@@ -421,7 +421,7 @@ export function ArchitecturePlaybookPage() {
 						"Can the shell survive a failed remote without a blank screen?",
 						"Are a11y, focus recovery, reduced motion, and observability included?",
 					].map((item) => (
-						<div key={item} className="flex items-start gap-3 rounded-2xl bg-muted/35 p-4">
+						<div key={item} className="flex items-start gap-3 rounded-lg bg-muted/35 p-4">
 							<CheckCircle2 className="mt-0.5 size-4 shrink-0 text-success" />
 							<p className="text-sm leading-6 text-muted-foreground">{item}</p>
 						</div>

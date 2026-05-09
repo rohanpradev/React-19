@@ -58,7 +58,7 @@ function WorkspaceLayout({ session }: { session: AuthSession }) {
 	const isRoutePending = navigation.state !== "idle";
 
 	return (
-		<div className="min-h-screen w-full text-foreground">
+		<div className="min-h-screen w-full bg-background text-foreground">
 			<div
 				className={cn(
 					"fixed inset-x-0 top-0 z-50 h-0.5 origin-left bg-primary transition-transform duration-300",
@@ -69,18 +69,12 @@ function WorkspaceLayout({ session }: { session: AuthSession }) {
 				Skip to content
 			</a>
 
-			<div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-				<div className="absolute top-[-11rem] right-[-8rem] h-[34rem] w-[34rem] rounded-full bg-primary/12 blur-3xl" />
-				<div className="absolute bottom-[-14rem] left-[-10rem] h-[32rem] w-[32rem] rounded-full bg-accent/45 blur-3xl" />
-				<div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/35 to-transparent" />
-			</div>
-
 			<div className="mx-auto grid min-h-screen w-full max-w-[1680px] xl:grid-cols-[92px_minmax(0,1fr)]">
 				<aside className="hidden px-4 py-5 xl:block">
 					<div className="app-rail sticky top-5 flex h-[calc(100vh-2.5rem)] flex-col items-center p-3">
 						<NavLink
 							to="/overview"
-							className="group/nav relative flex size-[3.25rem] items-center justify-center rounded-[1.35rem] bg-foreground text-background shadow-lg shadow-black/10"
+							className="group/nav relative flex size-[3.25rem] items-center justify-center rounded-lg bg-foreground text-background shadow-lg shadow-black/10"
 							aria-label={appIdentity.title}
 						>
 							<IdentityIcon className="size-6" />
@@ -101,7 +95,7 @@ function WorkspaceLayout({ session }: { session: AuthSession }) {
 										aria-label={link.label}
 										className={({ isActive }) =>
 											cn(
-												"group/nav relative flex size-12 items-center justify-center rounded-[1.15rem] transition-all duration-200",
+												"group/nav relative flex size-12 items-center justify-center rounded-lg transition-all duration-200",
 												isActive
 													? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
 													: "text-muted-foreground hover:bg-sidebar-accent hover:text-foreground",
@@ -132,7 +126,7 @@ function WorkspaceLayout({ session }: { session: AuthSession }) {
 					<header className="app-topbar sticky top-3 z-40 p-2.5 sm:p-3">
 						<div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
 							<div className="flex min-w-0 items-center gap-3">
-								<div className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/15">
+								<div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary ring-1 ring-primary/15">
 									<ActiveIcon className="size-5" />
 								</div>
 								<div className="min-w-0">
@@ -153,14 +147,9 @@ function WorkspaceLayout({ session }: { session: AuthSession }) {
 								<UserMenu
 									session={session}
 									showDetails={false}
-									className="size-11 rounded-2xl px-0"
+									className="size-11 rounded-lg px-0"
 								/>
-								<Button
-									asChild
-									variant="ghost"
-									size="sm"
-									className="hidden rounded-xl px-3 lg:inline-flex"
-								>
+								<Button asChild variant="ghost" size="sm" className="hidden px-3 lg:inline-flex">
 									<NavLink to={nextLink.path}>
 										Next
 										<ArrowRight className="size-4" />
@@ -182,7 +171,7 @@ function WorkspaceLayout({ session }: { session: AuthSession }) {
 											to={link.path}
 											className={({ isActive }) =>
 												cn(
-													"inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-sm font-medium transition-colors",
+													"inline-flex items-center gap-2 rounded-lg border px-3.5 py-2 text-sm font-medium transition-colors",
 													isActive
 														? "border-primary bg-primary text-primary-foreground shadow-sm shadow-primary/20"
 														: "border-border/70 bg-card/80 text-muted-foreground hover:bg-muted/70 hover:text-foreground",

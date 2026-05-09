@@ -3,7 +3,7 @@ import type * as React from "react";
 import { cn } from "@/lib/utils";
 
 const alertVariants = cva(
-	"relative grid w-full items-start gap-x-3 gap-y-1 rounded-[1.25rem] border px-4 py-4 text-sm shadow-sm supports-[backdrop-filter]:backdrop-blur-sm [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-3",
+	"relative grid w-full items-start gap-x-3 gap-y-1 rounded-lg border px-4 py-4 text-sm shadow-sm [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-3",
 	{
 		variants: {
 			variant: {
