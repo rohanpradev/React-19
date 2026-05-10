@@ -54,6 +54,23 @@ The app serves the frontend and API from Bun. The default landing page is `/over
 
 Authentication is required for the workspace routes. Unauthenticated users are sent to `/auth` and then redirected back to the requested page after sign-in.
 
+## Run With Docker
+
+Create a local `.env` from `.env.example` and set a strong `BETTER_AUTH_SECRET`.
+
+```bash
+docker compose up --build
+```
+
+The app runs at `http://localhost:3000`. Compose stores SQLite data in the `app-data` volume at `/data/mydb.sqlite` inside the container, so auth and demo data survive container restarts.
+
+To build and run without Compose:
+
+```bash
+docker build -t react-systems-studio .
+docker run --rm -p 3000:3000 -e BETTER_AUTH_URL=http://localhost:3000 -e BETTER_AUTH_SECRET=replace-with-a-strong-random-secret -v react-systems-studio-data:/data react-systems-studio
+```
+
 ## Useful Scripts
 
 ```bash
@@ -102,6 +119,8 @@ The local SQLite files live in the project root:
 - `mydb.sqlite`
 - `mydb.sqlite-shm`
 - `mydb.sqlite-wal`
+
+Set `DB_FILE_NAME` to override the SQLite path. The Docker image sets it to `/data/mydb.sqlite` so the database can be backed by a Docker volume.
 
 On startup, Bun runs Drizzle migrations from `./drizzle`, seeds customer demo data when needed, and uses the same SQLite database for Better Auth tables.
 

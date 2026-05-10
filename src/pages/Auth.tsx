@@ -275,9 +275,7 @@ export function AuthPage() {
 							</div>
 							<div className="space-y-1">
 								<CardTitle id="auth-form-title">
-									{mode === "sign-in"
-										? "Access your workspace"
-										: "Create a workspace login"}
+									{mode === "sign-in" ? "Access your workspace" : "Create a workspace login"}
 								</CardTitle>
 								<CardDescription className="leading-6">
 									{mode === "sign-in"
@@ -589,7 +587,7 @@ function SignUpForm({ nextPath }: { nextPath: string }) {
 	);
 }
 
-function FeatureCard({
+function TrustItem({
 	icon: Icon,
 	title,
 	detail,
@@ -599,14 +597,14 @@ function FeatureCard({
 	detail: string;
 }) {
 	return (
-		<div className="rounded-lg border border-border/65 bg-background/80 p-5">
-			<div className="flex items-start gap-3">
-				<span className="flex size-11 items-center justify-center rounded-lg bg-primary/12 text-primary">
-					<Icon className="size-5" />
+		<div className="rounded-lg border border-border/65 bg-background/80 p-4">
+			<div className="flex items-center gap-3">
+				<span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+					<Icon className="size-4" />
 				</span>
-				<div>
-					<p className="font-medium text-foreground">{title}</p>
-					<p className="mt-2 text-sm leading-6 text-muted-foreground">{detail}</p>
+				<div className="min-w-0">
+					<p className="text-sm font-medium text-foreground">{title}</p>
+					<p className="mt-1 text-sm leading-5 text-muted-foreground">{detail}</p>
 				</div>
 			</div>
 		</div>
