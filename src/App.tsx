@@ -1,14 +1,13 @@
 import { ArrowRight, ChevronRight } from "lucide-react";
-import type { ReactNode } from "react";
-import { Navigate, NavLink, Outlet, useLocation, useNavigation } from "react-router";
-import { type AuthSession, authClient } from "@/auth/client";
+import { Navigate, NavLink, Outlet, useLoaderData, useLocation, useNavigation } from "react-router";
+import type { AuthSession } from "@/auth/client";
 import { buildAuthHref, getDefaultAuthRedirectPath, sanitizeRedirectPath } from "@/auth/redirects";
 import { AppCommandPalette } from "@/components/app-command-palette";
 import { TechLogo } from "@/components/tech-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+
 import { UserMenu } from "@/components/user-menu";
 import { appIdentity, learningStages, navItems } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
@@ -17,34 +16,30 @@ import "./index.css";
 
 export function App() {
 	const location = useLocation();
-	const { data: authSession, isPending } = authClient.useSession();
+	const { session: authSession } = useLoaderData() as { session: AuthSession | null };
 	const isAuthRoute = location.pathname === "/auth";
 	const nextPath = sanitizeRedirectPath(
 		new URLSearchParams(location.search).get("next") ?? getDefaultAuthRedirectPath(),
 	);
 	const currentPath = `${location.pathname}${location.search}${location.hash}`;
 
-	if (isPending) {
-		return <AuthLoadingScreen />;
-	}
-
+	// Redirect if not authenticated and trying to access a protected route
 	if (!authSession && !isAuthRoute) {
 		return <Navigate to={buildAuthHref(currentPath)} replace />;
 	}
 
+	// Redirect if authenticated and trying to access the auth page
 	if (authSession && isAuthRoute) {
 		return <Navigate to={nextPath} replace />;
 	}
 
+	// Render the auth page directly (no layout)
 	if (isAuthRoute) {
 		return <Outlet />;
 	}
 
-	if (!authSession) {
-		return <Navigate to={buildAuthHref(currentPath)} replace />;
-	}
-
-	return <WorkspaceLayout session={authSession} />;
+	// For all other routes, render the workspace layout (we know authSession exists here)
+	return <WorkspaceLayout session={authSession as AuthSession} />;
 }
 
 function WorkspaceLayout({ session }: { session: AuthSession }) {
@@ -194,26 +189,6 @@ function WorkspaceLayout({ session }: { session: AuthSession }) {
 			</div>
 		</div>
 	);
-}
-
-function AuthLoadingScreen() {
-	return (
-		<div className="flex min-h-screen items-center justify-center p-6">
-			<SurfaceCard>
-				<div className="space-y-3 text-center">
-					<Badge variant="secondary">Checking session</Badge>
-					<h1 className="font-display text-3xl text-foreground">Loading private workspace</h1>
-					<p className="max-w-md text-sm leading-7 text-muted-foreground">
-						Better Auth is resolving your current session before the app shell opens.
-					</p>
-				</div>
-			</SurfaceCard>
-		</div>
-	);
-}
-
-function SurfaceCard({ children }: { children: ReactNode }) {
-	return <div className="app-panel w-full max-w-xl p-8">{children}</div>;
 }
 
 export default App;

@@ -3,6 +3,7 @@ import {
 	ChartColumnIncreasing,
 	FilePenLine,
 	FlaskConical,
+	Gauge,
 	type LucideIcon,
 	Orbit,
 	PanelTopOpen,
@@ -50,6 +51,15 @@ export const navItems: [NavItem, ...NavItem[]] = [
 		stage: "platform",
 		releaseArea: "Architecture",
 		apiLabels: ["Activity", "Compiler", "Microfrontends"],
+	},
+	{
+		path: "/platform-readiness",
+		label: "Platform Readiness",
+		blurb: "Source-backed upgrade posture for React, Router, Better Auth, and Bun.",
+		icon: Gauge,
+		stage: "platform",
+		releaseArea: "Upgrade track",
+		apiLabels: ["Activity", "Data Mode", "Bun.serve", "Sessions"],
 	},
 	{
 		path: "/form-actions",
@@ -128,8 +138,8 @@ export const releaseCoverage = [
 		title: "Architecture posture",
 		status: "Senior track",
 		detail:
-			"React 19.2, Router boundaries, platform standards, and microfrontend tradeoffs are captured as decision guides.",
-		relatedPaths: ["/architecture"],
+			"React 19.2, Router boundaries, platform standards, upgrade posture, and microfrontend tradeoffs are captured as decision guides.",
+		relatedPaths: ["/architecture", "/platform-readiness"],
 	},
 	{
 		title: "use",

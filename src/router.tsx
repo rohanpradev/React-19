@@ -1,12 +1,22 @@
 import { createBrowserRouter, Navigate } from "react-router";
-
+import { authClient } from "@/auth/client";
 import { App } from "@/App";
 import { RouteErrorBoundary } from "@/components/route-error-boundary";
+
+/**
+ * Root loader to fetch the session once for the entire app.
+ * React Router 7 will execute this before rendering the route tree.
+ */
+async function rootLoader() {
+	const { data: session } = await authClient.getSession();
+	return { session };
+}
 
 export const router = createBrowserRouter([
 	{
 		path: "/",
 		Component: App,
+		loader: rootLoader,
 		errorElement: <RouteErrorBoundary />,
 		children: [
 			{
@@ -21,14 +31,17 @@ export const router = createBrowserRouter([
 				},
 			},
 			{
-				path: "react-19",
-				element: <Navigate to="/overview" replace />,
-			},
-			{
 				path: "architecture",
 				lazy: async () => {
 					const { ArchitecturePlaybookPage } = await import("@/pages/ArchitecturePlaybook");
 					return { Component: ArchitecturePlaybookPage };
+				},
+			},
+			{
+				path: "platform-readiness",
+				lazy: async () => {
+					const { PlatformReadinessPage } = await import("@/pages/PlatformReadiness");
+					return { Component: PlatformReadinessPage };
 				},
 			},
 			{

@@ -7,14 +7,17 @@ import { authProvidersResponse, requireRequestSession, unauthorizedResponse } fr
 import { autocompleteCustomers, listCustomers } from "./server/customers";
 
 initializeDatabase();
+
 const isDevelopment = process.env.NODE_ENV !== "production";
 const projectRoot = process.cwd();
 const productionDistDir = path.resolve(projectRoot, "dist");
 const productionIndexPath = path.join(productionDistDir, "index.html");
+
 const siteRoutes = [
 	"/",
 	"/overview",
 	"/architecture",
+	"/platform-readiness",
 	"/form-actions",
 	"/actions",
 	"/optimistic",
@@ -25,6 +28,7 @@ const siteRoutes = [
 	"/auth",
 ] as const;
 
+// SEO and Meta Handlers
 function createTextResponse(body: string, contentType: string) {
 	return new Response(body, {
 		headers: {
@@ -36,7 +40,6 @@ function createTextResponse(body: string, contentType: string) {
 
 function createRobotsTxt(request: Request) {
 	const origin = new URL(request.url).origin;
-
 	return createTextResponse(
 		[`User-agent: *`, `Allow: /`, `Sitemap: ${origin}/sitemap.xml`, ""].join("\n"),
 		"text/plain; charset=utf-8",
@@ -45,7 +48,6 @@ function createRobotsTxt(request: Request) {
 
 function createLlmsTxt(request: Request) {
 	const origin = new URL(request.url).origin;
-
 	return createTextResponse(
 		[
 			"# React Systems Studio",
@@ -56,6 +58,7 @@ function createLlmsTxt(request: Request) {
 			"",
 			`- [Overview](${origin}/overview): Map of the React, Router, Bun, and UI topics in this workspace.`,
 			`- [Architecture Playbook](${origin}/architecture): Senior frontend architecture and platform standards.`,
+			`- [Platform Readiness](${origin}/platform-readiness): Source-backed upgrade posture for React, React Router, Better Auth, and Bun.`,
 			`- [Revenue Ops](${origin}/revenue-ops): Server-side table state backed by Bun, Drizzle, and SQLite.`,
 			`- [Auth](${origin}/auth): Better Auth sign-in and account creation flow.`,
 			"",
@@ -86,243 +89,150 @@ ${urls}
 	);
 }
 
+type PackageManifest = {
+	dependencies?: Record<string, string>;
+	devDependencies?: Record<string, string>;
+};
+
+async function createPlatformHealthResponse() {
+	const packageJson = (await Bun.file(
+		path.join(projectRoot, "package.json"),
+	).json()) as PackageManifest;
+
+	return Response.json({
+		status: "ok",
+		runtime: {
+			bun: Bun.version,
+			mode: isDevelopment ? "development" : "production",
+		},
+		packages: {
+			react: packageJson.dependencies?.react ?? "unknown",
+			"react-router": packageJson.dependencies?.["react-router"] ?? "unknown",
+			"better-auth": packageJson.dependencies?.["better-auth"] ?? "unknown",
+			tailwindcss: packageJson.devDependencies?.tailwindcss ?? "unknown",
+			"@typescript/native-preview":
+				packageJson.devDependencies?.["@typescript/native-preview"] ?? "unknown",
+		},
+		checks: [
+			"React Router Data Mode route tree is defined outside render.",
+			"Better Auth owns server-side session checks for protected API routes.",
+			"Bun serves API routes and the React app from one runtime.",
+			"Production assets are resolved inside the dist directory before serving.",
+		],
+	});
+}
+
 function getAssetContentType(filePath: string) {
-	switch (path.extname(filePath)) {
-		case ".css":
-			return "text/css; charset=utf-8";
-		case ".html":
-			return "text/html; charset=utf-8";
-		case ".js":
-			return "text/javascript; charset=utf-8";
-		case ".json":
-			return "application/json; charset=utf-8";
-		case ".svg":
-			return "image/svg+xml; charset=utf-8";
-		case ".txt":
-			return "text/plain; charset=utf-8";
-		case ".xml":
-			return "application/xml; charset=utf-8";
-		default:
-			return "application/octet-stream";
-	}
+	const ext = path.extname(filePath);
+	const types: Record<string, string> = {
+		".css": "text/css; charset=utf-8",
+		".html": "text/html; charset=utf-8",
+		".js": "text/javascript; charset=utf-8",
+		".json": "application/json; charset=utf-8",
+		".svg": "image/svg+xml; charset=utf-8",
+		".txt": "text/plain; charset=utf-8",
+		".xml": "application/xml; charset=utf-8",
+	};
+	return types[ext] ?? "application/octet-stream";
 }
 
-function isCompressibleAsset(filePath: string) {
-	return [".css", ".html", ".js", ".json", ".svg", ".txt", ".xml"].includes(path.extname(filePath));
-}
-
-function getProductionAssetPath(request: Request) {
-	const pathname = decodeURIComponent(new URL(request.url).pathname);
-	const relativePath = pathname === "/" ? "index.html" : pathname.replace(/^\/+/, "");
-	const resolvedPath = path.resolve(productionDistDir, relativePath);
-
-	if (
-		!resolvedPath.startsWith(`${productionDistDir}${path.sep}`) &&
-		resolvedPath !== productionIndexPath
-	) {
-		return null;
-	}
-
-	return resolvedPath;
-}
-
-async function createProductionFileResponse(
-	request: Request,
-	filePath: string,
-	cacheControl: string,
-) {
-	const file = Bun.file(filePath);
-
-	if (!(await file.exists())) {
-		return null;
-	}
-
-	const headers = new Headers({
-		"cache-control": cacheControl,
-		"content-type": getAssetContentType(filePath),
-	});
-
-	if (isCompressibleAsset(filePath) && request.headers.get("accept-encoding")?.includes("gzip")) {
-		headers.set("content-encoding", "gzip");
-		headers.set("vary", "Accept-Encoding");
-		return new Response(Bun.gzipSync(new Uint8Array(await file.arrayBuffer())), { headers });
-	}
-
-	return new Response(file, { headers });
-}
-
-async function createProductionIndexResponse(request: Request) {
-	const file = Bun.file(productionIndexPath);
-
-	if (!(await file.exists())) {
-		return null;
-	}
-
-	const htmlWithPreloadedCss = (await file.text()).replace(
-		/<link rel="stylesheet" crossorigin href="([^"]+\.css)">/,
-		`<link rel="preload" as="style" crossorigin href="$1" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" crossorigin href="$1"></noscript>`,
-	);
-	const moduleScriptMatch = htmlWithPreloadedCss.match(
-		/\s*<script type="module" crossorigin src="([^"]+\.js)"><\/script>/,
-	);
-	const moduleScript = moduleScriptMatch?.[0];
-	const moduleScriptSrc = moduleScriptMatch?.[1];
-	const deferredModuleScript = moduleScriptSrc
-		? `<script>
-(() => {
-  const loadApp = () => {
-    const script = document.createElement("script");
-    script.type = "module";
-    script.crossOrigin = "anonymous";
-    script.src = ${JSON.stringify(moduleScriptSrc)};
-    document.body.appendChild(script);
-  };
-  requestAnimationFrame(() => setTimeout(loadApp, 0));
-})();
-</script>`
-		: "";
-	const html =
-		moduleScript && deferredModuleScript
-			? htmlWithPreloadedCss
-					.replace(moduleScript, "")
-					.replace("</body>", `${deferredModuleScript}\n  </body>`)
-			: htmlWithPreloadedCss;
-	const headers = new Headers({
-		"cache-control": "no-cache",
-		"content-type": "text/html; charset=utf-8",
-	});
-
-	if (request.headers.get("accept-encoding")?.includes("gzip")) {
-		headers.set("content-encoding", "gzip");
-		headers.set("vary", "Accept-Encoding");
-		return new Response(Bun.gzipSync(new TextEncoder().encode(html)), { headers });
-	}
-
-	return new Response(html, { headers });
+function isPathInside(parentPath: string, childPath: string) {
+	const relativePath = path.relative(parentPath, childPath);
+	return relativePath === "" || (!relativePath.startsWith("..") && !path.isAbsolute(relativePath));
 }
 
 async function createProductionAppResponse(request: Request) {
-	const assetPath = getProductionAssetPath(request);
+	let pathname: string;
 
-	if (assetPath && path.basename(assetPath) !== "index.html") {
-		const assetResponse = await createProductionFileResponse(
-			request,
-			assetPath,
-			"public, max-age=31536000, immutable",
-		);
+	try {
+		pathname = decodeURIComponent(new URL(request.url).pathname);
+	} catch {
+		return new Response("Bad Request", { status: 400 });
+	}
 
-		if (assetResponse) {
-			return assetResponse;
+	const relativePath = pathname === "/" ? "index.html" : pathname.replace(/^\/+/, "");
+	const resolvedPath = path.resolve(productionDistDir, relativePath);
+
+	if (!isPathInside(productionDistDir, resolvedPath)) {
+		return new Response("Not Found", { status: 404 });
+	}
+
+	const file = Bun.file(resolvedPath);
+	const exists = await file.exists();
+
+	if (!exists) {
+		const indexFile = Bun.file(productionIndexPath);
+		if (!(await indexFile.exists())) {
+			return new Response("Production build not found.", { status: 503 });
 		}
+		return new Response(indexFile, {
+			headers: {
+				"cache-control": "no-cache",
+				"content-type": "text/html; charset=utf-8",
+			},
+		});
 	}
 
-	const indexResponse = await createProductionIndexResponse(request);
+	const isDocument = resolvedPath === productionIndexPath || path.extname(resolvedPath) === ".html";
 
-	if (indexResponse) {
-		return indexResponse;
-	}
-
-	return new Response("Production build not found. Run `bun run build` first.", {
-		status: 503,
+	return new Response(file, {
 		headers: {
-			"content-type": "text/plain; charset=utf-8",
+			"cache-control": isDocument ? "no-cache" : "public, max-age=31536000, immutable",
+			"content-type": getAssetContentType(resolvedPath),
 		},
 	});
 }
 
-const appFallback = isDevelopment
-	? index
-	: {
-			GET(req: Request) {
-				return createProductionAppResponse(req);
-			},
-		};
-
 const server = serve({
 	routes: {
-		"/robots.txt": {
-			GET(req) {
-				return createRobotsTxt(req);
-			},
-		},
-		"/llms.txt": {
-			GET(req) {
-				return createLlmsTxt(req);
-			},
-		},
-		"/sitemap.xml": {
-			GET(req) {
-				return createSitemapXml(req);
-			},
-		},
+		// Static & SEO
+		"/robots.txt": createRobotsTxt,
+		"/llms.txt": createLlmsTxt,
+		"/sitemap.xml": createSitemapXml,
 
+		// Authentication (Better Auth)
 		"/api/auth": auth.handler,
 		"/api/auth/*": auth.handler,
-		"/api/auth-providers": {
-			GET() {
-				return authProvidersResponse();
-			},
-		},
+		"/api/auth-providers": authProvidersResponse,
+		"/api/platform/health": createPlatformHealthResponse,
 
+		// API Routes
 		"/api/hello": {
-			async GET(_req) {
-				return Response.json({
-					message: "Hello, world!",
-					method: "GET",
-				});
-			},
-			async PUT(_req) {
-				return Response.json({
-					message: "Hello, world!",
-					method: "PUT",
-				});
-			},
+			GET: () => Response.json({ message: "Hello from Bun!", timestamp: Date.now() }),
+			PUT: () => Response.json({ message: "Update successful" }),
+		},
+		"/api/hello/:name": (req) => {
+			return Response.json({ message: `Hello, ${req.params.name}!` });
 		},
 
-		"/api/hello/:name": async (req) => {
-			const name = req.params.name;
-			return Response.json({
-				message: `Hello, ${name}!`,
-			});
+		// Protected API Routes
+		"/api/customers": async (req) => {
+			const session = await requireRequestSession(req);
+			if (!session) return unauthorizedResponse();
+			return Response.json(listCustomers(req));
+		},
+		"/api/customers/autocomplete": async (req) => {
+			const session = await requireRequestSession(req);
+			if (!session) return unauthorizedResponse();
+			return Response.json(autocompleteCustomers(req));
 		},
 
-		"/api/customers": {
-			async GET(req) {
-				const session = await requireRequestSession(req);
-
-				if (!session) {
-					return unauthorizedResponse();
-				}
-
-				return Response.json(listCustomers(req));
-			},
-		},
-
-		"/api/customers/autocomplete": {
-			async GET(req) {
-				const session = await requireRequestSession(req);
-
-				if (!session) {
-					return unauthorizedResponse();
-				}
-
-				return Response.json(autocompleteCustomers(req));
-			},
-		},
-
-		// Serve the app shell for all unmatched routes.
-		"/*": appFallback,
+		// App Shell Fallback
+		"/*": isDevelopment ? index : createProductionAppResponse,
 	},
 
 	development: isDevelopment
 		? {
-				// Enable browser hot reloading in development
 				hmr: true,
-
-				// Echo console logs from the browser to the server
 				console: true,
 			}
 		: false,
+
+	// Global error handling and logging
+	error(error) {
+		console.error("Server Error:", error);
+		return new Response("Internal Server Error", { status: 500 });
+	},
 });
 
-console.log(`Server running at ${server.url}`);
+console.log(`Server ready at ${server.url}`);

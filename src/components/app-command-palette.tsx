@@ -9,8 +9,10 @@ import {
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { themePresetOptions, useTheme } from "@/components/theme-provider";
+import { TechLogo } from "@/components/tech-logo";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+
 import {
 	CommandDialog,
 	CommandEmpty,
@@ -22,77 +24,8 @@ import {
 	CommandShortcut,
 } from "@/components/ui/command";
 import { learningStages, navItems } from "@/lib/navigation";
+import { officialDocLinks } from "@/lib/official-docs";
 import { cn } from "@/lib/utils";
-
-type DocsLink = {
-	label: string;
-	description: string;
-	href: string;
-	keywords: string[];
-};
-
-const docsLinks: DocsLink[] = [
-	{
-		label: "React 19.2 release",
-		description: "Activity, Effect Events, cacheSignal, performance tracks, and SSR updates.",
-		href: "https://react.dev/blog/2025/10/01/react-19-2",
-		keywords: ["react", "19.2", "activity", "effect event", "cache signal"],
-	},
-	{
-		label: "React Compiler",
-		description: "Compiler adoption, memoization strategy, and troubleshooting.",
-		href: "https://react.dev/learn/react-compiler",
-		keywords: ["react", "compiler", "memo", "performance"],
-	},
-	{
-		label: "React Router data routing",
-		description: "Route objects, nested layouts, loaders, actions, and route boundaries.",
-		href: "https://reactrouter.com/start/data/routing",
-		keywords: ["react router", "routing", "loader", "actions", "layouts"],
-	},
-	{
-		label: "Module Federation",
-		description: "Runtime sharing and microfrontend platform concepts.",
-		href: "https://module-federation.io/guide/start/",
-		keywords: ["microfrontend", "module federation", "remote", "host"],
-	},
-	{
-		label: "shadcn Command",
-		description: "Command palette patterns built on cmdk.",
-		href: "https://ui.shadcn.com/docs/components/command",
-		keywords: ["shadcn", "command", "palette", "cmdk"],
-	},
-	{
-		label: "shadcn Tailwind v4",
-		description: "React 19 and Tailwind v4 alignment notes.",
-		href: "https://ui.shadcn.com/docs/tailwind-v4",
-		keywords: ["shadcn", "tailwind", "v4", "react 19"],
-	},
-	{
-		label: "Bun fullstack server",
-		description: "HTML imports, routes, and production bundling.",
-		href: "https://bun.sh/docs/bundler/fullstack",
-		keywords: ["bun", "serve", "routes", "html imports"],
-	},
-	{
-		label: "Better Auth Bun SQLite",
-		description: "Official Bun built-in SQLite adapter guidance.",
-		href: "https://better-auth.com/docs/adapters/sqlite#bun-built-in-sqlite",
-		keywords: ["better auth", "bun", "sqlite", "auth"],
-	},
-	{
-		label: "Better Auth Google",
-		description: "Official Google OAuth provider setup.",
-		href: "https://better-auth.com/docs/authentication/google",
-		keywords: ["better auth", "google", "oauth", "auth"],
-	},
-	{
-		label: "Better Auth GitHub",
-		description: "Official GitHub OAuth provider setup.",
-		href: "https://better-auth.com/docs/authentication/github",
-		keywords: ["better auth", "github", "oauth", "auth"],
-	},
-];
 
 export function AppCommandPalette({ buttonClassName }: { buttonClassName?: string }) {
 	const [open, setOpen] = useState(false);
@@ -186,7 +119,7 @@ export function AppCommandPalette({ buttonClassName }: { buttonClassName?: strin
 					<CommandSeparator />
 
 					<CommandGroup heading="Official Docs">
-						{docsLinks.map((link) => (
+						{officialDocLinks.map((link) => (
 							<CommandItem
 								key={link.href}
 								keywords={link.keywords}
@@ -198,7 +131,11 @@ export function AppCommandPalette({ buttonClassName }: { buttonClassName?: strin
 								className="items-start gap-3 py-3"
 							>
 								<div className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent/40 text-accent-foreground">
-									<BookOpenText className="size-5" />
+									{link.logo ? (
+										<TechLogo name={link.logo} className="size-5" />
+									) : (
+										<BookOpenText className="size-5" />
+									)}
 								</div>
 								<div className="min-w-0 flex-1 space-y-1">
 									<p className="font-medium">{link.label}</p>

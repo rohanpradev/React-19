@@ -229,7 +229,10 @@ export function ArchitecturePlaybookPage() {
 				<TechPill name="react" />
 				<TechPill name="react-router" />
 				<TechPill name="typescript" />
+				<TechPill name="better-auth" />
 				<TechPill name="tanstack" />
+				<TechPill name="drizzle" />
+				<TechPill name="sqlite" />
 				<TechPill name="shadcn" />
 				<TechPill name="bun" />
 			</div>

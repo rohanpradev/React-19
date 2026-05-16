@@ -39,6 +39,7 @@ export function listCustomers(request: Request): CustomerListResponse {
 		status,
 		plan,
 	});
+
 	const totalRows = Number(
 		db.select({ value: count() }).from(customersTable).where(whereClause).get()?.value ?? 0,
 	);
@@ -152,12 +153,14 @@ export function autocompleteCustomers(request: Request): CustomerAutocompleteRes
 	const total = Number(
 		db.select({ value: count() }).from(customersTable).where(whereClause).get()?.value ?? 0,
 	);
+
 	const relevanceRank = sql<number>`case
 		when ${customersTable.name} like ${prefixPattern} then 0
 		when ${customersTable.company} like ${prefixPattern} then 1
 		when ${customersTable.email} like ${prefixPattern} then 2
 		else 3
 	end`;
+
 	const items = db
 		.select({
 			id: customersTable.id,

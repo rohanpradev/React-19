@@ -5,6 +5,7 @@ import { useNavigate, useSearchParams } from "react-router";
 import { authClient } from "@/auth/client";
 import { getDefaultAuthRedirectPath, sanitizeRedirectPath } from "@/auth/redirects";
 import type { SocialProviderAvailability, SocialProviderId } from "@/auth/social-providers";
+import { TechLogo } from "@/components/tech-logo";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -224,20 +225,26 @@ export function AuthPage() {
 							</summary>
 							<div className="mt-3 grid gap-2">
 								<div className="space-y-1 text-xs leading-5">
-									<p>
-										Google:{" "}
-										<code className="rounded bg-muted/60 px-1.5 py-0.5 text-foreground">
-											{appOrigin}/api/auth/callback/google
-										</code>
-									</p>
-									<p>
-										GitHub:{" "}
-										<code className="rounded bg-muted/60 px-1.5 py-0.5 text-foreground">
-											{appOrigin}/api/auth/callback/github
-										</code>
-									</p>
+									<div className="flex items-center gap-2">
+										<TechLogo name="google" className="size-3.5" />
+										<p>
+											Google:{" "}
+											<code className="rounded bg-muted/60 px-1.5 py-0.5 text-foreground">
+												{appOrigin}/api/auth/callback/google
+											</code>
+										</p>
+									</div>
+									<div className="flex items-center gap-2">
+										<TechLogo name="github" className="size-3.5" />
+										<p>
+											GitHub:{" "}
+											<code className="rounded bg-muted/60 px-1.5 py-0.5 text-foreground">
+												{appOrigin}/api/auth/callback/github
+											</code>
+										</p>
+									</div>
 								</div>
-								<div className="flex flex-wrap gap-2">
+								<div className="flex flex-wrap gap-2 pt-1">
 									{authDocsLinks.slice(0, 2).map((link) => (
 										<Button key={link.href} variant="outline" size="sm" asChild>
 											<a href={link.href} target="_blank" rel="noreferrer">
@@ -348,7 +355,7 @@ function SocialAuthSection({
 					isLoading={isLoading}
 					isPending={activeProvider === "google"}
 					onClick={onContinue}
-					icon={<ProviderMonogram label="G" className="text-[#ea4335]" />}
+					icon={<TechLogo name="google" className="size-5" />}
 				/>
 				<SocialButton
 					provider="github"
@@ -357,7 +364,7 @@ function SocialAuthSection({
 					isLoading={isLoading}
 					isPending={activeProvider === "github"}
 					onClick={onContinue}
-					icon={<ProviderMonogram label="GH" />}
+					icon={<TechLogo name="github" className="size-5" />}
 				/>
 			</div>
 
@@ -368,16 +375,6 @@ function SocialAuthSection({
 				</div>
 			) : null}
 		</div>
-	);
-}
-
-function ProviderMonogram({ label, className }: { label: string; className?: string }) {
-	return (
-		<span
-			className={`flex size-5 items-center justify-center rounded-md border border-current/15 bg-muted/40 text-[10px] font-bold ${className ?? ""}`}
-		>
-			{label}
-		</span>
 	);
 }
 

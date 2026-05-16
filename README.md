@@ -1,16 +1,17 @@
 # React Systems Studio
 
-A Bun-powered frontend systems workspace for current React, React Router Data Mode, shadcn-style UI, and full-stack learning patterns.
+A Bun-powered frontend systems workspace for current React, React Router Data Mode, shadcn-style UI, Better Auth, and full-stack Bun learning patterns.
 
 The app is intentionally compact: each route explains one advanced frontend idea with focused examples instead of long reference text. It is built to be useful for architects and senior frontend engineers evaluating modern React patterns, routing boundaries, state transitions, UI architecture, and Bun-backed data flows.
 
 ## What This Covers
 
 - React 19.2 patterns: Actions, `useActionState`, `useFormStatus`, `useOptimistic`, `use`, Suspense, ref cleanup, document metadata, custom elements, and `useDeferredValue`.
-- React Router 7 Data Mode: `createBrowserRouter`, route objects, lazy route modules, redirects, route-level error handling, and an auth-aware app shell.
+- React Router 7 Data Mode: `createBrowserRouter`, route objects, lazy route modules, redirects, route-level error handling, auth-aware app shell behavior, and a documented Data Mode vs Framework Mode decision.
 - Frontend architecture: app shell design, progressive route loading, server state boundaries, optimistic mutations, microfrontend tradeoffs, platform APIs, and UI system decisions.
-- Full-stack Bun: one Bun server for HTML import frontend delivery, API routes, Better Auth, Drizzle ORM, SQLite, and server-side TanStack Table state.
+- Full-stack Bun: one Bun server for HTML import frontend delivery, API routes, Better Auth, Drizzle ORM, SQLite, health checks, and server-side TanStack Table state.
 - Developer workflow: TypeScript 7 native preview through `tsgo`, Biome 2 formatting/lint/assist rules, Zed project settings, and a Bun build pipeline.
+- Source-backed learning: official React, React Router, Better Auth, Bun, shadcn, and Module Federation docs are linked from the app and command palette.
 
 ## Stack
 
@@ -32,6 +33,7 @@ The app is intentionally compact: each route explains one advanced frontend idea
 | --- | --- |
 | `/overview` | Compact map of the React, Bun, routing, UI, and tooling coverage |
 | `/architecture` | Senior frontend architecture notes, React 19.2 posture, router boundaries, and microfrontend decisions |
+| `/platform-readiness` | Experienced upgrade track for React 19.2, React Router 7.15.1 modes, Better Auth sessions, and Bun delivery |
 | `/form-actions` | Form mutations with `useActionState`, `useFormStatus`, pending states, and returned state |
 | `/actions` | Async Actions shaped with `startTransition` and clear mutation feedback |
 | `/optimistic` | `useOptimistic` with fast UI updates, success paths, and rollback handling |
@@ -41,7 +43,7 @@ The app is intentionally compact: each route explains one advanced frontend idea
 | `/revenue-ops` | Server-side TanStack Table state backed by Bun, Drizzle, and SQLite |
 | `/auth` | Better Auth sign-in and account creation |
 
-The previous `/react-19` route redirects to `/overview`.
+Unknown app routes redirect to `/overview`.
 
 ## Run Locally
 
@@ -112,6 +114,7 @@ Notable API routes:
 
 - `/api/customers` returns the server-side table payload.
 - `/api/customers/autocomplete` returns lightweight customer search suggestions.
+- `/api/platform/health` returns runtime/package versions and project readiness checks.
 - `/api/auth/*` handles Better Auth session and email/password endpoints.
 
 The local SQLite files live in the project root:
@@ -132,10 +135,13 @@ Recommended production environment variables:
 
 - `BETTER_AUTH_SECRET`
 - `BETTER_AUTH_URL`
+- `BETTER_AUTH_TRUSTED_ORIGINS`
 - `GOOGLE_CLIENT_ID`
 - `GOOGLE_CLIENT_SECRET`
 - `GITHUB_CLIENT_ID`
 - `GITHUB_CLIENT_SECRET`
+
+Better Auth is configured with server-side session reads, a 10-minute session freshness window for sensitive operations, compact cookie session caching, explicit trusted origins, and built-in rate limiting for auth endpoints.
 
 OAuth redirect URLs:
 

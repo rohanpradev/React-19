@@ -9,7 +9,6 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router/dom";
 import { ThemeProvider } from "@/components/theme-provider";
-import { router } from "@/router";
 
 const elem = document.getElementById("root");
 
@@ -18,20 +17,23 @@ if (!elem) {
 }
 
 const rootElement = elem;
-const app = (
-	<StrictMode>
-		<ThemeProvider>
-			<RouterProvider router={router} />
-		</ThemeProvider>
-	</StrictMode>
-);
 
-function renderApp() {
+async function renderApp() {
+	const { router } = await import("./router");
+	const app = (
+		<StrictMode>
+			<ThemeProvider>
+				<RouterProvider router={router} />
+			</ThemeProvider>
+		</StrictMode>
+	);
+
 	if (import.meta.hot) {
 		// With hot module reloading, `import.meta.hot.data` is persisted.
-		const existingRoot = import.meta.hot.data.root;
-		const root = existingRoot ?? createRoot(rootElement);
-		import.meta.hot.data.root = root;
+		if (!import.meta.hot.data.root) {
+			import.meta.hot.data.root = createRoot(rootElement);
+		}
+		const root = import.meta.hot.data.root;
 		root.render(app);
 		return;
 	}
@@ -40,4 +42,4 @@ function renderApp() {
 	createRoot(rootElement).render(app);
 }
 
-renderApp();
+void renderApp();

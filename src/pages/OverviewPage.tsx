@@ -12,11 +12,13 @@ import {
 	Workflow,
 } from "lucide-react";
 import { NavLink } from "react-router";
-import { TechLogo, TechPill } from "@/components/tech-logo";
+import { TechLogo, type TechLogoName, TechPill } from "@/components/tech-logo";
 import { Badge } from "@/components/ui/badge";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { learningStages, navItems } from "@/lib/navigation";
+import { officialDocLinks } from "@/lib/official-docs";
 
 const learningRoutes = navItems.filter((item) => item.path !== "/overview");
 
@@ -48,7 +50,7 @@ const systemCards = [
 		description: "Data-router route objects, lazy boundaries, redirects, and error surfaces.",
 		icon: Route,
 		logo: "react-router",
-		href: "/architecture",
+		href: "/platform-readiness",
 	},
 	{
 		title: "Bun data layer",
@@ -57,36 +59,26 @@ const systemCards = [
 		logo: "bun",
 		href: "/revenue-ops",
 	},
+	{
+		title: "Platform readiness",
+		description: "Source-backed upgrade posture for React, Router, Better Auth, and Bun.",
+		icon: ShieldCheck,
+		logo: "better-auth",
+		href: "/platform-readiness",
+	},
 ] as const satisfies {
 	title: string;
 	description: string;
 	icon: LucideIcon;
-	logo: "react" | "react-router" | "bun";
+	logo: "react" | "react-router" | "bun" | "better-auth";
 	href: string;
 }[];
 
-const docsLinks = [
-	{
-		label: "React 19.2",
-		href: "https://react.dev/blog/2025/10/01/react-19-2",
-		logo: "react",
-	},
-	{
-		label: "React Router",
-		href: "https://reactrouter.com/start/data/routing",
-		logo: "react-router",
-	},
-	{
-		label: "shadcn/ui",
-		href: "https://ui.shadcn.com/docs/theming",
-		logo: "shadcn",
-	},
-	{
-		label: "Bun full-stack",
-		href: "https://bun.sh/docs/bundler/fullstack",
-		logo: "bun",
-	},
-] as const;
+const docsLinks = officialDocLinks.filter((doc) =>
+	["React 19.2 release", "React Router modes", "Bun full-stack", "Better Auth sessions"].includes(
+		doc.label,
+	),
+);
 
 export function OverviewPage() {
 	return (
@@ -128,7 +120,10 @@ export function OverviewPage() {
 							<TechPill name="react" />
 							<TechPill name="react-router" />
 							<TechPill name="bun" />
-							<TechPill name="shadcn" />
+							<TechPill name="better-auth" />
+							<TechPill name="tanstack" />
+							<TechPill name="drizzle" />
+							<TechPill name="sqlite" />
 							<TechPill name="typescript" />
 						</div>
 					</div>
@@ -151,25 +146,28 @@ export function OverviewPage() {
 								["react", "React UI"],
 								["react-router", "Router"],
 								["bun", "Runtime"],
-								["shadcn", "UI system"],
+								["better-auth", "Auth"],
+								["drizzle", "ORM"],
+								["sqlite", "Database"],
 							].map(([logo, label]) => (
 								<div key={label} className="rounded-lg border border-border/55 bg-muted/35 p-3">
-									<TechLogo
-										name={logo as "react" | "react-router" | "bun" | "shadcn"}
-										className="size-5"
-									/>
+									<TechLogo name={logo as TechLogoName} className="size-5" />
 									<p className="mt-3 text-sm font-medium">{label}</p>
 								</div>
 							))}
 						</div>
 
-						<div className="mt-4 rounded-lg bg-foreground p-4 text-background">
-							<div className="flex items-center gap-2 text-xs font-semibold tracking-[0.16em] uppercase opacity-70">
+						<div className="mt-4 rounded-lg border border-success/25 bg-success/10 p-4 text-foreground">
+							<div className="flex items-center gap-2 text-xs font-semibold tracking-[0.16em] text-success uppercase">
 								<CheckCircle2 className="size-4" />
 								Validated workflow
 							</div>
-							<p className="mt-3 text-sm leading-6 opacity-85">
-								Biome, tsgo, and Bun build run together through `bun run validate`.
+							<p className="mt-3 text-sm leading-6 text-muted-foreground">
+								Biome, tsgo, and Bun build run together through{" "}
+								<code className="rounded-md border border-border/60 bg-background/70 px-1.5 py-0.5 text-foreground">
+									bun run validate
+								</code>
+								.
 							</p>
 						</div>
 					</div>
@@ -269,7 +267,11 @@ export function OverviewPage() {
 							className="group flex items-center justify-between gap-3 rounded-lg border border-border/60 bg-muted/35 p-3 transition-colors hover:bg-muted/60"
 						>
 							<span className="flex min-w-0 items-center gap-3">
-								<TechLogo name={doc.logo} className="size-5" />
+								{doc.logo ? (
+									<TechLogo name={doc.logo} className="size-5" />
+								) : (
+									<BookOpenText className="size-5" />
+								)}
 								<span className="truncate text-sm font-medium">{doc.label}</span>
 							</span>
 							<ArrowUpRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
