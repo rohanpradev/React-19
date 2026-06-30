@@ -1,3 +1,5 @@
+import { NavLink } from "react-router";
+
 import {
 	ArrowRight,
 	ArrowUpRight,
@@ -11,10 +13,9 @@ import {
 	Sparkles,
 	Workflow,
 } from "lucide-react";
-import { NavLink } from "react-router";
+
 import { TechLogo, type TechLogoName, TechPill } from "@/components/tech-logo";
 import { Badge } from "@/components/ui/badge";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { learningStages, navItems } from "@/lib/navigation";
@@ -75,9 +76,13 @@ const systemCards = [
 }[];
 
 const docsLinks = officialDocLinks.filter((doc) =>
-	["React 19.2 release", "React Router modes", "Bun full-stack", "Better Auth sessions"].includes(
-		doc.label,
-	),
+	[
+		"React versions",
+		"React 19.2 release",
+		"React Router modes",
+		"Bun full-stack",
+		"Better Auth sessions",
+	].includes(doc.label),
 );
 
 export function OverviewPage() {
@@ -257,7 +262,7 @@ export function OverviewPage() {
 						<BookOpenText className="size-5" />
 					</div>
 				</CardHeader>
-				<CardContent className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+				<CardContent className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
 					{docsLinks.map((doc) => (
 						<a
 							key={doc.href}

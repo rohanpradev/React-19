@@ -1,6 +1,8 @@
-import { Loader2, LogOut, ShieldCheck } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { NavLink, useNavigate } from "react-router";
+
+import { Loader2, LogOut, ShieldCheck } from "lucide-react";
+
 import { type AuthSession, authClient } from "@/auth/client";
 import { buildAuthHref } from "@/auth/redirects";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +15,9 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { accountNavItem } from "@/lib/navigation";
+
+const AccountIcon = accountNavItem.icon;
 
 export function UserMenu({
 	session,
@@ -73,6 +78,13 @@ export function UserMenu({
 						Private workspace
 					</Badge>
 				</div>
+				<DropdownMenuItem asChild>
+					<NavLink to={accountNavItem.path}>
+						<AccountIcon className="size-4" />
+						{accountNavItem.label}
+					</NavLink>
+				</DropdownMenuItem>
+				<DropdownMenuSeparator />
 				<DropdownMenuItem
 					onSelect={(event) => {
 						event.preventDefault();

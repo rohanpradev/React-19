@@ -1,6 +1,8 @@
-import { CheckCircle2, CircleAlert, Info } from "lucide-react";
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
+
+import { CheckCircle2, CircleAlert, Info } from "lucide-react";
+
 import { FeatureIntro } from "@/components/feature-intro";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";

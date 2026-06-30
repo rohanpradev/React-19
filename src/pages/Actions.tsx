@@ -1,5 +1,7 @@
-import { CircleAlert, Info } from "lucide-react";
 import { useState, useTransition } from "react";
+
+import { CircleAlert, Info } from "lucide-react";
+
 import { FeatureIntro } from "@/components/feature-intro";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";

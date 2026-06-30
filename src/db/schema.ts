@@ -1,4 +1,5 @@
 import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+
 import { customerPlans, customerStatuses } from "@/lib/customer-table";
 
 export * from "@/db/auth-schema";

@@ -5,12 +5,12 @@ import {
 	CheckCircle2,
 	Gauge,
 	GitBranch,
+	type LucideIcon,
 	Network,
 	Route,
 	ShieldCheck,
 	Split,
 	Waypoints,
-	type LucideIcon,
 } from "lucide-react";
 
 import { FeatureIntro } from "@/components/feature-intro";
@@ -176,8 +176,16 @@ const frontendRadar = [
 
 const docs = [
 	{
+		label: "React versions",
+		href: "https://react.dev/versions",
+	},
+	{
 		label: "React 19.2",
 		href: "https://react.dev/blog/2025/10/01/react-19-2",
+	},
+	{
+		label: "React useEffectEvent",
+		href: "https://react.dev/reference/react/useEffectEvent",
 	},
 	{
 		label: "React Compiler",
@@ -222,7 +230,7 @@ export function ArchitecturePlaybookPage() {
 						detail: "Runtime federation is framed as an operating model, not just a bundler trick.",
 					},
 				]}
-				links={docs.slice(0, 3)}
+				links={docs.slice(0, 4)}
 			/>
 
 			<div className="flex flex-wrap gap-2">

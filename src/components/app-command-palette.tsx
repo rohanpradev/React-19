@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router";
+
 import {
 	ArrowUpRight,
 	BookOpenText,
@@ -6,13 +9,11 @@ import {
 	SearchIcon,
 	SunMedium,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router";
-import { themePresetOptions, useTheme } from "@/components/theme-provider";
+
 import { TechLogo } from "@/components/tech-logo";
+import { themePresetOptions, useTheme } from "@/components/theme-provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
 import {
 	CommandDialog,
 	CommandEmpty,
@@ -23,7 +24,7 @@ import {
 	CommandSeparator,
 	CommandShortcut,
 } from "@/components/ui/command";
-import { learningStages, navItems } from "@/lib/navigation";
+import { learningStages, navItems, workspaceNavItems } from "@/lib/navigation";
 import { officialDocLinks } from "@/lib/official-docs";
 import { cn } from "@/lib/utils";
 
@@ -75,6 +76,40 @@ export function AppCommandPalette({ buttonClassName }: { buttonClassName?: strin
 				<CommandInput placeholder="Search routes, APIs, docs, or quick actions..." />
 				<CommandList className="max-h-[480px]">
 					<CommandEmpty>No matching pages or docs.</CommandEmpty>
+
+					<CommandGroup heading="Workspace">
+						{workspaceNavItems.map((item) => {
+							const Icon = item.icon;
+							const isActive = item.path === location.pathname;
+
+							return (
+								<CommandItem
+									key={item.path}
+									keywords={[item.releaseArea, ...item.apiLabels]}
+									value={`${item.label} ${item.blurb} ${item.releaseArea} ${item.apiLabels.join(" ")}`}
+									onSelect={() => {
+										navigate(item.path);
+										setOpen(false);
+									}}
+									className="items-start gap-3 py-3"
+								>
+									<div className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+										<Icon className="size-5" />
+									</div>
+									<div className="min-w-0 flex-1 space-y-1">
+										<div className="flex flex-wrap items-center gap-2">
+											<p className="font-medium">{item.label}</p>
+											{isActive ? <Badge variant="secondary">Current</Badge> : null}
+										</div>
+										<p className="text-sm leading-5 text-muted-foreground">{item.blurb}</p>
+									</div>
+									<CommandShortcut>Private workspace</CommandShortcut>
+								</CommandItem>
+							);
+						})}
+					</CommandGroup>
+
+					<CommandSeparator />
 
 					<CommandGroup heading="Learning Routes">
 						{navItems.map((item) => {

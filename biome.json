@@ -55,7 +55,7 @@
 			"react": "recommended"
 		},
 		"rules": {
-			"recommended": true,
+			"preset": "recommended",
 			"correctness": {
 				"noUndeclaredDependencies": "error",
 				"noUnusedImports": "error"
@@ -92,9 +92,10 @@
 		"enabled": true,
 		"includes": ["src/**", "styles/**", "build.ts", "drizzle.config.ts", ".zed/**"],
 		"actions": {
-			"recommended": true,
+			"preset": "recommended",
 			"source": {
 				"organizeImports": {
+					"level": "on",
 					"options": {
 						"groups": [
 							[":BUN:", ":NODE:"],

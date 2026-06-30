@@ -1,7 +1,9 @@
-import { ArrowUpRight, KeyRound, Loader2, LockKeyhole, ShieldCheck } from "lucide-react";
 import type { ReactNode } from "react";
 import { useActionState, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
+
+import { ArrowUpRight, KeyRound, Loader2, LockKeyhole, ShieldCheck } from "lucide-react";
+
 import { authClient } from "@/auth/client";
 import { getDefaultAuthRedirectPath, sanitizeRedirectPath } from "@/auth/redirects";
 import type { SocialProviderAvailability, SocialProviderId } from "@/auth/social-providers";

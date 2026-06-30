@@ -1,6 +1,8 @@
-import { serve } from "bun";
 import path from "node:path";
+import { serve } from "bun";
+
 import { auth } from "@/auth/server";
+
 import { initializeDatabase } from "./db/init";
 import index from "./index.html";
 import { authProvidersResponse, requireRequestSession, unauthorizedResponse } from "./server/auth";
@@ -25,6 +27,7 @@ const siteRoutes = [
 	"/dom-interop",
 	"/search-debounce",
 	"/revenue-ops",
+	"/account",
 	"/auth",
 ] as const;
 
@@ -60,6 +63,7 @@ function createLlmsTxt(request: Request) {
 			`- [Architecture Playbook](${origin}/architecture): Senior frontend architecture and platform standards.`,
 			`- [Platform Readiness](${origin}/platform-readiness): Source-backed upgrade posture for React, React Router, Better Auth, and Bun.`,
 			`- [Revenue Ops](${origin}/revenue-ops): Server-side table state backed by Bun, Drizzle, and SQLite.`,
+			`- [Account](${origin}/account): Better Auth profile, password, and session management.`,
 			`- [Auth](${origin}/auth): Better Auth sign-in and account creation flow.`,
 			"",
 		].join("\n"),

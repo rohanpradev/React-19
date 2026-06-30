@@ -2,6 +2,7 @@
 import { existsSync } from "node:fs";
 import { rm } from "node:fs/promises";
 import path from "node:path";
+
 import plugin from "bun-plugin-tailwind";
 
 type CliConfig = Partial<Bun.BuildConfig> & Record<string, unknown>;

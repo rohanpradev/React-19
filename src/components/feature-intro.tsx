@@ -1,4 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -39,7 +40,7 @@ export function FeatureIntro({ eyebrow, title, summary, points, links = [] }: Fe
 
 				{links.length > 0 ? (
 					<div className="flex flex-wrap gap-2 lg:justify-end">
-						{links.slice(0, 3).map((link) => (
+						{links.slice(0, 4).map((link) => (
 							<Button
 								key={link.href}
 								variant="outline"

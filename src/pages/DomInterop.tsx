@@ -1,4 +1,3 @@
-import { Blocks, FileText, Focus, type LucideIcon, Radar } from "lucide-react";
 import {
 	type ComponentPropsWithoutRef,
 	createElement,
@@ -7,6 +6,9 @@ import {
 	useRef,
 	useState,
 } from "react";
+
+import { Blocks, FileText, Focus, type LucideIcon, Radar } from "lucide-react";
+
 import { CodeBlock } from "@/components/code-block";
 import { FeatureIntro } from "@/components/feature-intro";
 import { Badge } from "@/components/ui/badge";

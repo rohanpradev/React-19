@@ -1,6 +1,9 @@
+import { Activity as ReactActivity, useCallback, useEffect, useMemo, useState } from "react";
+
 import {
 	Activity,
 	ArrowUpRight,
+	BookOpenText,
 	CheckCircle2,
 	Database,
 	Gauge,
@@ -11,13 +14,18 @@ import {
 	ShieldCheck,
 	Workflow,
 } from "lucide-react";
-import { Activity as ReactActivity, useCallback, useEffect, useMemo, useState } from "react";
+
 import { FeatureIntro } from "@/components/feature-intro";
 import { TechLogo, type TechLogoName, TechPill } from "@/components/tech-logo";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { getOfficialDocsByArea, officialDocLinks } from "@/lib/official-docs";
+import {
+	docsLastCheckedLabel,
+	docsPosture,
+	getOfficialDocsByArea,
+	officialDocLinks,
+} from "@/lib/official-docs";
 
 type ActivityLog = {
 	id: number;
@@ -127,6 +135,8 @@ const docAreas = [
 	{ area: "router", label: "React Router" },
 	{ area: "auth", label: "Better Auth" },
 	{ area: "bun", label: "Bun" },
+	{ area: "ui", label: "UI System" },
+	{ area: "platform", label: "Platform" },
 ] as const;
 
 function ActivityPreview({ onLifecycle }: { onLifecycle: (event: string) => void }) {
@@ -167,8 +177,8 @@ export function PlatformReadinessPage() {
 		() =>
 			officialDocLinks.filter((doc) =>
 				[
-					"React 19.2 release",
-					"React Router modes",
+					"React versions",
+					"React Router v8 upgrade",
 					"Better Auth sessions",
 					"Bun full-stack",
 				].includes(doc.label),
@@ -213,6 +223,35 @@ export function PlatformReadinessPage() {
 				<TechPill name="sqlite" />
 				<TechPill name="typescript" />
 			</div>
+
+			<Card className="border-border/60">
+				<CardHeader>
+					<div className="flex items-start justify-between gap-3">
+						<div>
+							<div className="flex flex-wrap items-center gap-2">
+								<Badge variant="secondary">Docs freshness</Badge>
+								<Badge variant="outline">Checked {docsLastCheckedLabel}</Badge>
+							</div>
+							<CardTitle className="mt-3">Latest-doc posture</CardTitle>
+							<CardDescription>
+								Version and docs claims are explicit so future upgrades have a review target.
+							</CardDescription>
+						</div>
+						<div className="hidden size-11 items-center justify-center rounded-lg bg-accent/45 text-accent-foreground sm:flex">
+							<BookOpenText className="size-5" />
+						</div>
+					</div>
+				</CardHeader>
+				<CardContent className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+					{docsPosture.map((item) => (
+						<div key={item.title} className="app-muted-surface p-4">
+							<Badge variant="outline">{item.status}</Badge>
+							<p className="mt-3 font-semibold text-foreground">{item.title}</p>
+							<p className="mt-2 text-sm leading-6 text-muted-foreground">{item.detail}</p>
+						</div>
+					))}
+				</CardContent>
+			</Card>
 
 			<div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
 				{platformSignals.map((signal) => {
@@ -306,7 +345,8 @@ export function PlatformReadinessPage() {
 						</div>
 						<CardTitle>React Router mode decision</CardTitle>
 						<CardDescription>
-							React Router 7.15.1 has three modes. This project deliberately lives in Data Mode.
+							React Router 8.1.0 documents three modes. This project deliberately lives in Data
+							Mode.
 						</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-3">
@@ -375,13 +415,13 @@ export function PlatformReadinessPage() {
 						</div>
 					</div>
 				</CardHeader>
-				<CardContent className="grid gap-4 lg:grid-cols-4">
+				<CardContent className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
 					{docAreas.map((group) => (
 						<div key={group.area} className="app-muted-surface p-4">
 							<p className="font-semibold text-foreground">{group.label}</p>
 							<div className="mt-3 space-y-2">
 								{getOfficialDocsByArea(group.area)
-									.slice(0, 4)
+									.slice(0, 5)
 									.map((doc) => (
 										<a
 											key={doc.href}

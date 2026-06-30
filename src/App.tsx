@@ -1,35 +1,61 @@
-import { ArrowRight, ChevronRight } from "lucide-react";
 import { Navigate, NavLink, Outlet, useLoaderData, useLocation, useNavigation } from "react-router";
-import type { AuthSession } from "@/auth/client";
+
+import { ArrowRight, Check, ChevronDown, ChevronRight } from "lucide-react";
+
+import { type AuthSession, authClient } from "@/auth/client";
 import { buildAuthHref, getDefaultAuthRedirectPath, sanitizeRedirectPath } from "@/auth/redirects";
 import { AppCommandPalette } from "@/components/app-command-palette";
 import { TechLogo } from "@/components/tech-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuGroup,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { UserMenu } from "@/components/user-menu";
-import { appIdentity, learningStages, navItems } from "@/lib/navigation";
+import {
+	accountNavItem,
+	appIdentity,
+	learningStages,
+	type NavItem,
+	navItems,
+} from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 
 import "./index.css";
 
+const routeGroups = Object.entries(learningStages)
+	.map(([stage, label]) => ({
+		stage,
+		label,
+		items: navItems.filter((item) => item.stage === stage),
+	}))
+	.filter(({ items }) => items.length > 0);
+
 export function App() {
 	const location = useLocation();
 	const { session: authSession } = useLoaderData() as { session: AuthSession | null };
+	const liveSession = authClient.useSession();
 	const isAuthRoute = location.pathname === "/auth";
+	const session = liveSession.isPending ? authSession : liveSession.data;
 	const nextPath = sanitizeRedirectPath(
 		new URLSearchParams(location.search).get("next") ?? getDefaultAuthRedirectPath(),
 	);
 	const currentPath = `${location.pathname}${location.search}${location.hash}`;
 
 	// Redirect if not authenticated and trying to access a protected route
-	if (!authSession && !isAuthRoute) {
+	if (!session && !isAuthRoute) {
 		return <Navigate to={buildAuthHref(currentPath)} replace />;
 	}
 
 	// Redirect if authenticated and trying to access the auth page
-	if (authSession && isAuthRoute) {
+	if (session && isAuthRoute) {
 		return <Navigate to={nextPath} replace />;
 	}
 
@@ -38,16 +64,22 @@ export function App() {
 		return <Outlet />;
 	}
 
-	// For all other routes, render the workspace layout (we know authSession exists here)
-	return <WorkspaceLayout session={authSession as AuthSession} />;
+	// For all other routes, render the workspace layout.
+	return <WorkspaceLayout session={session as AuthSession} />;
 }
 
 function WorkspaceLayout({ session }: { session: AuthSession }) {
 	const location = useLocation();
 	const navigation = useNavigation();
-	const activeLink = navItems.find(({ path }) => location.pathname === path) ?? navItems[0];
-	const activeLinkIndex = navItems.findIndex(({ path }) => path === activeLink.path);
-	const nextLink = navItems[(activeLinkIndex + 1) % navItems.length] ?? navItems[0];
+	const activeLink =
+		location.pathname === accountNavItem.path
+			? accountNavItem
+			: (navItems.find(({ path }) => location.pathname === path) ?? navItems[0]);
+	const activeLearningLinkIndex = navItems.findIndex(({ path }) => path === activeLink.path);
+	const nextLink =
+		activeLearningLinkIndex >= 0
+			? (navItems[(activeLearningLinkIndex + 1) % navItems.length] ?? navItems[0])
+			: navItems[0];
 	const ActiveIcon = activeLink.icon;
 	const IdentityIcon = appIdentity.icon;
 	const isRoutePending = navigation.state !== "idle";
@@ -154,37 +186,112 @@ function WorkspaceLayout({ session }: { session: AuthSession }) {
 						</div>
 					</header>
 
-					<div className="pt-3 xl:hidden">
-						<ScrollArea className="w-full whitespace-nowrap">
-							<div className="flex gap-2 pb-1">
-								{navItems.map((link) => {
-									const Icon = link.icon;
-
-									return (
-										<NavLink
-											key={link.path}
-											to={link.path}
-											className={({ isActive }) =>
-												cn(
-													"inline-flex items-center gap-2 rounded-lg border px-3.5 py-2 text-sm font-medium transition-colors",
-													isActive
-														? "border-primary bg-primary text-primary-foreground shadow-sm shadow-primary/20"
-														: "border-border/70 bg-card/80 text-muted-foreground hover:bg-muted/70 hover:text-foreground",
-												)
-											}
-										>
-											<Icon className="size-4" />
-											{link.label}
-										</NavLink>
-									);
-								})}
-							</div>
-						</ScrollArea>
-					</div>
+					<MobileRouteNav activeLink={activeLink} />
 
 					<main id="main-content" className="min-w-0 py-4 sm:py-6">
 						<Outlet />
 					</main>
+				</div>
+			</div>
+		</div>
+	);
+}
+
+function MobileRouteNav({ activeLink }: { activeLink: NavItem }) {
+	const activePath = activeLink.path;
+	const ActiveIcon = activeLink.icon;
+
+	return (
+		<div className="pt-3 xl:hidden">
+			<div className="grid gap-2">
+				<DropdownMenu>
+					<DropdownMenuTrigger asChild>
+						<Button
+							variant="outline"
+							className="h-12 w-full justify-between rounded-lg border-border/70 bg-card/95 px-3 shadow-sm"
+						>
+							<span className="flex min-w-0 items-center gap-2.5">
+								<span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+									<ActiveIcon className="size-4" />
+								</span>
+								<span className="min-w-0 text-left">
+									<span className="block truncate text-sm font-medium">{activeLink.label}</span>
+									<span className="block truncate text-xs text-muted-foreground">
+										{learningStages[activeLink.stage]}
+									</span>
+								</span>
+							</span>
+							<ChevronDown className="size-4 text-muted-foreground" />
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent
+						align="start"
+						className="max-h-[min(28rem,calc(100vh-10rem))] w-[calc(100vw-1.5rem)] max-w-[440px] overflow-y-auto"
+					>
+						{routeGroups.map((group, groupIndex) => (
+							<DropdownMenuGroup key={group.stage}>
+								{groupIndex > 0 ? <DropdownMenuSeparator /> : null}
+								<DropdownMenuLabel className="text-xs font-semibold tracking-[0.14em] text-muted-foreground uppercase">
+									{group.label}
+								</DropdownMenuLabel>
+								{group.items.map((link) => {
+									const Icon = link.icon;
+									const isActive = link.path === activePath;
+
+									return (
+										<DropdownMenuItem
+											key={link.path}
+											asChild
+											className={cn("items-center gap-3 py-2", isActive && "bg-accent")}
+										>
+											<NavLink to={link.path}>
+												<span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
+													<Icon className="size-4" />
+												</span>
+												<span className="min-w-0 flex-1">
+													<span className="block truncate font-medium">{link.label}</span>
+													<span className="block truncate text-xs text-muted-foreground">
+														{link.releaseArea}
+													</span>
+												</span>
+												{isActive ? <Check className="ml-auto size-4 text-primary" /> : null}
+											</NavLink>
+										</DropdownMenuItem>
+									);
+								})}
+							</DropdownMenuGroup>
+						))}
+					</DropdownMenuContent>
+				</DropdownMenu>
+
+				<div className="relative min-w-0">
+					<ScrollArea className="w-full whitespace-nowrap pb-3">
+						<nav aria-label="Route shortcuts" className="flex w-max gap-2 pb-3 pr-6">
+							{navItems.map((link) => {
+								const Icon = link.icon;
+
+								return (
+									<NavLink
+										key={link.path}
+										to={link.path}
+										className={({ isActive }) =>
+											cn(
+												"inline-flex h-9 shrink-0 items-center gap-2 rounded-lg border px-3 text-sm font-medium transition-colors",
+												isActive
+													? "border-primary bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+													: "border-border/70 bg-card/80 text-muted-foreground hover:bg-muted/70 hover:text-foreground",
+											)
+										}
+									>
+										<Icon className="size-4" />
+										{link.label}
+									</NavLink>
+								);
+							})}
+						</nav>
+						<ScrollBar orientation="horizontal" />
+					</ScrollArea>
+					<div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-background to-transparent" />
 				</div>
 			</div>
 		</div>

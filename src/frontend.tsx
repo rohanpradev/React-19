@@ -8,6 +8,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router/dom";
+
 import { ThemeProvider } from "@/components/theme-provider";
 
 const elem = document.getElementById("root");

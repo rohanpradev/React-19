@@ -1,3 +1,5 @@
+import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from "react";
+
 import {
 	type ColumnDef,
 	type ColumnFiltersState,
@@ -21,7 +23,7 @@ import {
 	UsersRound,
 	X,
 } from "lucide-react";
-import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from "react";
+
 import { redirectToAuth } from "@/auth/redirects";
 import { DataTableColumnHeader } from "@/components/data-table-column-header";
 import { DataTableViewOptions } from "@/components/data-table-view-options";

@@ -1,5 +1,6 @@
 import { count } from "drizzle-orm";
 import { migrate } from "drizzle-orm/bun-sqlite/migrator";
+
 import db from "@/db";
 import { customersTable, type NewCustomer } from "@/db/schema";
 import { Temporal } from "@/lib/temporal";

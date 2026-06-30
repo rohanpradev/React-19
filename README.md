@@ -7,7 +7,7 @@ The app is intentionally compact: each route explains one advanced frontend idea
 ## What This Covers
 
 - React 19.2 patterns: Actions, `useActionState`, `useFormStatus`, `useOptimistic`, `use`, Suspense, ref cleanup, document metadata, custom elements, and `useDeferredValue`.
-- React Router 7 Data Mode: `createBrowserRouter`, route objects, lazy route modules, redirects, route-level error handling, auth-aware app shell behavior, and a documented Data Mode vs Framework Mode decision.
+- React Router 8.1 Data Mode: `createBrowserRouter`, route objects, lazy route modules, redirects, route-level error handling, auth-aware app shell behavior, and a documented Data Mode vs Framework Mode decision.
 - Frontend architecture: app shell design, progressive route loading, server state boundaries, optimistic mutations, microfrontend tradeoffs, platform APIs, and UI system decisions.
 - Full-stack Bun: one Bun server for HTML import frontend delivery, API routes, Better Auth, Drizzle ORM, SQLite, health checks, and server-side TanStack Table state.
 - Developer workflow: TypeScript 7 native preview through `tsgo`, Biome 2 formatting/lint/assist rules, Zed project settings, and a Bun build pipeline.
@@ -19,7 +19,7 @@ The app is intentionally compact: each route explains one advanced frontend idea
 | --- | --- |
 | Runtime | Bun |
 | UI | React 19.2, React DOM, shadcn-style components, Radix UI, Tailwind CSS 4 |
-| Routing | React Router 7 Data Mode |
+| Routing | React Router 8.1 Data Mode |
 | Data UI | TanStack Table |
 | Auth | Better Auth |
 | Database | SQLite through Bun, Drizzle ORM, Drizzle Kit |
@@ -33,7 +33,7 @@ The app is intentionally compact: each route explains one advanced frontend idea
 | --- | --- |
 | `/overview` | Compact map of the React, Bun, routing, UI, and tooling coverage |
 | `/architecture` | Senior frontend architecture notes, React 19.2 posture, router boundaries, and microfrontend decisions |
-| `/platform-readiness` | Experienced upgrade track for React 19.2, React Router 7.15.1 modes, Better Auth sessions, and Bun delivery |
+| `/platform-readiness` | Experienced upgrade track for React 19.2, React Router 8.1.0 modes, Better Auth sessions, and Bun delivery |
 | `/form-actions` | Form mutations with `useActionState`, `useFormStatus`, pending states, and returned state |
 | `/actions` | Async Actions shaped with `startTransition` and clear mutation feedback |
 | `/optimistic` | `useOptimistic` with fast UI updates, success paths, and rollback handling |
@@ -41,6 +41,7 @@ The app is intentionally compact: each route explains one advanced frontend idea
 | `/dom-interop` | Metadata, refs, custom elements, assets, and React DOM interoperability |
 | `/search-debounce` | Debounced autocomplete with `useDeferredValue` and a real Bun API endpoint |
 | `/revenue-ops` | Server-side TanStack Table state backed by Bun, Drizzle, and SQLite |
+| `/account` | Better Auth profile, password, and active-session management |
 | `/auth` | Better Auth sign-in and account creation |
 
 Unknown app routes redirect to `/overview`.
@@ -72,6 +73,21 @@ To build and run without Compose:
 docker build -t react-systems-studio .
 docker run --rm -p 3000:3000 -e BETTER_AUTH_URL=http://localhost:3000 -e BETTER_AUTH_SECRET=replace-with-a-strong-random-secret -v react-systems-studio-data:/data react-systems-studio
 ```
+
+## Current Docs Posture
+
+Latest official docs were checked on June 30, 2026. React's docs list React 19.2 as the current documented release line, React Router is on the latest v8 line, and the app now pins the current package set for the actively tracked libraries:
+
+| Package | Version |
+| --- | --- |
+| `react` / `react-dom` | `^19.2.7` |
+| `react-router` | `^8.1.0` |
+| `better-auth` | `^1.6.23` |
+| `tailwindcss` | `^4.3.2` |
+| `@typescript/native-preview` | `^7.0.0-dev.20260630.1` |
+| Bun runtime used for validation | `1.3.14` |
+
+The Platform Readiness route now includes a docs freshness card and expanded official references for React versions, Effect Events, React Router v8 Data Mode and `HydrateFallback`, Bun HTML routes, Better Auth options, session caching, rate limiting, and SQLite guidance.
 
 ## Useful Scripts
 
@@ -141,7 +157,7 @@ Recommended production environment variables:
 - `GITHUB_CLIENT_ID`
 - `GITHUB_CLIENT_SECRET`
 
-Better Auth is configured with server-side session reads, a 10-minute session freshness window for sensitive operations, compact cookie session caching, explicit trusted origins, and built-in rate limiting for auth endpoints.
+Better Auth is configured with server-side session reads, a 10-minute session freshness window for sensitive operations, short-lived compact cookie session caching, explicit trusted origins, and built-in rate limiting for auth endpoints.
 
 OAuth redirect URLs:
 

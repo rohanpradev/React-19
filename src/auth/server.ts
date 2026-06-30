@@ -1,4 +1,5 @@
 import { betterAuth } from "better-auth";
+
 import { configuredSocialProviders } from "@/auth/social-providers";
 import { sqlite } from "@/db";
 
@@ -30,9 +31,6 @@ export const auth = betterAuth({
 			enabled: true,
 			maxAge: 60 * 5,
 			strategy: "compact",
-			refreshCache: {
-				updateAge: 60,
-			},
 		},
 	},
 	rateLimit: {

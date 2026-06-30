@@ -10,6 +10,7 @@ import {
 	Rocket,
 	Search,
 	Sparkles,
+	UserRound,
 	Workflow,
 } from "lucide-react";
 
@@ -125,6 +126,18 @@ export const navItems: [NavItem, ...NavItem[]] = [
 		apiLabels: ["TanStack Table", "Drizzle", "Bun"],
 	},
 ];
+
+export const accountNavItem = {
+	path: "/account",
+	label: "Account Center",
+	blurb: "Profile, password, and active session controls for the signed-in user.",
+	icon: UserRound,
+	stage: "full-stack",
+	releaseArea: "Account security",
+	apiLabels: ["updateUser", "changePassword", "Sessions"],
+} satisfies NavItem;
+
+export const workspaceNavItems = [accountNavItem] as const;
 
 export const releaseCoverage = [
 	{

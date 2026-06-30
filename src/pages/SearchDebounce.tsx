@@ -1,3 +1,5 @@
+import { useDeferredValue, useEffect, useEffectEvent, useState } from "react";
+
 import {
 	Building2,
 	Clock3,
@@ -8,7 +10,7 @@ import {
 	TimerReset,
 	Workflow,
 } from "lucide-react";
-import { useDeferredValue, useEffect, useEffectEvent, useState } from "react";
+
 import { redirectToAuth } from "@/auth/redirects";
 import { FeatureIntro } from "@/components/feature-intro";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
