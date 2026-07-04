@@ -1,6 +1,6 @@
 import type { TechLogoName } from "@/components/tech-logo";
 
-export type OfficialDocArea = "react" | "router" | "bun" | "auth" | "ui" | "platform";
+export type OfficialDocArea = "react" | "router" | "bun" | "auth" | "ui" | "data" | "platform";
 
 export type OfficialDocLink = {
 	label: string;
@@ -11,8 +11,8 @@ export type OfficialDocLink = {
 	logo?: TechLogoName;
 };
 
-export const docsLastCheckedAt = "2026-06-30";
-export const docsLastCheckedLabel = "June 30, 2026";
+export const docsLastCheckedAt = "2026-07-04";
+export const docsLastCheckedLabel = "July 4, 2026";
 
 export const docsPosture = [
 	{
@@ -39,9 +39,15 @@ export const docsPosture = [
 		detail:
 			"Bun docs now center HTML route imports, development HMR/console forwarding, and route maps in Bun.serve.",
 	},
+	{
+		title: "Biome",
+		status: "Drizzle domain enabled: 2.5.1",
+		detail:
+			"Biome exposes Drizzle ORM rules in the nursery group, so destructive update and delete calls are explicitly guarded.",
+	},
 ] as const;
 
-export const officialDocLinks = [
+export const officialDocLinks: OfficialDocLink[] = [
 	{
 		label: "React versions",
 		description: "Latest documented React release line and archived major-version docs.",
@@ -73,6 +79,22 @@ export const officialDocLinks = [
 		href: "https://react.dev/reference/react/useEffectEvent",
 		area: "react",
 		keywords: ["react", "use effect event", "effect event", "effects", "dependencies"],
+		logo: "react",
+	},
+	{
+		label: "React useSyncExternalStore",
+		description: "Official API for subscribing to external stores with immutable snapshots.",
+		href: "https://react.dev/reference/react/useSyncExternalStore",
+		area: "react",
+		keywords: ["react", "external store", "sync", "signals", "context", "state"],
+		logo: "react",
+	},
+	{
+		label: "React Error Boundary",
+		description: "Class boundary pattern for catching render errors below a route or widget.",
+		href: "https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary",
+		area: "react",
+		keywords: ["react", "error boundary", "componentdidcatch", "recovery", "fallback"],
 		logo: "react",
 	},
 	{
@@ -190,6 +212,94 @@ export const officialDocLinks = [
 		logo: "bun",
 	},
 	{
+		label: "TanStack Query",
+		description: "Server-state cache, query keys, mutation lifecycle, and invalidation.",
+		href: "https://tanstack.com/query/latest/docs/framework/react/overview",
+		area: "data",
+		keywords: ["tanstack", "query", "server state", "cache", "mutation", "invalidation"],
+		logo: "tanstack",
+	},
+	{
+		label: "TanStack Query optimistic updates",
+		description: "Optimistic UI, rollback, mutation variables, and cache reconciliation.",
+		href: "https://tanstack.com/query/latest/docs/framework/react/guides/optimistic-updates",
+		area: "data",
+		keywords: ["tanstack", "query", "optimistic", "rollback", "mutation"],
+		logo: "tanstack",
+	},
+	{
+		label: "TanStack Form validation",
+		description: "Field-level and form-level validation with React form state subscriptions.",
+		href: "https://tanstack.com/form/latest/docs/framework/react/guides/validation",
+		area: "ui",
+		keywords: ["tanstack", "form", "validation", "field", "schema"],
+		logo: "tanstack",
+	},
+	{
+		label: "shadcn TanStack Form",
+		description: "Official shadcn guidance for composing TanStack Form with UI primitives.",
+		href: "https://ui.shadcn.com/docs/forms/tanstack-form",
+		area: "ui",
+		keywords: ["shadcn", "tanstack form", "forms", "field", "validation"],
+		logo: "shadcn",
+	},
+	{
+		label: "Valibot",
+		description: "Modular type-safe schema validation for form and API boundaries.",
+		href: "https://valibot.dev/",
+		area: "ui",
+		keywords: ["valibot", "schema", "validation", "forms", "types"],
+		logo: undefined,
+	},
+	{
+		label: "dnd-kit",
+		description: "Accessible drag, drop, sort, sensors, and sortable interfaces for React.",
+		href: "https://dndkit.com/",
+		area: "ui",
+		keywords: ["drag", "drop", "dnd-kit", "sortable", "keyboard sensor"],
+		logo: undefined,
+	},
+	{
+		label: "Preact Signals",
+		description: "Signal primitives, computed values, effects, context, and batched updates.",
+		href: "https://preactjs.com/guide/v10/signals/",
+		area: "ui",
+		keywords: ["signals", "preact", "react", "computed", "effect", "state"],
+		logo: undefined,
+	},
+	{
+		label: "React libraries 2026",
+		description: "Robin Wieruch's ecosystem guide for state, data, forms, UI, DnD, and tooling.",
+		href: "https://www.robinwieruch.de/react-libraries/",
+		area: "platform",
+		keywords: ["react", "libraries", "2026", "zustand", "query", "forms", "dnd"],
+		logo: "react",
+	},
+	{
+		label: "Biome Drizzle domain",
+		description: "Drizzle ORM lint domain and activation guidance for Biome.",
+		href: "https://biomejs.dev/linter/domains/#drizzle",
+		area: "platform",
+		keywords: ["biome", "drizzle", "domain", "lint", "nursery"],
+		logo: undefined,
+	},
+	{
+		label: "Biome no Drizzle delete without where",
+		description: "Guard Drizzle delete calls that could delete every row.",
+		href: "https://biomejs.dev/linter/rules/no-drizzle-delete-without-where/",
+		area: "platform",
+		keywords: ["biome", "drizzle", "delete", "where", "safety"],
+		logo: undefined,
+	},
+	{
+		label: "Biome no Drizzle update without where",
+		description: "Guard Drizzle update calls that could update every row.",
+		href: "https://biomejs.dev/linter/rules/no-drizzle-update-without-where/",
+		area: "platform",
+		keywords: ["biome", "drizzle", "update", "where", "safety"],
+		logo: undefined,
+	},
+	{
 		label: "Better Auth SQLite",
 		description: "Official SQLite adapter guidance, including Bun built-in SQLite and joins.",
 		href: "https://better-auth.com/docs/adapters/sqlite#bun-built-in-sqlite",
@@ -262,7 +372,7 @@ export const officialDocLinks = [
 		keywords: ["microfrontend", "module federation", "remote", "host"],
 		logo: "module-federation",
 	},
-] as const satisfies OfficialDocLink[];
+];
 
 export function getOfficialDocsByArea(area: OfficialDocArea) {
 	return officialDocLinks.filter((doc) => doc.area === area);

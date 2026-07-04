@@ -33,7 +33,7 @@ const learningTracks = (Object.keys(learningStages) as Array<keyof typeof learni
 
 const studioStats = [
 	{ value: "19.2", label: "React APIs", detail: "Actions, use, DOM APIs" },
-	{ value: "7", label: "Router Data Mode", detail: "Lazy route modules" },
+	{ value: "14", label: "Learning routes", detail: "Lazy route modules" },
 	{ value: "Bun", label: "Full-stack runtime", detail: "APIs, build, SQLite" },
 	{ value: "TS7", label: "Native preview", detail: "tsgo type checks" },
 ] as const;
@@ -82,6 +82,12 @@ const docsLinks = officialDocLinks.filter((doc) =>
 		"React Router modes",
 		"Bun full-stack",
 		"Better Auth sessions",
+		"React useSyncExternalStore",
+		"TanStack Query",
+		"TanStack Form validation",
+		"dnd-kit",
+		"Biome Drizzle domain",
+		"React libraries 2026",
 	].includes(doc.label),
 );
 
@@ -262,7 +268,7 @@ export function OverviewPage() {
 						<BookOpenText className="size-5" />
 					</div>
 				</CardHeader>
-				<CardContent className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+				<CardContent className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
 					{docsLinks.map((doc) => (
 						<a
 							key={doc.href}

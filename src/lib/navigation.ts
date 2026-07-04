@@ -1,12 +1,16 @@
 import {
 	BrainCircuit,
 	ChartColumnIncreasing,
+	ClipboardCheck,
+	DatabaseZap,
 	FilePenLine,
 	FlaskConical,
 	Gauge,
+	LayoutDashboard,
 	type LucideIcon,
 	Orbit,
 	PanelTopOpen,
+	RadioTower,
 	Rocket,
 	Search,
 	Sparkles,
@@ -63,6 +67,15 @@ export const navItems: [NavItem, ...NavItem[]] = [
 		apiLabels: ["Activity", "Data Mode", "Bun.serve", "Sessions"],
 	},
 	{
+		path: "/control-room",
+		label: "Control Room",
+		blurb: "Signal-style external store, context injection, command logs, and error boundaries.",
+		icon: RadioTower,
+		stage: "platform",
+		releaseArea: "State architecture",
+		apiLabels: ["useSyncExternalStore", "Context", "Error Boundary"],
+	},
+	{
 		path: "/form-actions",
 		label: "Form Actions",
 		blurb: "Form mutations with pending, success, and returned state.",
@@ -115,6 +128,33 @@ export const navItems: [NavItem, ...NavItem[]] = [
 		stage: "hands-on",
 		releaseArea: "Performance",
 		apiLabels: ["useDeferredValue", "debounce", "Bun API"],
+	},
+	{
+		path: "/workflow-board",
+		label: "Workflow Board",
+		blurb: "Sortable drag-and-drop prioritization with dnd-kit and shadcn-style UI.",
+		icon: LayoutDashboard,
+		stage: "hands-on",
+		releaseArea: "Interaction",
+		apiLabels: ["dnd-kit", "SortableContext", "KeyboardSensor"],
+	},
+	{
+		path: "/intake-form",
+		label: "Intake Form",
+		blurb: "Complex form validation with TanStack Form, Valibot, and shadcn controls.",
+		icon: ClipboardCheck,
+		stage: "hands-on",
+		releaseArea: "Forms",
+		apiLabels: ["TanStack Form", "Valibot", "Schema validation"],
+	},
+	{
+		path: "/server-state",
+		label: "Server State",
+		blurb: "TanStack Query cache, optimistic mutation, rollback, and Bun invalidation.",
+		icon: DatabaseZap,
+		stage: "full-stack",
+		releaseArea: "Server state",
+		apiLabels: ["TanStack Query", "Optimistic updates", "Bun API"],
 	},
 	{
 		path: "/revenue-ops",
@@ -174,6 +214,20 @@ export const releaseCoverage = [
 		detail:
 			"The search page shows why deferred values still need normal UX shaping like debouncing, now backed by a real Bun autocomplete endpoint.",
 		relatedPaths: ["/search-debounce"],
+	},
+	{
+		title: "Library-backed interaction patterns",
+		status: "New advanced demos",
+		detail:
+			"dnd-kit, TanStack Form, Valibot, and TanStack Query show drag/drop, schema forms, and server-state cache workflows without hand-rolled infrastructure.",
+		relatedPaths: ["/workflow-board", "/intake-form", "/server-state"],
+	},
+	{
+		title: "State architecture and error recovery",
+		status: "Expert showcase",
+		detail:
+			"The control room route demonstrates signal-style external state, context as dependency injection, command writes, derived snapshots, and recoverable render boundaries.",
+		relatedPaths: ["/control-room"],
 	},
 	{
 		title: "Static APIs, asset loading, diagnostics",

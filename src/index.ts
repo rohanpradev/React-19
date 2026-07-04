@@ -7,6 +7,7 @@ import { initializeDatabase } from "./db/init";
 import index from "./index.html";
 import { authProvidersResponse, requireRequestSession, unauthorizedResponse } from "./server/auth";
 import { autocompleteCustomers, listCustomers } from "./server/customers";
+import { listPlatformSignals, updatePlatformSignal } from "./server/platform-signals";
 
 initializeDatabase();
 
@@ -20,12 +21,16 @@ const siteRoutes = [
 	"/overview",
 	"/architecture",
 	"/platform-readiness",
+	"/control-room",
 	"/form-actions",
 	"/actions",
 	"/optimistic",
 	"/react-use",
 	"/dom-interop",
 	"/search-debounce",
+	"/workflow-board",
+	"/intake-form",
+	"/server-state",
 	"/revenue-ops",
 	"/account",
 	"/auth",
@@ -113,6 +118,10 @@ async function createPlatformHealthResponse() {
 			react: packageJson.dependencies?.react ?? "unknown",
 			"react-router": packageJson.dependencies?.["react-router"] ?? "unknown",
 			"better-auth": packageJson.dependencies?.["better-auth"] ?? "unknown",
+			"@tanstack/react-query": packageJson.dependencies?.["@tanstack/react-query"] ?? "unknown",
+			"@tanstack/react-form": packageJson.dependencies?.["@tanstack/react-form"] ?? "unknown",
+			"@dnd-kit/core": packageJson.dependencies?.["@dnd-kit/core"] ?? "unknown",
+			valibot: packageJson.dependencies?.valibot ?? "unknown",
 			tailwindcss: packageJson.devDependencies?.tailwindcss ?? "unknown",
 			"@typescript/native-preview":
 				packageJson.devDependencies?.["@typescript/native-preview"] ?? "unknown",
@@ -121,6 +130,8 @@ async function createPlatformHealthResponse() {
 			"React Router Data Mode route tree is defined outside render.",
 			"Better Auth owns server-side session checks for protected API routes.",
 			"Bun serves API routes and the React app from one runtime.",
+			"TanStack Query is mounted once at the app entry for server-state examples.",
+			"Biome Drizzle rules guard destructive updates and deletes without where clauses.",
 			"Production assets are resolved inside the dist directory before serving.",
 		],
 	});
@@ -199,6 +210,18 @@ const server = serve({
 		"/api/auth/*": auth.handler,
 		"/api/auth-providers": authProvidersResponse,
 		"/api/platform/health": createPlatformHealthResponse,
+		"/api/platform/signals": {
+			GET: async (req) => {
+				const session = await requireRequestSession(req);
+				if (!session) return unauthorizedResponse();
+				return Response.json(listPlatformSignals());
+			},
+			PATCH: async (req) => {
+				const session = await requireRequestSession(req);
+				if (!session) return unauthorizedResponse();
+				return updatePlatformSignal(req);
+			},
+		},
 
 		// API Routes
 		"/api/hello": {

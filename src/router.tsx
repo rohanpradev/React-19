@@ -69,6 +69,14 @@ export const router = createBrowserRouter([
 				},
 			},
 			{
+				path: "control-room",
+				HydrateFallback: RouteHydrateFallback,
+				lazy: async () => {
+					const { ControlRoomPage } = await import("@/pages/ControlRoom");
+					return { Component: ControlRoomPage };
+				},
+			},
+			{
 				path: "form-actions",
 				HydrateFallback: RouteHydrateFallback,
 				lazy: async () => {
@@ -114,6 +122,30 @@ export const router = createBrowserRouter([
 				lazy: async () => {
 					const { SearchDebounce } = await import("@/pages/SearchDebounce");
 					return { Component: SearchDebounce };
+				},
+			},
+			{
+				path: "workflow-board",
+				HydrateFallback: RouteHydrateFallback,
+				lazy: async () => {
+					const { WorkflowBoardPage } = await import("@/pages/WorkflowBoard");
+					return { Component: WorkflowBoardPage };
+				},
+			},
+			{
+				path: "intake-form",
+				HydrateFallback: RouteHydrateFallback,
+				lazy: async () => {
+					const { IntakeFormPage } = await import("@/pages/IntakeForm");
+					return { Component: IntakeFormPage };
+				},
+			},
+			{
+				path: "server-state",
+				HydrateFallback: RouteHydrateFallback,
+				lazy: async () => {
+					const { ServerStatePage } = await import("@/pages/ServerState");
+					return { Component: ServerStatePage };
 				},
 			},
 			{

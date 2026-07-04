@@ -45,7 +45,7 @@ export function ThemeToggle({ className }: { className?: string }) {
 						aria-label={option.label}
 						aria-pressed={isActive}
 						className={cn(
-							"inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-all duration-200 hover:bg-muted/70 hover:text-foreground",
+							"inline-flex size-8 items-center justify-center rounded-md text-muted-foreground transition-all duration-200 hover:bg-muted/70 hover:text-foreground sm:size-9",
 							isActive && "bg-foreground text-background shadow-sm shadow-black/10",
 						)}
 					>
@@ -60,7 +60,7 @@ export function ThemeToggle({ className }: { className?: string }) {
 						type="button"
 						variant="ghost"
 						size="icon"
-						className="size-9 rounded-md"
+						className="size-8 rounded-md sm:size-9"
 						aria-label="Choose color preset"
 					>
 						<Palette className="size-4" />

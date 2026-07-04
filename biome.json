@@ -51,6 +51,7 @@
 			"components.json"
 		],
 		"domains": {
+			"drizzle": "recommended",
 			"project": "recommended",
 			"react": "recommended"
 		},
@@ -59,6 +60,20 @@
 			"correctness": {
 				"noUndeclaredDependencies": "error",
 				"noUnusedImports": "error"
+			},
+			"nursery": {
+				"noDrizzleDeleteWithoutWhere": {
+					"level": "error",
+					"options": {
+						"drizzleObjectName": ["db"]
+					}
+				},
+				"noDrizzleUpdateWithoutWhere": {
+					"level": "error",
+					"options": {
+						"drizzleObjectName": ["db"]
+					}
+				}
 			},
 			"style": {
 				"useImportType": "error"

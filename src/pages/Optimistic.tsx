@@ -118,7 +118,7 @@ export function UseOptimisticPage() {
 				<Card className="border-border/60">
 					<CardHeader>
 						<CardTitle>Renewal notes</CardTitle>
-						<CardDescription>Use “fail” to simulate a rejected save.</CardDescription>
+						<CardDescription>Use "fail" to simulate a rejected save.</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-5">
 						<form onSubmit={handleSubmit} className="space-y-3">

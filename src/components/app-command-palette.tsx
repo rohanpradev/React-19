@@ -51,17 +51,19 @@ export function AppCommandPalette({ buttonClassName }: { buttonClassName?: strin
 			<Button
 				type="button"
 				variant="outline"
+				aria-label="Open command palette"
 				className={cn(
-					"justify-between gap-3 rounded-lg px-4 text-left sm:min-w-[240px]",
+					"min-w-0 justify-between gap-2 rounded-lg px-3 text-left sm:min-w-[240px] sm:gap-3 sm:px-4",
 					buttonClassName,
 				)}
 				onClick={() => setOpen(true)}
 			>
-				<span className="flex items-center gap-2">
-					<SearchIcon className="size-4" />
-					Search routes or docs
+				<span className="flex min-w-0 items-center gap-2">
+					<SearchIcon className="size-4 shrink-0" />
+					<span className="truncate sm:hidden">Search</span>
+					<span className="hidden sm:inline">Search routes or docs</span>
 				</span>
-				<span className="rounded-lg border border-border/70 bg-background/80 px-2 py-1 text-[11px] font-medium tracking-[0.18em] text-muted-foreground uppercase">
+				<span className="hidden rounded-lg border border-border/70 bg-background/80 px-2 py-1 text-[11px] font-medium tracking-[0.18em] text-muted-foreground uppercase sm:inline-flex">
 					Ctrl K
 				</span>
 			</Button>

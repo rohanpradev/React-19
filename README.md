@@ -6,11 +6,11 @@ The app is intentionally compact: each route explains one advanced frontend idea
 
 ## What This Covers
 
-- React 19.2 patterns: Actions, `useActionState`, `useFormStatus`, `useOptimistic`, `use`, Suspense, ref cleanup, document metadata, custom elements, and `useDeferredValue`.
+- React 19.2 patterns: Actions, `useActionState`, `useFormStatus`, `useOptimistic`, `use`, Suspense, ref cleanup, document metadata, custom elements, `useDeferredValue`, Activity, and Effect Events.
 - React Router 8.1 Data Mode: `createBrowserRouter`, route objects, lazy route modules, redirects, route-level error handling, auth-aware app shell behavior, and a documented Data Mode vs Framework Mode decision.
-- Frontend architecture: app shell design, progressive route loading, server state boundaries, optimistic mutations, microfrontend tradeoffs, platform APIs, and UI system decisions.
+- Frontend architecture: app shell design, progressive route loading, signal-style external state, context injection, error boundaries, server state boundaries, optimistic mutations, drag-and-drop interactions, schema validation, microfrontend tradeoffs, platform APIs, and UI system decisions.
 - Full-stack Bun: one Bun server for HTML import frontend delivery, API routes, Better Auth, Drizzle ORM, SQLite, health checks, and server-side TanStack Table state.
-- Developer workflow: TypeScript 7 native preview through `tsgo`, Biome 2 formatting/lint/assist rules, Zed project settings, and a Bun build pipeline.
+- Developer workflow: TypeScript 7 native preview through `tsgo`, Biome 2 formatting/lint/assist rules, Drizzle destructive-write lint rules, Zed project settings, and a Bun build pipeline.
 - Source-backed learning: official React, React Router, Better Auth, Bun, shadcn, and Module Federation docs are linked from the app and command palette.
 
 ## Stack
@@ -20,7 +20,9 @@ The app is intentionally compact: each route explains one advanced frontend idea
 | Runtime | Bun |
 | UI | React 19.2, React DOM, shadcn-style components, Radix UI, Tailwind CSS 4 |
 | Routing | React Router 8.1 Data Mode |
-| Data UI | TanStack Table |
+| Data UI | TanStack Table, TanStack Query |
+| Forms | TanStack Form, Valibot |
+| Interaction | dnd-kit |
 | Auth | Better Auth |
 | Database | SQLite through Bun, Drizzle ORM, Drizzle Kit |
 | Type Checking | TypeScript 7 native preview via `@typescript/native-preview` and `tsgo` |
@@ -34,12 +36,16 @@ The app is intentionally compact: each route explains one advanced frontend idea
 | `/overview` | Compact map of the React, Bun, routing, UI, and tooling coverage |
 | `/architecture` | Senior frontend architecture notes, React 19.2 posture, router boundaries, and microfrontend decisions |
 | `/platform-readiness` | Experienced upgrade track for React 19.2, React Router 8.1.0 modes, Better Auth sessions, and Bun delivery |
+| `/control-room` | Signal-style external store, context injection, command log, derived state, and recoverable error boundary |
 | `/form-actions` | Form mutations with `useActionState`, `useFormStatus`, pending states, and returned state |
 | `/actions` | Async Actions shaped with `startTransition` and clear mutation feedback |
 | `/optimistic` | `useOptimistic` with fast UI updates, success paths, and rollback handling |
 | `/react-use` | `use`, Suspense boundaries, promise reads, and conditional context reads |
 | `/dom-interop` | Metadata, refs, custom elements, assets, and React DOM interoperability |
 | `/search-debounce` | Debounced autocomplete with `useDeferredValue` and a real Bun API endpoint |
+| `/workflow-board` | Sortable drag-and-drop prioritization with dnd-kit and shadcn-style UI |
+| `/intake-form` | Complex launch intake validation with TanStack Form and Valibot |
+| `/server-state` | TanStack Query cache, optimistic mutation, rollback, invalidation, and a Bun API endpoint |
 | `/revenue-ops` | Server-side TanStack Table state backed by Bun, Drizzle, and SQLite |
 | `/account` | Better Auth profile, password, and active-session management |
 | `/auth` | Better Auth sign-in and account creation |
@@ -76,7 +82,7 @@ docker run --rm -p 3000:3000 -e BETTER_AUTH_URL=http://localhost:3000 -e BETTER_
 
 ## Current Docs Posture
 
-Latest official docs were checked on June 30, 2026. React's docs list React 19.2 as the current documented release line, React Router is on the latest v8 line, and the app now pins the current package set for the actively tracked libraries:
+Latest official docs were checked on July 4, 2026. React's docs list React 19.2 as the current documented release line, React Router is on the latest v8 line, Bun is on the latest 1.3 line, and the app now pins the current package set for the actively tracked libraries:
 
 | Package | Version |
 | --- | --- |
@@ -84,10 +90,14 @@ Latest official docs were checked on June 30, 2026. React's docs list React 19.2
 | `react-router` | `^8.1.0` |
 | `better-auth` | `^1.6.23` |
 | `tailwindcss` | `^4.3.2` |
+| `@tanstack/react-query` | `^5.101.2` |
+| `@tanstack/react-form` | `^1.33.0` |
+| `@dnd-kit/core` / `@dnd-kit/sortable` | `^6.3.1` / `^10.0.0` |
+| `valibot` | `^1.4.2` |
 | `@typescript/native-preview` | `^7.0.0-dev.20260630.1` |
 | Bun runtime used for validation | `1.3.14` |
 
-The Platform Readiness route now includes a docs freshness card and expanded official references for React versions, Effect Events, React Router v8 Data Mode and `HydrateFallback`, Bun HTML routes, Better Auth options, session caching, rate limiting, and SQLite guidance.
+The Platform Readiness route now includes a docs freshness card and expanded references for React versions, Effect Events, `useSyncExternalStore`, error boundaries, React Router v8 Data Mode and `HydrateFallback`, Bun HTML routes, Better Auth options, session caching, rate limiting, SQLite guidance, TanStack Query, TanStack Form, Valibot, dnd-kit, signal-style state, Robin Wieruch's 2026 React library guide, and Biome's Drizzle lint domain.
 
 ## Useful Scripts
 
@@ -131,6 +141,7 @@ Notable API routes:
 - `/api/customers` returns the server-side table payload.
 - `/api/customers/autocomplete` returns lightweight customer search suggestions.
 - `/api/platform/health` returns runtime/package versions and project readiness checks.
+- `/api/platform/signals` returns and mutates the TanStack Query server-state demo payload.
 - `/api/auth/*` handles Better Auth session and email/password endpoints.
 
 The local SQLite files live in the project root:

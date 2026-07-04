@@ -162,15 +162,22 @@ const platformContracts = [
 const frontendRadar = [
 	{
 		label: "Adopt now",
-		items: ["React 19.2", "Router data boundaries", "Actions", "Activity", "Biome gates"],
+		items: [
+			"React 19.2",
+			"Router data boundaries",
+			"Actions",
+			"Activity",
+			"TanStack Query",
+			"Biome Drizzle rules",
+		],
 	},
 	{
 		label: "Pilot",
-		items: ["React Compiler", "Partial pre-render", "RSC boundary", "Module Federation"],
+		items: ["React Compiler", "TanStack Form", "dnd-kit", "Partial pre-render", "RSC boundary"],
 	},
 	{
 		label: "Watch",
-		items: ["ViewTransition", "RSC in routers", "edge stream caching", "design token tooling"],
+		items: ["ViewTransition", "RSC in routers", "Module Federation", "edge stream caching"],
 	},
 ] as const;
 
@@ -196,8 +203,12 @@ const docs = [
 		href: "https://reactrouter.com/start/data/routing",
 	},
 	{
-		label: "Module Federation",
-		href: "https://module-federation.io/guide/start/",
+		label: "TanStack Query",
+		href: "https://tanstack.com/query/latest/docs/framework/react/overview",
+	},
+	{
+		label: "Biome Drizzle",
+		href: "https://biomejs.dev/linter/domains/#drizzle",
 	},
 ] as const;
 

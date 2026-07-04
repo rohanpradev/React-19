@@ -136,6 +136,7 @@ const docAreas = [
 	{ area: "auth", label: "Better Auth" },
 	{ area: "bun", label: "Bun" },
 	{ area: "ui", label: "UI System" },
+	{ area: "data", label: "Server State" },
 	{ area: "platform", label: "Platform" },
 ] as const;
 
@@ -181,6 +182,8 @@ export function PlatformReadinessPage() {
 					"React Router v8 upgrade",
 					"Better Auth sessions",
 					"Bun full-stack",
+					"React useSyncExternalStore",
+					"Biome Drizzle domain",
 				].includes(doc.label),
 			),
 		[],
