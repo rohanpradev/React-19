@@ -2,13 +2,16 @@ import {
 	BrainCircuit,
 	ChartColumnIncreasing,
 	ClipboardCheck,
+	CloudUpload,
 	DatabaseZap,
 	FilePenLine,
 	FlaskConical,
 	Gauge,
 	LayoutDashboard,
+	ListTree,
 	type LucideIcon,
 	Orbit,
+	PanelsTopLeft,
 	PanelTopOpen,
 	RadioTower,
 	Rocket,
@@ -130,6 +133,15 @@ export const navItems: [NavItem, ...NavItem[]] = [
 		apiLabels: ["useDeferredValue", "debounce", "Bun API"],
 	},
 	{
+		path: "/virtual-explorer",
+		label: "Virtual Explorer",
+		blurb: "High-volume entity browsing with deferred filters and a virtual row window.",
+		icon: ListTree,
+		stage: "hands-on",
+		releaseArea: "Performance",
+		apiLabels: ["useDeferredValue", "useTransition", "ref cleanup"],
+	},
+	{
 		path: "/workflow-board",
 		label: "Workflow Board",
 		blurb: "Sortable drag-and-drop prioritization with dnd-kit and shadcn-style UI.",
@@ -146,6 +158,25 @@ export const navItems: [NavItem, ...NavItem[]] = [
 		stage: "hands-on",
 		releaseArea: "Forms",
 		apiLabels: ["TanStack Form", "Valibot", "Schema validation"],
+	},
+	{
+		path: "/upload-manager",
+		label: "Upload Manager",
+		blurb:
+			"Enterprise file intake with validation, optimistic queueing, progress, retry, and cancel.",
+		icon: CloudUpload,
+		stage: "hands-on",
+		releaseArea: "File workflows",
+		apiLabels: ["useOptimistic", "useEffectEvent", "File API"],
+	},
+	{
+		path: "/workbench-layout",
+		label: "Workbench Layout",
+		blurb: "Resizable enterprise shell with accessible splitters and Activity-preserved panels.",
+		icon: PanelsTopLeft,
+		stage: "platform",
+		releaseArea: "Enterprise shell",
+		apiLabels: ["Activity", "useTransition", "ARIA splitter"],
 	},
 	{
 		path: "/server-state",
@@ -212,8 +243,8 @@ export const releaseCoverage = [
 		title: "useDeferredValue initial value",
 		status: "Pattern demo",
 		detail:
-			"The search page shows why deferred values still need normal UX shaping like debouncing, now backed by a real Bun autocomplete endpoint.",
-		relatedPaths: ["/search-debounce"],
+			"The search and virtual explorer pages show why deferred values still need normal UX shaping like debouncing, bounded rendering, and clear pending states.",
+		relatedPaths: ["/search-debounce", "/virtual-explorer"],
 	},
 	{
 		title: "Library-backed interaction patterns",
@@ -221,6 +252,13 @@ export const releaseCoverage = [
 		detail:
 			"dnd-kit, TanStack Form, Valibot, and TanStack Query show drag/drop, schema forms, and server-state cache workflows without hand-rolled infrastructure.",
 		relatedPaths: ["/workflow-board", "/intake-form", "/server-state"],
+	},
+	{
+		title: "Enterprise reusable UI surfaces",
+		status: "High-impact additions",
+		detail:
+			"Virtualized browsing, upload queue management, and resizable workbench layouts round out common enterprise product surfaces beyond tables and forms.",
+		relatedPaths: ["/virtual-explorer", "/upload-manager", "/workbench-layout"],
 	},
 	{
 		title: "State architecture and error recovery",

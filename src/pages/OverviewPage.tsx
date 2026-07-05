@@ -33,7 +33,7 @@ const learningTracks = (Object.keys(learningStages) as Array<keyof typeof learni
 
 const studioStats = [
 	{ value: "19.2", label: "React APIs", detail: "Actions, use, DOM APIs" },
-	{ value: "14", label: "Learning routes", detail: "Lazy route modules" },
+	{ value: String(learningRoutes.length), label: "Learning routes", detail: "Lazy route modules" },
 	{ value: "Bun", label: "Full-stack runtime", detail: "APIs, build, SQLite" },
 	{ value: "TS7", label: "Native preview", detail: "tsgo type checks" },
 ] as const;

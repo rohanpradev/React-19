@@ -8,7 +8,7 @@ The app is intentionally compact: each route explains one advanced frontend idea
 
 - React 19.2 patterns: Actions, `useActionState`, `useFormStatus`, `useOptimistic`, `use`, Suspense, ref cleanup, document metadata, custom elements, `useDeferredValue`, Activity, and Effect Events.
 - React Router 8.1 Data Mode: `createBrowserRouter`, route objects, lazy route modules, redirects, route-level error handling, auth-aware app shell behavior, and a documented Data Mode vs Framework Mode decision.
-- Frontend architecture: app shell design, progressive route loading, signal-style external state, context injection, error boundaries, server state boundaries, optimistic mutations, drag-and-drop interactions, schema validation, microfrontend tradeoffs, platform APIs, and UI system decisions.
+- Frontend architecture: app shell design, progressive route loading, signal-style external state, context injection, error boundaries, server state boundaries, optimistic mutations, virtualized browsing, upload queue management, resizable workbench layouts, drag-and-drop interactions, schema validation, microfrontend tradeoffs, platform APIs, and UI system decisions.
 - Full-stack Bun: one Bun server for HTML import frontend delivery, API routes, Better Auth, Drizzle ORM, SQLite, health checks, and server-side TanStack Table state.
 - Developer workflow: TypeScript 7 native preview through `tsgo`, Biome 2 formatting/lint/assist rules, Drizzle destructive-write lint rules, Zed project settings, and a Bun build pipeline.
 - Source-backed learning: official React, React Router, Better Auth, Bun, shadcn, and Module Federation docs are linked from the app and command palette.
@@ -43,8 +43,11 @@ The app is intentionally compact: each route explains one advanced frontend idea
 | `/react-use` | `use`, Suspense boundaries, promise reads, and conditional context reads |
 | `/dom-interop` | Metadata, refs, custom elements, assets, and React DOM interoperability |
 | `/search-debounce` | Debounced autocomplete with `useDeferredValue` and a real Bun API endpoint |
+| `/virtual-explorer` | High-volume entity browsing with deferred filters, virtual rows, ref cleanup, and Activity-preserved detail state |
 | `/workflow-board` | Sortable drag-and-drop prioritization with dnd-kit and shadcn-style UI |
 | `/intake-form` | Complex launch intake validation with TanStack Form and Valibot |
+| `/upload-manager` | Enterprise file intake with validation, optimistic queueing, progress, retry, and cancel states |
+| `/workbench-layout` | Resizable enterprise workbench shell with accessible splitters and Activity-preserved panels |
 | `/server-state` | TanStack Query cache, optimistic mutation, rollback, invalidation, and a Bun API endpoint |
 | `/revenue-ops` | Server-side TanStack Table state backed by Bun, Drizzle, and SQLite |
 | `/account` | Better Auth profile, password, and active-session management |

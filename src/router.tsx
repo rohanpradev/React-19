@@ -125,6 +125,14 @@ export const router = createBrowserRouter([
 				},
 			},
 			{
+				path: "virtual-explorer",
+				HydrateFallback: RouteHydrateFallback,
+				lazy: async () => {
+					const { VirtualExplorerPage } = await import("@/pages/VirtualExplorer");
+					return { Component: VirtualExplorerPage };
+				},
+			},
+			{
 				path: "workflow-board",
 				HydrateFallback: RouteHydrateFallback,
 				lazy: async () => {
@@ -138,6 +146,22 @@ export const router = createBrowserRouter([
 				lazy: async () => {
 					const { IntakeFormPage } = await import("@/pages/IntakeForm");
 					return { Component: IntakeFormPage };
+				},
+			},
+			{
+				path: "upload-manager",
+				HydrateFallback: RouteHydrateFallback,
+				lazy: async () => {
+					const { UploadManagerPage } = await import("@/pages/UploadManager");
+					return { Component: UploadManagerPage };
+				},
+			},
+			{
+				path: "workbench-layout",
+				HydrateFallback: RouteHydrateFallback,
+				lazy: async () => {
+					const { WorkbenchLayoutPage } = await import("@/pages/WorkbenchLayout");
+					return { Component: WorkbenchLayoutPage };
 				},
 			},
 			{
