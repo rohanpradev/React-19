@@ -2,6 +2,7 @@ import path from "node:path";
 import { serve } from "bun";
 
 import { auth } from "@/auth/server";
+import { serverEnv } from "@/config/server-env";
 
 import { initializeDatabase } from "./db/init";
 import index from "./index.html";
@@ -11,7 +12,7 @@ import { listPlatformSignals, updatePlatformSignal } from "./server/platform-sig
 
 initializeDatabase();
 
-const isDevelopment = process.env.NODE_ENV !== "production";
+const { isDevelopment } = serverEnv;
 const projectRoot = process.cwd();
 const productionDistDir = path.resolve(projectRoot, "dist");
 const productionIndexPath = path.join(productionDistDir, "index.html");
@@ -205,6 +206,7 @@ async function createProductionAppResponse(request: Request) {
 }
 
 const server = serve({
+	port: serverEnv.port,
 	routes: {
 		// Static & SEO
 		"/robots.txt": createRobotsTxt,

@@ -11,8 +11,8 @@ export type OfficialDocLink = {
 	logo?: TechLogoName;
 };
 
-export const docsLastCheckedAt = "2026-07-04";
-export const docsLastCheckedLabel = "July 4, 2026";
+export const docsLastCheckedAt = "2026-07-08";
+export const docsLastCheckedLabel = "July 8, 2026";
 
 export const docsPosture = [
 	{
@@ -29,9 +29,15 @@ export const docsPosture = [
 	},
 	{
 		title: "Better Auth",
-		status: "Package updated: 1.6.23",
+		status: "Package current: 1.6.23",
 		detail:
-			"Current docs emphasize session freshness, authoritative reads for sensitive actions, cookie-cache limits, rate-limit storage, and SQLite joins.",
+			"Current docs emphasize explicit base URLs, strong secrets, trusted origins, session freshness, cookie-cache limits, and Bun SQLite support.",
+	},
+	{
+		title: "shadcn/ui",
+		status: "Config current: Tailwind v4",
+		detail:
+			"components.json keeps RSC disabled for this client-rendered app, leaves Tailwind config blank for v4, and points the CLI at the shared CSS token file.",
 	},
 	{
 		title: "Bun",
@@ -41,7 +47,7 @@ export const docsPosture = [
 	},
 	{
 		title: "Biome",
-		status: "Drizzle domain enabled: 2.5.1",
+		status: "Drizzle domain enabled: 2.5.3",
 		detail:
 			"Biome exposes Drizzle ORM rules in the nursery group, so destructive update and delete calls are explicitly guarded.",
 	},
@@ -273,6 +279,22 @@ export const officialDocLinks: OfficialDocLink[] = [
 		href: "https://ui.shadcn.com/docs/forms/tanstack-form",
 		area: "ui",
 		keywords: ["shadcn", "tanstack form", "forms", "field", "validation"],
+		logo: "shadcn",
+	},
+	{
+		label: "shadcn components.json",
+		description: "Project config for aliases, Tailwind CSS v4, CSS variables, RSC, and icons.",
+		href: "https://ui.shadcn.com/docs/components-json",
+		area: "ui",
+		keywords: ["shadcn", "components json", "tailwind v4", "aliases", "rsc"],
+		logo: "shadcn",
+	},
+	{
+		label: "shadcn Vite install",
+		description: "Current React + TypeScript setup flow with Tailwind CSS v4 and alias resolution.",
+		href: "https://ui.shadcn.com/docs/installation/vite",
+		area: "ui",
+		keywords: ["shadcn", "vite", "react", "typescript", "tailwind"],
 		logo: "shadcn",
 	},
 	{

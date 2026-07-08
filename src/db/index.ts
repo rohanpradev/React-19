@@ -4,9 +4,10 @@ import { dirname } from "node:path";
 
 import { drizzle } from "drizzle-orm/bun-sqlite";
 
+import { serverEnv } from "@/config/server-env";
 import * as schema from "@/db/schema";
 
-export const dbFileName = Bun.env.DB_FILE_NAME ?? "mydb.sqlite";
+export const dbFileName = serverEnv.dbFileName;
 const dbDirectory = dirname(dbFileName);
 
 if (dbDirectory !== ".") {

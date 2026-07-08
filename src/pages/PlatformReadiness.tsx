@@ -182,6 +182,7 @@ export function PlatformReadinessPage() {
 					"React Router v8 upgrade",
 					"Better Auth sessions",
 					"Bun full-stack",
+					"shadcn components.json",
 					"React useSyncExternalStore",
 					"Biome Drizzle domain",
 				].includes(doc.label),

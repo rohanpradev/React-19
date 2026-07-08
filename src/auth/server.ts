@@ -1,23 +1,16 @@
 import { betterAuth } from "better-auth";
 
-import { configuredSocialProviders } from "@/auth/social-providers";
+import { serverEnv } from "@/config/server-env";
 import { sqlite } from "@/db";
 
-const authBaseUrl = Bun.env.BETTER_AUTH_URL ?? `http://localhost:${Bun.env.PORT ?? "3000"}`;
-const hasSocialProviders = Object.keys(configuredSocialProviders).length > 0;
-const trustedOrigins = Array.from(
-	new Set(
-		[authBaseUrl, ...(Bun.env.BETTER_AUTH_TRUSTED_ORIGINS ?? "").split(",")]
-			.map((origin) => origin.trim())
-			.filter(Boolean),
-	),
-);
+const hasSocialProviders = Object.keys(serverEnv.auth.socialProviders).length > 0;
 
 export const auth = betterAuth({
 	database: sqlite,
-	baseURL: authBaseUrl,
+	...(serverEnv.auth.secret ? { secret: serverEnv.auth.secret } : {}),
+	baseURL: serverEnv.auth.baseURL,
 	basePath: "/api/auth",
-	trustedOrigins,
+	trustedOrigins: serverEnv.auth.trustedOrigins,
 	emailAndPassword: {
 		enabled: true,
 		autoSignIn: true,
@@ -49,5 +42,5 @@ export const auth = betterAuth({
 			"/get-session": false,
 		},
 	},
-	...(hasSocialProviders ? { socialProviders: configuredSocialProviders } : {}),
+	...(hasSocialProviders ? { socialProviders: serverEnv.auth.socialProviders } : {}),
 });

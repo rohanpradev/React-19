@@ -68,7 +68,8 @@ Authentication is required for the workspace routes. Unauthenticated users are s
 
 ## Run With Docker
 
-Create a local `.env` from `.env.example` and set a strong `BETTER_AUTH_SECRET`.
+Create a local `.env` from `.env.example` and set a strong `BETTER_AUTH_SECRET`. The
+Compose setup refuses to start without one.
 
 ```bash
 docker compose up --build
@@ -79,13 +80,14 @@ The app runs at `http://localhost:3000`. Compose stores SQLite data in the `app-
 To build and run without Compose:
 
 ```bash
+export BETTER_AUTH_SECRET="$(openssl rand -base64 32)"
 docker build -t react-systems-studio .
-docker run --rm -p 3000:3000 -e BETTER_AUTH_URL=http://localhost:3000 -e BETTER_AUTH_SECRET=replace-with-a-strong-random-secret -v react-systems-studio-data:/data react-systems-studio
+docker run --rm -p 3000:3000 -e BETTER_AUTH_URL=http://localhost:3000 -e BETTER_AUTH_SECRET="$BETTER_AUTH_SECRET" -v react-systems-studio-data:/data react-systems-studio
 ```
 
 ## Current Docs Posture
 
-Latest official docs were checked on July 4, 2026. React's docs list React 19.2 as the current documented release line, React Router is on the latest v8 line, Bun is on the latest 1.3 line, and the app now pins the current package set for the actively tracked libraries:
+Latest official docs were checked on July 8, 2026. React's docs list React 19.2 as the current documented release line, React Router documents 8.1.0 as latest, Better Auth docs are on v1.6, shadcn documents Tailwind CSS v4 configuration, and the app now pins the current package set for the actively tracked libraries:
 
 | Package | Version |
 | --- | --- |
@@ -97,10 +99,12 @@ Latest official docs were checked on July 4, 2026. React's docs list React 19.2 
 | `@tanstack/react-form` | `^1.33.0` |
 | `@dnd-kit/core` / `@dnd-kit/sortable` | `^6.3.1` / `^10.0.0` |
 | `valibot` | `^1.4.2` |
-| `@typescript/native-preview` | `^7.0.0-dev.20260630.1` |
+| `lucide-react` | `^1.23.0` |
+| `@biomejs/biome` | `^2.5.3` |
+| `@typescript/native-preview` | `^7.0.0-dev.20260707.2` |
 | Bun runtime used for validation | `1.3.14` |
 
-The Platform Readiness route now includes a docs freshness card and expanded references for React versions, Effect Events, `useSyncExternalStore`, error boundaries, React Router v8 Data Mode and `HydrateFallback`, Bun HTML routes, Better Auth options, session caching, rate limiting, SQLite guidance, TanStack Query, TanStack Form, Valibot, dnd-kit, signal-style state, Robin Wieruch's 2026 React library guide, and Biome's Drizzle lint domain.
+The Platform Readiness route now includes a docs freshness card and expanded references for React versions, Effect Events, `useSyncExternalStore`, error boundaries, React Router v8 Data Mode and `HydrateFallback`, Bun HTML routes, Better Auth options, session caching, rate limiting, SQLite guidance, shadcn `components.json`, Tailwind CSS v4 setup, TanStack Query, TanStack Form, Valibot, dnd-kit, signal-style state, Robin Wieruch's 2026 React library guide, and Biome's Drizzle lint domain.
 
 ## Useful Scripts
 
@@ -171,7 +175,7 @@ Recommended production environment variables:
 - `GITHUB_CLIENT_ID`
 - `GITHUB_CLIENT_SECRET`
 
-Better Auth is configured with server-side session reads, a 10-minute session freshness window for sensitive operations, short-lived compact cookie session caching, explicit trusted origins, and built-in rate limiting for auth endpoints.
+Better Auth is configured with server-side session reads, a 10-minute session freshness window for sensitive operations, short-lived compact cookie session caching, explicit trusted origins, built-in rate limiting for auth endpoints, and a Valibot-backed server config guard that rejects missing or placeholder production secrets.
 
 OAuth redirect URLs:
 
