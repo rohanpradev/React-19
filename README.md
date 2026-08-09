@@ -7,7 +7,7 @@ The app is intentionally compact: each route explains one advanced frontend idea
 ## What This Covers
 
 - React 19.2 patterns: Actions, `useActionState`, `useFormStatus`, `useOptimistic`, `use`, Suspense, ref cleanup, document metadata, custom elements, `useDeferredValue`, Activity, and Effect Events.
-- React Router 8.1 Data Mode: `createBrowserRouter`, route objects, lazy route modules, redirects, route-level error handling, auth-aware app shell behavior, and a documented Data Mode vs Framework Mode decision.
+- React Router 8.2 Data Mode: `createBrowserRouter`, route objects, lazy route modules, redirects, route-level error handling, auth-aware app shell behavior, and a documented Data Mode vs Framework Mode decision.
 - Frontend architecture: app shell design, progressive route loading, signal-style external state, context injection, error boundaries, server state boundaries, optimistic mutations, virtualized browsing, upload queue management, resizable workbench layouts, drag-and-drop interactions, schema validation, microfrontend tradeoffs, platform APIs, and UI system decisions.
 - Full-stack Bun: one Bun server for HTML import frontend delivery, API routes, Better Auth, Drizzle ORM, SQLite, health checks, and server-side TanStack Table state.
 - Developer workflow: TypeScript 7 native preview through `tsgo`, Biome 2 formatting/lint/assist rules, Drizzle destructive-write lint rules, Zed project settings, and a Bun build pipeline.
@@ -19,7 +19,7 @@ The app is intentionally compact: each route explains one advanced frontend idea
 | --- | --- |
 | Runtime | Bun |
 | UI | React 19.2, React DOM, shadcn-style components, Radix UI, Tailwind CSS 4 |
-| Routing | React Router 8.1 Data Mode |
+| Routing | React Router 8.2 Data Mode |
 | Data UI | TanStack Table, TanStack Query |
 | Forms | TanStack Form, Valibot |
 | Interaction | dnd-kit |
@@ -35,7 +35,7 @@ The app is intentionally compact: each route explains one advanced frontend idea
 | --- | --- |
 | `/overview` | Compact map of the React, Bun, routing, UI, and tooling coverage |
 | `/architecture` | Senior frontend architecture notes, React 19.2 posture, router boundaries, and microfrontend decisions |
-| `/platform-readiness` | Experienced upgrade track for React 19.2, React Router 8.1.0 modes, Better Auth sessions, and Bun delivery |
+| `/platform-readiness` | Experienced upgrade track for React 19.2, React Router 8.2 modes, Better Auth security, and Bun delivery |
 | `/control-room` | Signal-style external store, context injection, command log, derived state, and recoverable error boundary |
 | `/form-actions` | Form mutations with `useActionState`, `useFormStatus`, pending states, and returned state |
 | `/actions` | Async Actions shaped with `startTransition` and clear mutation feedback |
@@ -68,8 +68,8 @@ Authentication is required for the workspace routes. Unauthenticated users are s
 
 ## Run With Docker
 
-Create a local `.env` from `.env.example` and set a strong `BETTER_AUTH_SECRET`. The
-Compose setup refuses to start without one.
+Create a local `.env` from `.env.example` and set either a strong `BETTER_AUTH_SECRET` or a
+versioned `BETTER_AUTH_SECRETS` keyring. The app refuses to start in production without one.
 
 ```bash
 docker compose up --build
@@ -87,24 +87,24 @@ docker run --rm -p 3000:3000 -e BETTER_AUTH_URL=http://localhost:3000 -e BETTER_
 
 ## Current Docs Posture
 
-Latest official docs were checked on July 8, 2026. React's docs list React 19.2 as the current documented release line, React Router documents 8.1.0 as latest, Better Auth docs are on v1.6, shadcn documents Tailwind CSS v4 configuration, and the app now pins the current package set for the actively tracked libraries:
+Latest official docs and package registries were checked on July 14, 2026. React's docs list React 19.2 as the current documented release line, React Router 8.2 is the latest stable package, Better Auth 1.6 is the stable line while 1.7 remains a release candidate, and shadcn documents Tailwind CSS v4 configuration. The app pins the current stable package set for the actively tracked libraries:
 
 | Package | Version |
 | --- | --- |
 | `react` / `react-dom` | `^19.2.7` |
-| `react-router` | `^8.1.0` |
+| `react-router` | `^8.2.0` |
 | `better-auth` | `^1.6.23` |
 | `tailwindcss` | `^4.3.2` |
 | `@tanstack/react-query` | `^5.101.2` |
-| `@tanstack/react-form` | `^1.33.0` |
+| `@tanstack/react-form` | `^1.33.2` |
 | `@dnd-kit/core` / `@dnd-kit/sortable` | `^6.3.1` / `^10.0.0` |
 | `valibot` | `^1.4.2` |
-| `lucide-react` | `^1.23.0` |
+| `lucide-react` | `^1.24.0` |
 | `@biomejs/biome` | `^2.5.3` |
 | `@typescript/native-preview` | `^7.0.0-dev.20260707.2` |
 | Bun runtime used for validation | `1.3.14` |
 
-The Platform Readiness route now includes a docs freshness card and expanded references for React versions, Effect Events, `useSyncExternalStore`, error boundaries, React Router v8 Data Mode and `HydrateFallback`, Bun HTML routes, Better Auth options, session caching, rate limiting, SQLite guidance, shadcn `components.json`, Tailwind CSS v4 setup, TanStack Query, TanStack Form, Valibot, dnd-kit, signal-style state, Robin Wieruch's 2026 React library guide, and Biome's Drizzle lint domain.
+The Platform Readiness route now includes a docs freshness card, a stable-vs-preview release policy, and a Better Auth threat-to-control map. References cover React versions, Effect Events, `useSyncExternalStore`, error boundaries, React Router v8 Data Mode and changelog, Bun HTML routes, Better Auth 1.6 security guidance and the 1.7 RC migration guide, session caching, secret rotation, rate limiting, SQLite guidance, shadcn `components.json`, Tailwind CSS v4 setup, TanStack Query, TanStack Form, Valibot, dnd-kit, signal-style state, and Biome's Drizzle lint domain.
 
 ## Useful Scripts
 
@@ -168,6 +168,8 @@ The app uses Better Auth with Bun's built-in SQLite driver while Drizzle manages
 Recommended production environment variables:
 
 - `BETTER_AUTH_SECRET`
+- `BETTER_AUTH_SECRETS` for rotation-safe `version:secret` keyrings
+- `BETTER_AUTH_IP_ADDRESS_HEADERS` when a trusted edge overwrites a single-value client-IP header
 - `BETTER_AUTH_URL`
 - `BETTER_AUTH_TRUSTED_ORIGINS`
 - `GOOGLE_CLIENT_ID`
@@ -175,7 +177,9 @@ Recommended production environment variables:
 - `GITHUB_CLIENT_ID`
 - `GITHUB_CLIENT_SECRET`
 
-Better Auth is configured with server-side session reads, a 10-minute session freshness window for sensitive operations, short-lived compact cookie session caching, explicit trusted origins, built-in rate limiting for auth endpoints, and a Valibot-backed server config guard that rejects missing or placeholder production secrets.
+Better Auth is configured with server-side session reads, a 10-minute session freshness window for sensitive operations, short-lived compact cookie session caching, explicit trusted origins, and built-in rate limiting for auth endpoints. Bun overwrites `x-real-ip` from the socket address before the auth handler runs, so the default limiter cannot be bypassed with a client-supplied forwarding header. Behind a trusted edge, set `BETTER_AUTH_IP_ADDRESS_HEADERS` to the single-value header that edge overwrites (for example, `cf-connecting-ip`) and keep the origin unreachable directly.
+
+The Valibot-backed server config guard rejects missing, malformed, duplicate-version, short, or placeholder production secrets. `BETTER_AUTH_SECRETS` follows Better Auth's ordered `2:new-secret,1:old-secret` format: the first key encrypts new data while older keys remain available for decryption during rotation. `BETTER_AUTH_SECRET` can remain temporarily as a fallback for legacy encrypted data.
 
 OAuth redirect URLs:
 

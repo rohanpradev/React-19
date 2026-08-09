@@ -26,6 +26,62 @@ const optionalUrl = v.optional(
 	v.pipe(v.string(), v.trim(), v.url("BETTER_AUTH_URL must be a valid URL.")),
 	undefined,
 );
+const optionalVersionedAuthSecrets = v.optional(
+	v.pipe(
+		v.string(),
+		v.trim(),
+		v.minLength(1),
+		v.transform((value) =>
+			value.split(",").map((entry) => {
+				const separatorIndex = entry.indexOf(":");
+
+				return {
+					version: Number(entry.slice(0, separatorIndex).trim()),
+					value: separatorIndex >= 0 ? entry.slice(separatorIndex + 1).trim() : "",
+				};
+			}),
+		),
+		v.check(
+			(secrets) =>
+				secrets.every(
+					(secret) =>
+						Number.isSafeInteger(secret.version) && secret.version > 0 && secret.value.length >= 32,
+				),
+			"BETTER_AUTH_SECRETS must use version:secret entries with secrets at least 32 characters long.",
+		),
+		v.check(
+			(secrets) => new Set(secrets.map((secret) => secret.version)).size === secrets.length,
+			"BETTER_AUTH_SECRETS cannot contain duplicate versions.",
+		),
+		v.check(
+			(secrets) => secrets.every((secret) => !isPlaceholderAuthSecret(secret.value)),
+			"BETTER_AUTH_SECRETS must not contain placeholder secrets.",
+		),
+	),
+	undefined,
+);
+const optionalTrustedIpHeaders = v.optional(
+	v.pipe(
+		v.string(),
+		v.trim(),
+		v.minLength(1),
+		v.transform((value) =>
+			uniqueValues(
+				value
+					.split(",")
+					.map((header) => header.trim().toLowerCase())
+					.filter(Boolean),
+			),
+		),
+		v.check(
+			(headers) =>
+				headers.length > 0 &&
+				headers.every((header) => /^[a-z0-9-]+$/.test(header) && header !== "x-forwarded-for"),
+			"BETTER_AUTH_IP_ADDRESS_HEADERS must contain trusted single-value header names; x-forwarded-for chains are not accepted here.",
+		),
+	),
+	undefined,
+);
 
 const rawServerEnvSchema = v.object({
 	NODE_ENV: v.pipe(
@@ -43,6 +99,8 @@ const rawServerEnvSchema = v.object({
 	DB_FILE_NAME: v.optional(v.pipe(v.string(), v.trim(), v.minLength(1)), "mydb.sqlite"),
 	BETTER_AUTH_URL: optionalUrl,
 	BETTER_AUTH_SECRET: optionalText,
+	BETTER_AUTH_SECRETS: optionalVersionedAuthSecrets,
+	BETTER_AUTH_IP_ADDRESS_HEADERS: optionalTrustedIpHeaders,
 	BETTER_AUTH_TRUSTED_ORIGINS: optionalText,
 	GOOGLE_CLIENT_ID: optionalText,
 	GOOGLE_CLIENT_SECRET: optionalText,
@@ -59,8 +117,10 @@ const serverEnvSchema = v.pipe(
 		"BETTER_AUTH_URL is required when NODE_ENV=production.",
 	),
 	v.check(
-		(env) => env.NODE_ENV !== "production" || Boolean(env.BETTER_AUTH_SECRET),
-		"BETTER_AUTH_SECRET is required when NODE_ENV=production.",
+		(env) =>
+			env.NODE_ENV !== "production" ||
+			Boolean(env.BETTER_AUTH_SECRET || env.BETTER_AUTH_SECRETS?.length),
+		"BETTER_AUTH_SECRET or BETTER_AUTH_SECRETS is required when NODE_ENV=production.",
 	),
 	v.check(
 		(env) =>
@@ -68,7 +128,10 @@ const serverEnvSchema = v.pipe(
 		"BETTER_AUTH_SECRET must be replaced with a strong random secret.",
 	),
 	v.check(
-		(env) => env.NODE_ENV !== "production" || (env.BETTER_AUTH_SECRET?.length ?? 0) >= 32,
+		(env) =>
+			env.NODE_ENV !== "production" ||
+			!env.BETTER_AUTH_SECRET ||
+			env.BETTER_AUTH_SECRET.length >= 32,
 		"BETTER_AUTH_SECRET must be at least 32 characters.",
 	),
 	v.transform((env) => {
@@ -85,6 +148,8 @@ const serverEnvSchema = v.pipe(
 			auth: {
 				baseURL: authBaseURL,
 				secret: getRuntimeAuthSecret(env.BETTER_AUTH_SECRET),
+				versionedSecrets: env.BETTER_AUTH_SECRETS ?? [],
+				ipAddressHeaders: env.BETTER_AUTH_IP_ADDRESS_HEADERS ?? ["x-real-ip"],
 				trustedOrigins: uniqueValues([
 					authBaseURL,
 					...parseCommaSeparatedValues(env.BETTER_AUTH_TRUSTED_ORIGINS),
@@ -108,6 +173,8 @@ function readRawServerEnv() {
 		DB_FILE_NAME: Bun.env.DB_FILE_NAME,
 		BETTER_AUTH_URL: Bun.env.BETTER_AUTH_URL,
 		BETTER_AUTH_SECRET: Bun.env.BETTER_AUTH_SECRET,
+		BETTER_AUTH_SECRETS: Bun.env.BETTER_AUTH_SECRETS,
+		BETTER_AUTH_IP_ADDRESS_HEADERS: Bun.env.BETTER_AUTH_IP_ADDRESS_HEADERS,
 		BETTER_AUTH_TRUSTED_ORIGINS: Bun.env.BETTER_AUTH_TRUSTED_ORIGINS,
 		GOOGLE_CLIENT_ID: Bun.env.GOOGLE_CLIENT_ID,
 		GOOGLE_CLIENT_SECRET: Bun.env.GOOGLE_CLIENT_SECRET,

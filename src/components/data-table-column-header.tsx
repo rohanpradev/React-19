@@ -1,6 +1,7 @@
 import type { Column } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp, ArrowUpDown, EyeOff, MoreHorizontal } from "lucide-react";
 
+import type { CustomerTableFeatures } from "@/components/data-table-features";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -11,13 +12,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
-type DataTableColumnHeaderProps<TData, TValue> = {
-	column: Column<TData, TValue>;
+type DataTableColumnHeaderProps<TData extends Record<string, unknown>, TValue> = {
+	column: Column<CustomerTableFeatures, TData, TValue>;
 	title: string;
 	className?: string;
 };
 
-export function DataTableColumnHeader<TData, TValue>({
+export function DataTableColumnHeader<TData extends Record<string, unknown>, TValue>({
 	column,
 	title,
 	className,

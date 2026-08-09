@@ -1,6 +1,7 @@
 import type { Column, Table } from "@tanstack/react-table";
 import { Settings2 } from "lucide-react";
 
+import type { CustomerTableFeatures } from "@/components/data-table-features";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -11,12 +12,18 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-function getColumnLabel<TData>(tableColumn: Column<TData, unknown>) {
+function getColumnLabel<TData extends Record<string, unknown>>(
+	tableColumn: Column<CustomerTableFeatures, TData, unknown>,
+) {
 	const meta = tableColumn.columnDef.meta as { label?: string } | undefined;
 	return meta?.label ?? tableColumn.id;
 }
 
-export function DataTableViewOptions<TData>({ table }: { table: Table<TData> }) {
+export function DataTableViewOptions<TData extends Record<string, unknown>>({
+	table,
+}: {
+	table: Table<CustomerTableFeatures, TData>;
+}) {
 	const hideableColumns = table.getAllColumns().filter((column) => column.getCanHide());
 
 	if (hideableColumns.length === 0) {

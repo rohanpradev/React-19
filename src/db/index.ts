@@ -5,7 +5,6 @@ import { dirname } from "node:path";
 import { drizzle } from "drizzle-orm/bun-sqlite";
 
 import { serverEnv } from "@/config/server-env";
-import * as schema from "@/db/schema";
 
 export const dbFileName = serverEnv.dbFileName;
 const dbDirectory = dirname(dbFileName);
@@ -19,6 +18,6 @@ export const sqlite = new Database(dbFileName);
 sqlite.exec("PRAGMA foreign_keys = ON;");
 sqlite.exec("PRAGMA journal_mode = WAL;");
 
-const db = drizzle({ client: sqlite, schema });
+const db = drizzle({ client: sqlite });
 
 export default db;

@@ -11,8 +11,8 @@ export type OfficialDocLink = {
 	logo?: TechLogoName;
 };
 
-export const docsLastCheckedAt = "2026-07-08";
-export const docsLastCheckedLabel = "July 8, 2026";
+export const docsLastCheckedAt = "2026-07-14";
+export const docsLastCheckedLabel = "July 14, 2026";
 
 export const docsPosture = [
 	{
@@ -23,15 +23,15 @@ export const docsPosture = [
 	},
 	{
 		title: "React Router",
-		status: "Package updated: 8.1.0",
+		status: "Package updated: 8.2.0",
 		detail:
-			"React Router 8 keeps the Data Mode fit for this app because Bun owns the server and bundling while React Router owns route data semantics.",
+			"React Router 8.2 keeps the Data Mode fit and adds correctness fixes for encoded params, route ranking, optional segments, blockers, and React form-state types.",
 	},
 	{
 		title: "Better Auth",
 		status: "Package current: 1.6.23",
 		detail:
-			"Current docs emphasize explicit base URLs, strong secrets, trusted origins, session freshness, cookie-cache limits, and Bun SQLite support.",
+			"The stable 1.6 line is hardened with versioned secret rotation, explicit origins, short session freshness, cookie-cache limits, and Bun SQLite; 1.7 remains an RC watch item.",
 	},
 	{
 		title: "shadcn/ui",
@@ -174,6 +174,14 @@ export const officialDocLinks: OfficialDocLink[] = [
 		href: "https://reactrouter.com/upgrading/v7",
 		area: "router",
 		keywords: ["react router", "v8", "upgrade", "latest", "react-router-dom"],
+		logo: "react-router",
+	},
+	{
+		label: "React Router changelog",
+		description: "Stable v8 release notes, compatibility baselines, fixes, and upgrade signals.",
+		href: "https://reactrouter.com/changelog",
+		area: "router",
+		keywords: ["react router", "v8", "8.2", "changelog", "release"],
 		logo: "react-router",
 	},
 	{
@@ -378,6 +386,32 @@ export const officialDocLinks: OfficialDocLink[] = [
 		logo: undefined,
 	},
 	{
+		label: "Better Auth 1.6",
+		description:
+			"Stable release posture, non-blocking scrypt, instrumentation, and hardening work.",
+		href: "https://better-auth.com/blog/1-6",
+		area: "auth",
+		keywords: ["better auth", "1.6", "stable", "release", "security"],
+		logo: "better-auth",
+	},
+	{
+		label: "Better Auth 1.7 upgrade (RC)",
+		description:
+			"Release-candidate migration guide for OAuth, OIDC, proxies, storage, plugins, and schema changes.",
+		href: "https://better-auth.com/docs/guides/1-7-upgrade-guide",
+		area: "auth",
+		keywords: ["better auth", "1.7", "release candidate", "upgrade", "migration"],
+		logo: "better-auth",
+	},
+	{
+		label: "Better Auth security update",
+		description: "June 2026 advisories and the stable-line package upgrade guidance.",
+		href: "https://better-auth.com/blog/security-update-june-2026",
+		area: "auth",
+		keywords: ["better auth", "security", "advisory", "1.6", "upgrade"],
+		logo: "better-auth",
+	},
+	{
 		label: "Better Auth SQLite",
 		description: "Official SQLite adapter guidance, including Bun built-in SQLite and joins.",
 		href: "https://better-auth.com/docs/adapters/sqlite#bun-built-in-sqlite",
@@ -428,10 +462,11 @@ export const officialDocLinks: OfficialDocLink[] = [
 	},
 	{
 		label: "Better Auth security",
-		description: "Security reference for cookies, trusted origins, proxies, and request safety.",
+		description:
+			"Security reference for secret rotation, cookies, CSRF, PKCE, trusted origins, proxies, and request safety.",
 		href: "https://better-auth.com/docs/reference/security",
 		area: "auth",
-		keywords: ["better auth", "security", "cookies", "origins", "proxy"],
+		keywords: ["better auth", "security", "secret rotation", "cookies", "origins", "proxy"],
 		logo: "better-auth",
 	},
 	{

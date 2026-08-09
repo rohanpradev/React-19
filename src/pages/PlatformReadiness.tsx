@@ -130,6 +130,62 @@ const upgradeChecklist = [
 	},
 ] as const;
 
+const releaseChannelDecisions = [
+	{
+		technology: "React",
+		version: "19.2.7 stable",
+		decision: "Adopt",
+		detail: "Current documented release line and the minimum baseline required by Router v8.",
+	},
+	{
+		technology: "React Router",
+		version: "8.2.0 stable",
+		decision: "Adopt",
+		detail:
+			"Patch fixes cover encoded params, optional segments, route ranking, blockers, and form types.",
+	},
+	{
+		technology: "Better Auth",
+		version: "1.6.23 stable",
+		decision: "Adopt",
+		detail: "Stay on the latest stable 1.6 patch and rotate secrets with a versioned keyring.",
+	},
+	{
+		technology: "Better Auth 1.7",
+		version: "Release candidate",
+		decision: "Watch",
+		detail:
+			"Review OAuth, proxy, plugin, and schema changes now; move only after the stable tag ships.",
+	},
+] as const;
+
+const authSecurityControls = [
+	{
+		control: "Versioned secret rotation",
+		threat: "Key replacement invalidates sessions or in-flight OAuth state.",
+		implementation:
+			"BETTER_AUTH_SECRETS accepts ordered version:key entries; the first encrypts new data and older keys remain decryption-only.",
+	},
+	{
+		control: "Origin and CSRF boundary",
+		threat: "Cross-site state-changing requests or an over-broad deployment origin.",
+		implementation:
+			"Better Auth checks non-simple requests and origins; the server exposes a reviewed trusted-origin allowlist.",
+	},
+	{
+		control: "Credential abuse resistance",
+		threat: "Password spraying, brute force, and email enumeration.",
+		implementation:
+			"Scrypt-backed passwords, strict sign-in/sign-up rate limits, socket-derived client IPs, and production secret validation form the baseline.",
+	},
+	{
+		control: "Session containment",
+		threat: "A long-lived or stolen session performs sensitive account operations.",
+		implementation:
+			"Seven-day expiry, daily renewal, five-minute compact cache, ten-minute freshness, and user-visible revocation narrow exposure.",
+	},
+] as const;
+
 const docAreas = [
 	{ area: "react", label: "React" },
 	{ area: "router", label: "React Router" },
@@ -180,7 +236,10 @@ export function PlatformReadinessPage() {
 				[
 					"React versions",
 					"React Router v8 upgrade",
+					"React Router changelog",
 					"Better Auth sessions",
+					"Better Auth 1.7 upgrade (RC)",
+					"Better Auth security update",
 					"Bun full-stack",
 					"shadcn components.json",
 					"React useSyncExternalStore",
@@ -349,8 +408,7 @@ export function PlatformReadinessPage() {
 						</div>
 						<CardTitle>React Router mode decision</CardTitle>
 						<CardDescription>
-							React Router 8.1.0 documents three modes. This project deliberately lives in Data
-							Mode.
+							React Router 8.2 documents three modes. This project deliberately lives in Data Mode.
 						</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-3">
@@ -401,6 +459,68 @@ export function PlatformReadinessPage() {
 								</div>
 							);
 						})}
+					</CardContent>
+				</Card>
+			</div>
+
+			<div className="grid gap-6 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
+				<Card className="border-border/60">
+					<CardHeader>
+						<div className="flex flex-wrap items-center gap-2">
+							<Badge variant="secondary">Release channel policy</Badge>
+							<Badge variant="outline">Stable before novel</Badge>
+						</div>
+						<CardTitle>Adopt, hold, and watch with intent</CardTitle>
+						<CardDescription>
+							A latest-version app still distinguishes production releases from useful previews.
+						</CardDescription>
+					</CardHeader>
+					<CardContent className="space-y-3">
+						{releaseChannelDecisions.map((item) => (
+							<div key={item.technology} className="app-muted-surface p-4">
+								<div className="flex flex-wrap items-center justify-between gap-2">
+									<div>
+										<p className="font-semibold text-foreground">{item.technology}</p>
+										<p className="mt-1 text-xs text-muted-foreground">{item.version}</p>
+									</div>
+									<Badge variant={item.decision === "Adopt" ? "secondary" : "outline"}>
+										{item.decision}
+									</Badge>
+								</div>
+								<p className="mt-3 text-sm leading-6 text-muted-foreground">{item.detail}</p>
+							</div>
+						))}
+					</CardContent>
+				</Card>
+
+				<Card className="border-border/60">
+					<CardHeader>
+						<div className="flex size-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
+							<LockKeyhole className="size-5" />
+						</div>
+						<CardTitle>Better Auth threat-to-control map</CardTitle>
+						<CardDescription>
+							Auth guidance is useful when every setting names the failure it is designed to
+							contain.
+						</CardDescription>
+					</CardHeader>
+					<CardContent className="grid gap-3 md:grid-cols-2">
+						{authSecurityControls.map((item) => (
+							<div key={item.control} className="app-surface p-4">
+								<div className="flex items-start gap-3">
+									<ShieldCheck className="mt-0.5 size-5 shrink-0 text-success" />
+									<div>
+										<p className="font-semibold text-foreground">{item.control}</p>
+										<p className="mt-2 text-xs leading-5 text-warning-foreground">
+											<span className="font-medium">Threat:</span> {item.threat}
+										</p>
+										<p className="mt-2 text-sm leading-6 text-muted-foreground">
+											{item.implementation}
+										</p>
+									</div>
+								</div>
+							</div>
+						))}
 					</CardContent>
 				</Card>
 			</div>

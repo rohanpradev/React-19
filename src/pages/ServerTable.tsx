@@ -1,14 +1,14 @@
-import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import {
 	type ColumnDef,
 	type ColumnFiltersState,
+	type ColumnVisibilityState,
 	flexRender,
-	getCoreRowModel,
 	type PaginationState,
 	type SortingState,
-	useReactTable,
-	type VisibilityState,
+	useTable,
 } from "@tanstack/react-table";
 import {
 	ArrowUpDown,
@@ -26,6 +26,10 @@ import {
 
 import { redirectToAuth } from "@/auth/redirects";
 import { DataTableColumnHeader } from "@/components/data-table-column-header";
+import {
+	type CustomerTableFeatures,
+	customerTableFeatures,
+} from "@/components/data-table-features";
 import { DataTableViewOptions } from "@/components/data-table-view-options";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -71,7 +75,9 @@ type CustomerColumnMeta = {
 	cellClassName?: string;
 };
 
-const columns: ColumnDef<CustomerRow>[] = [
+const EMPTY_CUSTOMERS: CustomerRow[] = [];
+
+const columns: ColumnDef<CustomerTableFeatures, CustomerRow>[] = [
 	{
 		accessorKey: "name",
 		meta: { label: "Customer" } satisfies CustomerColumnMeta,
@@ -156,23 +162,18 @@ const emptyFacets = {
 };
 
 export function ServerTablePage() {
-	const hasLoadedRef = useRef(false);
 	const [pagination, setPagination] = useState<PaginationState>({
 		pageIndex: 0,
 		pageSize: 10,
 	});
 	const [sorting, setSorting] = useState<SortingState>(defaultCustomerSorting);
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+	const [columnVisibility, setColumnVisibility] = useState<ColumnVisibilityState>({
 		seats: false,
 	});
 	const [globalFilter, setGlobalFilter] = useState("");
 	const [debouncedGlobalFilter, setDebouncedGlobalFilter] = useState("");
 	const [refreshKey, setRefreshKey] = useState(0);
-	const [response, setResponse] = useState<CustomerListResponse | null>(null);
-	const [isLoading, setIsLoading] = useState(true);
-	const [isRefreshing, setIsRefreshing] = useState(false);
-	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
 		const timeout = setTimeout(() => {
@@ -182,84 +183,58 @@ export function ServerTablePage() {
 		return () => clearTimeout(timeout);
 	}, [globalFilter]);
 
+	const query = useQuery({
+		queryKey: [
+			"customers",
+			{
+				pageIndex: pagination.pageIndex,
+				pageSize: pagination.pageSize,
+				search: debouncedGlobalFilter,
+				sorting,
+				filters: columnFilters,
+				refreshKey,
+			},
+		],
+		queryFn: ({ signal }) =>
+			fetchCustomerList({
+				pageIndex: pagination.pageIndex,
+				pageSize: pagination.pageSize,
+				search: debouncedGlobalFilter,
+				sorting: toServerSorting(sorting),
+				filters: toServerFilters(columnFilters),
+				refreshKey,
+				signal,
+			}),
+		placeholderData: keepPreviousData,
+	});
+	const response = query.data ?? null;
+	const isLoading = query.isPending;
+	const isRefreshing = query.isFetching && !query.isPending;
+	const error = query.error instanceof Error ? query.error.message : null;
+	const nextPageIndex = response?.meta.pageIndex;
+	const nextPageSize = response?.meta.pageSize;
+
 	useEffect(() => {
-		const controller = new AbortController();
-		const isFirstLoad = !hasLoadedRef.current;
-
-		async function loadCustomers() {
-			setError(null);
-			setIsLoading(isFirstLoad);
-			setIsRefreshing(!isFirstLoad);
-
-			try {
-				const queryString = buildCustomersQueryString({
-					pageIndex: pagination.pageIndex,
-					pageSize: pagination.pageSize,
-					search: debouncedGlobalFilter,
-					sorting: toServerSorting(sorting),
-					filters: toServerFilters(columnFilters),
-				});
-				const requestUrl = `/api/customers?${queryString}&refresh=${refreshKey}`;
-				const request = await fetch(requestUrl, {
-					signal: controller.signal,
-				});
-
-				if (request.status === 401) {
-					redirectToAuth();
-					return;
-				}
-
-				if (!request.ok) {
-					throw new Error(`Request failed with status ${request.status}`);
-				}
-
-				const nextResponse = (await request.json()) as CustomerListResponse;
-				setResponse(nextResponse);
-
-				setPagination((current) => {
-					if (
-						current.pageIndex === nextResponse.meta.pageIndex &&
-						current.pageSize === nextResponse.meta.pageSize
-					) {
-						return current;
-					}
-
-					return {
-						pageIndex: nextResponse.meta.pageIndex,
-						pageSize: nextResponse.meta.pageSize,
-					};
-				});
-			} catch (caughtError) {
-				if (caughtError instanceof DOMException && caughtError.name === "AbortError") {
-					return;
-				}
-
-				setError(caughtError instanceof Error ? caughtError.message : "Unable to load customers.");
-			} finally {
-				if (!controller.signal.aborted) {
-					hasLoadedRef.current = true;
-					setIsLoading(false);
-					setIsRefreshing(false);
-				}
-			}
+		if (nextPageIndex === undefined || nextPageSize === undefined) {
+			return;
 		}
 
-		loadCustomers();
+		setPagination((current) => {
+			if (current.pageIndex === nextPageIndex && current.pageSize === nextPageSize) {
+				return current;
+			}
 
-		return () => controller.abort();
-	}, [
-		columnFilters,
-		debouncedGlobalFilter,
-		pagination.pageIndex,
-		pagination.pageSize,
-		refreshKey,
-		sorting,
-	]);
+			return {
+				pageIndex: nextPageIndex,
+				pageSize: nextPageSize,
+			};
+		});
+	}, [nextPageIndex, nextPageSize]);
 
-	const table = useReactTable({
-		data: response?.rows ?? [],
+	const table = useTable({
+		features: customerTableFeatures,
+		data: response?.rows ?? EMPTY_CUSTOMERS,
 		columns,
-		getCoreRowModel: getCoreRowModel(),
 		manualFiltering: true,
 		manualPagination: true,
 		manualSorting: true,
@@ -617,7 +592,7 @@ export function ServerTablePage() {
 	);
 }
 
-function getColumnMeta(columnDef: ColumnDef<CustomerRow>) {
+function getColumnMeta(columnDef: ColumnDef<CustomerTableFeatures, CustomerRow>) {
 	return (columnDef.meta as CustomerColumnMeta | undefined) ?? {};
 }
 
@@ -646,6 +621,44 @@ function SummaryCard({
 			</CardContent>
 		</Card>
 	);
+}
+
+async function fetchCustomerList({
+	pageIndex,
+	pageSize,
+	search,
+	sorting,
+	filters,
+	refreshKey,
+	signal,
+}: {
+	pageIndex: number;
+	pageSize: number;
+	search: string;
+	sorting: CustomerTableSorting;
+	filters: CustomerTableFilters;
+	refreshKey: number;
+	signal: AbortSignal;
+}): Promise<CustomerListResponse> {
+	const queryString = buildCustomersQueryString({
+		pageIndex,
+		pageSize,
+		search,
+		sorting,
+		filters,
+	});
+	const response = await fetch(`/api/customers?${queryString}&refresh=${refreshKey}`, { signal });
+
+	if (response.status === 401) {
+		redirectToAuth();
+		throw new Error("Authentication is required.");
+	}
+
+	if (!response.ok) {
+		throw new Error(`Request failed with status ${response.status}`);
+	}
+
+	return (await response.json()) as CustomerListResponse;
 }
 
 function getStatusVariant(status: CustomerStatus) {

@@ -1,5 +1,5 @@
 import path from "node:path";
-import { serve } from "bun";
+import { type Server, serve } from "bun";
 
 import { auth } from "@/auth/server";
 import { serverEnv } from "@/config/server-env";
@@ -105,6 +105,23 @@ ${urls}
 	);
 }
 
+function withSocketClientIp(request: Request, server: Server<undefined>) {
+	const clientAddress = server.requestIP(request);
+
+	if (!clientAddress) {
+		return request;
+	}
+
+	const headers = new Headers(request.headers);
+	headers.set("x-real-ip", clientAddress.address);
+
+	return new Request(request, { headers });
+}
+
+function handleAuthRequest(request: Request, server: Server<undefined>) {
+	return auth.handler(withSocketClientIp(request, server));
+}
+
 type PackageManifest = {
 	dependencies?: Record<string, string>;
 	devDependencies?: Record<string, string>;
@@ -135,7 +152,8 @@ async function createPlatformHealthResponse() {
 		},
 		checks: [
 			"React Router Data Mode route tree is defined outside render.",
-			"Better Auth owns server-side session checks for protected API routes.",
+			"Better Auth owns server-side session checks and supports rotation-safe versioned secrets.",
+			"Bun supplies a socket-derived client IP to Better Auth rate limiting by default.",
 			"Bun serves API routes and the React app from one runtime.",
 			"TanStack Query is mounted once at the app entry for server-state examples.",
 			"Biome Drizzle rules guard destructive updates and deletes without where clauses.",
@@ -214,8 +232,8 @@ const server = serve({
 		"/sitemap.xml": createSitemapXml,
 
 		// Authentication (Better Auth)
-		"/api/auth": auth.handler,
-		"/api/auth/*": auth.handler,
+		"/api/auth": handleAuthRequest,
+		"/api/auth/*": handleAuthRequest,
 		"/api/auth-providers": authProvidersResponse,
 		"/api/platform/health": createPlatformHealthResponse,
 		"/api/platform/signals": {
