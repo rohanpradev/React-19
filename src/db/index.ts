@@ -15,8 +15,11 @@ if (dbDirectory !== ".") {
 
 export const sqlite = new Database(dbFileName);
 
+sqlite.exec("PRAGMA busy_timeout = 5000;");
 sqlite.exec("PRAGMA foreign_keys = ON;");
 sqlite.exec("PRAGMA journal_mode = WAL;");
+sqlite.exec("PRAGMA synchronous = NORMAL;");
+sqlite.exec("PRAGMA temp_store = MEMORY;");
 
 const db = drizzle({ client: sqlite });
 

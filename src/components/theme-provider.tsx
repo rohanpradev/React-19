@@ -77,8 +77,8 @@ function resolveTheme(theme: Theme): ResolvedTheme {
 function applyTheme(resolvedTheme: ResolvedTheme, preset: ThemePreset) {
 	const root = document.documentElement;
 	root.classList.toggle("dark", resolvedTheme === "dark");
-	root.dataset.theme = resolvedTheme;
-	root.dataset.preset = preset;
+	root.dataset["theme"] = resolvedTheme;
+	root.dataset["preset"] = preset;
 	root.style.colorScheme = resolvedTheme;
 }
 

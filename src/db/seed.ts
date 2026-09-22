@@ -1,7 +1,7 @@
 import { count } from "drizzle-orm";
-import { migrate } from "drizzle-orm/bun-sqlite/migrator";
 
 import db from "@/db";
+import { runMigrations } from "@/db/migrations";
 import { customersTable, type NewCustomer } from "@/db/schema";
 import { Temporal } from "@/lib/temporal";
 
@@ -191,7 +191,7 @@ export function seedCustomers(totalRows = 240) {
 }
 
 if (import.meta.main) {
-	migrate(db, { migrationsFolder: "./drizzle" });
+	runMigrations();
 
 	const insertedRows = seedCustomers();
 	console.log(

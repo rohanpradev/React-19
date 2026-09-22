@@ -26,6 +26,7 @@ import {
 	getOfficialDocsByArea,
 	officialDocLinks,
 } from "@/lib/official-docs";
+import { stackVersions } from "@/lib/stack-versions";
 
 type ActivityLog = {
 	id: number;
@@ -34,7 +35,7 @@ type ActivityLog = {
 
 const platformSignals = [
 	{
-		title: "React 19.2 posture",
+		title: "React 19.3 posture",
 		status: "Current",
 		icon: Activity,
 		logo: "react",
@@ -133,29 +134,31 @@ const upgradeChecklist = [
 const releaseChannelDecisions = [
 	{
 		technology: "React",
-		version: "19.2.7 stable",
+		version: `${stackVersions.react} stable`,
 		decision: "Adopt",
-		detail: "Current documented release line and the minimum baseline required by Router v8.",
+		detail:
+			"Current stable release with View Transitions and Fragment refs; compatible with Router v8.",
 	},
 	{
 		technology: "React Router",
-		version: "8.2.0 stable",
+		version: `${stackVersions.router} stable`,
 		decision: "Adopt",
 		detail:
 			"Patch fixes cover encoded params, optional segments, route ranking, blockers, and form types.",
 	},
 	{
 		technology: "Better Auth",
-		version: "1.6.23 stable",
+		version: `${stackVersions.auth} stable`,
 		decision: "Adopt",
-		detail: "Stay on the latest stable 1.6 patch and rotate secrets with a versioned keyring.",
+		detail:
+			"Use the restored core account schema from 1.7.3+ and retain the versioned secret keyring.",
 	},
 	{
-		technology: "Better Auth 1.7",
-		version: "Release candidate",
+		technology: "Drizzle ORM / Kit",
+		version: `${stackVersions.drizzle} preview`,
 		decision: "Watch",
 		detail:
-			"Review OAuth, proxy, plugin, and schema changes now; move only after the stable tag ships.",
+			"Keep ORM and Kit exact-pinned together on the verified RC channel; validate the migration graph before release.",
 	},
 ] as const;
 
@@ -238,7 +241,7 @@ export function PlatformReadinessPage() {
 					"React Router v8 upgrade",
 					"React Router changelog",
 					"Better Auth sessions",
-					"Better Auth 1.7 upgrade (RC)",
+					"Better Auth 1.7 upgrade",
 					"Better Auth security update",
 					"Bun full-stack",
 					"shadcn components.json",
@@ -261,7 +264,7 @@ export function PlatformReadinessPage() {
 				summary="A source-backed review of the current React, React Router, Better Auth, and Bun choices. This page turns the docs into operating rules for senior frontend work."
 				points={[
 					{
-						title: "React 19.2 as architecture",
+						title: "React 19.3 as architecture",
 						detail:
 							"Activity, Effect Events, performance tracks, and Actions are evaluated by boundary and risk.",
 					},
@@ -344,7 +347,7 @@ export function PlatformReadinessPage() {
 				<Card className="border-border/60">
 					<CardHeader>
 						<div className="flex flex-wrap items-center gap-2">
-							<Badge variant="secondary">React 19.2</Badge>
+							<Badge variant="secondary">React 19.3</Badge>
 							<Badge variant="outline">Activity boundary</Badge>
 						</div>
 						<CardTitle>Preserve state without keeping effects alive</CardTitle>
@@ -408,7 +411,7 @@ export function PlatformReadinessPage() {
 						</div>
 						<CardTitle>React Router mode decision</CardTitle>
 						<CardDescription>
-							React Router 8.2 documents three modes. This project deliberately lives in Data Mode.
+							React Router 8.4 documents three modes. This project deliberately lives in Data Mode.
 						</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-3">

@@ -222,7 +222,7 @@ export const releaseCoverage = [
 		title: "Architecture posture",
 		status: "Senior track",
 		detail:
-			"React 19.2, Router boundaries, platform standards, upgrade posture, and microfrontend tradeoffs are captured as decision guides.",
+			"React 19.3, Router boundaries, platform standards, upgrade posture, and microfrontend tradeoffs are captured as decision guides.",
 		relatedPaths: ["/architecture", "/platform-readiness"],
 	},
 	{

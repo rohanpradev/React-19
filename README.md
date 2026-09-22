@@ -6,8 +6,8 @@ The app is intentionally compact: each route explains one advanced frontend idea
 
 ## What This Covers
 
-- React 19.2 patterns: Actions, `useActionState`, `useFormStatus`, `useOptimistic`, `use`, Suspense, ref cleanup, document metadata, custom elements, `useDeferredValue`, Activity, and Effect Events.
-- React Router 8.2 Data Mode: `createBrowserRouter`, route objects, lazy route modules, redirects, route-level error handling, auth-aware app shell behavior, and a documented Data Mode vs Framework Mode decision.
+- React 19.3 patterns: Actions, `useActionState`, `useFormStatus`, `useOptimistic`, `use`, Suspense, ref cleanup, document metadata, custom elements, `useDeferredValue`, Activity, Effect Events, and stable View Transitions.
+- React Router 8.4 Data Mode: `createBrowserRouter`, route objects, lazy route modules, redirects, route-level error handling, auth-aware app shell behavior, and a documented Data Mode vs Framework Mode decision.
 - Frontend architecture: app shell design, progressive route loading, signal-style external state, context injection, error boundaries, server state boundaries, optimistic mutations, virtualized browsing, upload queue management, resizable workbench layouts, drag-and-drop interactions, schema validation, microfrontend tradeoffs, platform APIs, and UI system decisions.
 - Full-stack Bun: one Bun server for HTML import frontend delivery, API routes, Better Auth, Drizzle ORM, SQLite, health checks, and server-side TanStack Table state.
 - Developer workflow: TypeScript 7 native preview through `tsgo`, Biome 2 formatting/lint/assist rules, Drizzle destructive-write lint rules, Zed project settings, and a Bun build pipeline.
@@ -18,8 +18,8 @@ The app is intentionally compact: each route explains one advanced frontend idea
 | Area | Tools |
 | --- | --- |
 | Runtime | Bun |
-| UI | React 19.2, React DOM, shadcn-style components, Radix UI, Tailwind CSS 4 |
-| Routing | React Router 8.2 Data Mode |
+| UI | React 19.3, React DOM, shadcn-style components, Radix UI, Tailwind CSS 4 |
+| Routing | React Router 8.4 Data Mode |
 | Data UI | TanStack Table, TanStack Query |
 | Forms | TanStack Form, Valibot |
 | Interaction | dnd-kit |
@@ -34,8 +34,8 @@ The app is intentionally compact: each route explains one advanced frontend idea
 | Route | Focus |
 | --- | --- |
 | `/overview` | Compact map of the React, Bun, routing, UI, and tooling coverage |
-| `/architecture` | Senior frontend architecture notes, React 19.2 posture, router boundaries, and microfrontend decisions |
-| `/platform-readiness` | Experienced upgrade track for React 19.2, React Router 8.2 modes, Better Auth security, and Bun delivery |
+| `/architecture` | Senior frontend architecture notes, React 19.3 posture, router boundaries, and microfrontend decisions |
+| `/platform-readiness` | Experienced upgrade track for React 19.3, React Router 8.4 modes, Better Auth security, and Bun delivery |
 | `/control-room` | Signal-style external store, context injection, command log, derived state, and recoverable error boundary |
 | `/form-actions` | Form mutations with `useActionState`, `useFormStatus`, pending states, and returned state |
 | `/actions` | Async Actions shaped with `startTransition` and clear mutation feedback |
@@ -87,24 +87,41 @@ docker run --rm -p 3000:3000 -e BETTER_AUTH_URL=http://localhost:3000 -e BETTER_
 
 ## Current Docs Posture
 
-Latest official docs and package registries were checked on July 14, 2026. React's docs list React 19.2 as the current documented release line, React Router 8.2 is the latest stable package, Better Auth 1.6 is the stable line while 1.7 remains a release candidate, and shadcn documents Tailwind CSS v4 configuration. The app pins the current stable package set for the actively tracked libraries:
+Official docs and package registry tags were checked on September 22, 2026. React 19.3 and React Router 8.4 are adopted. Better Auth 1.7.5 supports this app’s existing core schema after the 1.7.3 account-schema correction. Drizzle ORM and Kit remain exact-pinned to the current `rc` tag, `1.0.0-rc.4`; the TypeScript native preview remains on its current registry `latest` tag. Radix remains supported by shadcn and the components now share the `radix-ui` package. CI, Docker, and the package-manager declaration use Bun 1.4.2.
 
 | Package | Version |
 | --- | --- |
-| `react` / `react-dom` | `^19.2.7` |
-| `react-router` | `^8.2.0` |
-| `better-auth` | `^1.6.23` |
-| `tailwindcss` | `^4.3.2` |
-| `@tanstack/react-query` | `^5.101.2` |
-| `@tanstack/react-form` | `^1.33.2` |
+| `react` / `react-dom` | `^19.3.0` |
+| `react-router` | `^8.4.0` |
+| `better-auth` | `^1.7.5` |
+| `drizzle-orm` / `drizzle-kit` | `1.0.0-rc.4` |
+| `tailwindcss` | `^4.3.3` |
+| `@tanstack/react-table` | `^9.2.4` |
+| `@tanstack/react-query` | `^5.103.2` |
+| `@tanstack/react-form` | `^1.33.5` |
 | `@dnd-kit/core` / `@dnd-kit/sortable` | `^6.3.1` / `^10.0.0` |
-| `valibot` | `^1.4.2` |
-| `lucide-react` | `^1.24.0` |
-| `@biomejs/biome` | `^2.5.3` |
+| `valibot` | `^1.5.0` |
+| `lucide-react` | `^1.47.0` |
+| `@biomejs/biome` | `^2.5.14` |
 | `@typescript/native-preview` | `^7.0.0-dev.20260707.2` |
-| Bun runtime used for validation | `1.3.14` |
+| Bun runtime used for validation | `1.4.2` |
 
-The Platform Readiness route now includes a docs freshness card, a stable-vs-preview release policy, and a Better Auth threat-to-control map. References cover React versions, Effect Events, `useSyncExternalStore`, error boundaries, React Router v8 Data Mode and changelog, Bun HTML routes, Better Auth 1.6 security guidance and the 1.7 RC migration guide, session caching, secret rotation, rate limiting, SQLite guidance, shadcn `components.json`, Tailwind CSS v4 setup, TanStack Query, TanStack Form, Valibot, dnd-kit, signal-style state, and Biome's Drizzle lint domain.
+The Platform Readiness route includes a docs freshness card, stable-vs-preview release policy, Drizzle v1 migration posture, and Better Auth threat-to-control map. References cover React versions, Router v8 Data Mode, Bun HTML routes, Better Auth hardening, SQLite guidance, Drizzle's v1 upgrade and breaking-change guides, Tailwind CSS v4, TanStack, Valibot, dnd-kit, signal-style state, and Biome's Drizzle lint domain.
+
+## September Upgrade Notes
+
+- The September 22 refresh updates React Router to 8.4.0, Better Auth to 1.7.5, TanStack Query to 5.103.2, Lucide to 1.47.0, and Biome to 2.5.14. Dependency ranges and `bun.lock` are updated together.
+- [Router 8.4](https://reactrouter.com/changelog#v840) reduces unrelated route re-renders and preserves lazy-route import errors. This app uses public Data Mode APIs and keeps the stable matcher; the new route-pattern matching flag is experimental.
+- [Better Auth 1.7.5](https://github.com/better-auth/better-auth/releases/tag/v1.7.5) includes adapter and database fixes without requiring a core schema migration for this Bun SQLite setup. Drizzle stays paired on the `rc` tag, rather than adopting commit-suffixed experimental builds or downgrading to the older `latest` line.
+- The September 14 security follow-up updated Better Auth's transitive `defu` dependency from 6.1.4 to 6.1.5 for [GHSA-737v-mqg7-c878](https://github.com/advisories/GHSA-737v-mqg7-c878). CI runs `bun run audit` after installing the lockfile; this check needs network access to npm's advisory service.
+- The overview has a searchable route explorer with track filters, deferred updates, an empty state, and React 19.3 View Transitions. Reduced-motion preferences disable the transition animations.
+- Mobile navigation is compact; the desktop rail scrolls independently on short viewports. Focus outlines, a focusable skip-link target, and outline-button borders improve keyboard and visual clarity.
+- Version cards use declared package baselines instead of independently maintained version strings.
+- Drizzle configuration uses `process.env` so the CLI works under Node as well as Bun.
+- Auth tests cover legacy 1.6 password hashes and identity preservation, registration, session reads, sign-out, invalid passwords, and untrusted origins. A separate upgrade check also verified a database session created by 1.6.26 against 1.7.4.
+- Google/GitHub OAuth callbacks still need a deployment-specific check with the configured provider credentials; local verification covers email/password authentication.
+
+Sources: [React 19.3](https://react.dev/blog/2026/09/09/react-19-3), [Router changelog](https://reactrouter.com/changelog), [Better Auth upgrade guide](https://better-auth.com/docs/guides/1-7-upgrade-guide), [account schema correction](https://better-auth.com/blog/1-7-account-schema), [Radix package guidance](https://www.radix-ui.com/primitives/docs/overview/introduction), [shadcn library support](https://ui.shadcn.com/docs/changelog/2026-07-base-ui-default), [Drizzle v1](https://orm.drizzle.team/docs/upgrade-v1).
 
 ## Useful Scripts
 
@@ -118,11 +135,15 @@ bun run typecheck
 bun run typecheck:diagnostics
 bun run typecheck:single
 bun run validate
+bun run test
+bun run audit
+bun run db:check
 bun run db:generate
+bun run db:migrate
 bun run db:seed
 ```
 
-`bun run validate` runs Biome checks, `tsgo` type checking, and the Bun build.
+`bun run validate` runs the production build, Biome checks, `tsgo` type checking, migration graph validation, and auth regression tests. `bun run test` uses an isolated in-memory SQLite database and never touches local accounts.
 
 ## TypeScript 7 Native Preview
 
@@ -160,6 +181,14 @@ The local SQLite files live in the project root:
 Set `DB_FILE_NAME` to override the SQLite path. The Docker image sets it to `/data/mydb.sqlite` so the database can be backed by a Docker volume.
 
 On startup, Bun runs Drizzle migrations from `./drizzle`, seeds customer demo data when needed, and uses the same SQLite database for Better Auth tables.
+
+The Drizzle layer is treated as an operational contract:
+
+- ORM and Kit are exact-pinned to the same RC so a lockfile refresh cannot silently split their migration semantics.
+- The v1 folder-based migration graph is validated with `bun run db:check`.
+- Customer status, plan, value, seat, and timestamp invariants are enforced by SQLite checks, not only TypeScript types.
+- WAL mode, foreign keys, a busy timeout, and balanced durability settings are applied when the connection opens.
+- Paginated reads use deterministic tie-breakers and transaction snapshots; search escapes SQL wildcard characters so user text stays literal.
 
 ## Authentication
 

@@ -1,6 +1,6 @@
 import { defineConfig } from "drizzle-kit";
 
-const dbFileName = Bun.env.DB_FILE_NAME ?? "mydb.sqlite";
+const dbFileName = process.env["DB_FILE_NAME"] ?? "mydb.sqlite";
 
 export default defineConfig({
 	out: "./drizzle",

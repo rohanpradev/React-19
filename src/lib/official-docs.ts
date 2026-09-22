@@ -1,4 +1,5 @@
 import type { TechLogoName } from "@/components/tech-logo";
+import { stackVersions } from "@/lib/stack-versions";
 
 export type OfficialDocArea = "react" | "router" | "bun" | "auth" | "ui" | "data" | "platform";
 
@@ -11,55 +12,107 @@ export type OfficialDocLink = {
 	logo?: TechLogoName;
 };
 
-export const docsLastCheckedAt = "2026-07-14";
-export const docsLastCheckedLabel = "July 14, 2026";
+export const docsLastCheckedAt = "2026-09-22";
+export const docsLastCheckedLabel = "September 22, 2026";
 
 export const docsPosture = [
 	{
 		title: "React",
-		status: "Package updated: 19.2.7",
+		status: `Package baseline: ${stackVersions.react}`,
 		detail:
-			"react.dev lists React 19.2 as the current documented release line, and this project is on the current 19.2 patch.",
+			"React 19.3 stabilizes ViewTransition and Fragment refs. The route explorer uses deferred filtering with a ViewTransition boundary.",
 	},
 	{
 		title: "React Router",
-		status: "Package updated: 8.2.0",
+		status: `Package baseline: ${stackVersions.router}`,
 		detail:
-			"React Router 8.2 keeps the Data Mode fit and adds correctness fixes for encoded params, route ranking, optional segments, blockers, and React form-state types.",
+			"React Router 8.4 reduces unrelated route re-renders and preserves lazy import errors. Data Mode stays on the stable matcher; the new route-pattern matcher remains experimental.",
 	},
 	{
 		title: "Better Auth",
-		status: "Package current: 1.6.23",
+		status: `Package baseline: ${stackVersions.auth}`,
 		detail:
-			"The stable 1.6 line is hardened with versioned secret rotation, explicit origins, short session freshness, cookie-cache limits, and Bun SQLite; 1.7 remains an RC watch item.",
+			"Better Auth 1.7.3 restored the 1.6 core account schema. This upgrade keeps providerId/accountId identity, trusted origins, session freshness, and rate limiting.",
+	},
+	{
+		title: "Drizzle ORM",
+		status: `Pinned RC: ${stackVersions.drizzle}`,
+		detail:
+			"ORM and Kit are exact-pinned as a pair, use the v3 migration graph, enforce database checks, and pass Drizzle's commutativity check.",
 	},
 	{
 		title: "shadcn/ui",
-		status: "Config current: Tailwind v4",
+		status: "Radix UI + Tailwind v4",
 		detail:
-			"components.json keeps RSC disabled for this client-rendered app, leaves Tailwind config blank for v4, and points the CLI at the shared CSS token file.",
+			"Radix remains supported by shadcn. Components share the tree-shakeable radix-ui package, React 19 ref props, and existing Tailwind v4 theme tokens.",
 	},
 	{
 		title: "Bun",
-		status: "Runtime checked: 1.3.14",
+		status: "Runtime checked: 1.4.2",
 		detail:
 			"Bun docs now center HTML route imports, development HMR/console forwarding, and route maps in Bun.serve.",
 	},
 	{
 		title: "Biome",
-		status: "Drizzle domain enabled: 2.5.3",
+		status: `Drizzle domain enabled: ${stackVersions.biome}`,
 		detail:
 			"Biome exposes Drizzle ORM rules in the nursery group, so destructive update and delete calls are explicitly guarded.",
+	},
+	{
+		title: "TypeScript",
+		status: "Native preview: 7.0",
+		detail:
+			"Strict mode now rejects unused symbols and unsafe index-signature property access in addition to unchecked indexed reads and fallthrough.",
 	},
 ] as const;
 
 export const officialDocLinks: OfficialDocLink[] = [
 	{
+		label: "React 19.3 release",
+		description: "Stable View Transitions, Fragment refs, browser(), and Trusted Types.",
+		href: "https://react.dev/blog/2026/09/09/react-19-3",
+		area: "react",
+		keywords: ["react", "19.3", "view transition", "fragment", "stable"],
+		logo: "react",
+	},
+	{
+		label: "React ViewTransition",
+		description: "Animate deferred and transition updates with browser View Transitions.",
+		href: "https://react.dev/reference/react/ViewTransition",
+		area: "react",
+		keywords: ["react", "motion", "deferred", "view transition"],
+		logo: "react",
+	},
+	{
+		label: "Better Auth account compatibility",
+		description: "The 1.7.3 correction restores the 1.6 core account schema.",
+		href: "https://better-auth.com/blog/1-7-account-schema",
+		area: "auth",
+		keywords: ["better auth", "1.7.3", "issuer", "schema", "upgrade"],
+		logo: "better-auth",
+	},
+	{
+		label: "shadcn library choice",
+		description: "Base UI defaults for new projects; existing Radix components remain supported.",
+		href: "https://ui.shadcn.com/docs/changelog/2026-07-base-ui-default",
+		area: "ui",
+		keywords: ["shadcn", "radix", "base ui"],
+		logo: "shadcn",
+	},
+	{
+		label: "Radix package imports",
+		description: "Use a single tree-shakeable package for accessible UI primitives.",
+		href: "https://www.radix-ui.com/primitives/docs/overview/introduction",
+		area: "ui",
+		keywords: ["radix", "package", "accessibility"],
+		logo: "shadcn",
+	},
+	{
 		label: "React versions",
 		description: "Latest documented React release line and archived major-version docs.",
 		href: "https://react.dev/versions",
 		area: "react",
-		keywords: ["react", "versions", "latest", "19.2", "release"],
+		keywords: ["react", "versions", "latest", "19.3", "release"],
 		logo: "react",
 	},
 	{
@@ -181,7 +234,7 @@ export const officialDocLinks: OfficialDocLink[] = [
 		description: "Stable v8 release notes, compatibility baselines, fixes, and upgrade signals.",
 		href: "https://reactrouter.com/changelog",
 		area: "router",
-		keywords: ["react router", "v8", "8.2", "changelog", "release"],
+		keywords: ["react router", "v8", "8.4", "changelog", "release"],
 		logo: "react-router",
 	},
 	{
@@ -256,6 +309,24 @@ export const officialDocLinks: OfficialDocLink[] = [
 		area: "data",
 		keywords: ["tanstack", "query", "server state", "cache", "mutation", "invalidation"],
 		logo: "tanstack",
+	},
+	{
+		label: "Drizzle v1 upgrade",
+		description:
+			"Official v1 upgrade workflow covering package tags, migration graph upgrades, and breaking changes.",
+		href: "https://orm.drizzle.team/docs/upgrade-v1",
+		area: "data",
+		keywords: ["drizzle", "v1", "release candidate", "migration", "upgrade"],
+		logo: "drizzle",
+	},
+	{
+		label: "Drizzle v1 changes",
+		description:
+			"Complete v0-to-v1 API and behavior changes for ORM, Kit, relations, casing, and drivers.",
+		href: "https://orm.drizzle.team/docs/v0-v1-changes",
+		area: "data",
+		keywords: ["drizzle", "v1", "breaking changes", "relations", "kit"],
+		logo: "drizzle",
 	},
 	{
 		label: "TanStack Query optimistic updates",
@@ -395,12 +466,12 @@ export const officialDocLinks: OfficialDocLink[] = [
 		logo: "better-auth",
 	},
 	{
-		label: "Better Auth 1.7 upgrade (RC)",
+		label: "Better Auth 1.7 upgrade",
 		description:
-			"Release-candidate migration guide for OAuth, OIDC, proxies, storage, plugins, and schema changes.",
+			"Stable upgrade guide for account compatibility, OAuth, proxies, storage, and plugins.",
 		href: "https://better-auth.com/docs/guides/1-7-upgrade-guide",
 		area: "auth",
-		keywords: ["better auth", "1.7", "release candidate", "upgrade", "migration"],
+		keywords: ["better auth", "1.7", "stable", "upgrade", "migration"],
 		logo: "better-auth",
 	},
 	{

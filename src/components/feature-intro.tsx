@@ -31,10 +31,12 @@ export function FeatureIntro({ eyebrow, title, summary, points, links = [] }: Fe
 					</Badge>
 
 					<div className="space-y-3">
-						<h1 className="max-w-4xl font-display text-4xl leading-[0.95] text-foreground sm:text-5xl">
+						<h1 className="max-w-4xl font-display text-3xl font-semibold leading-tight text-foreground sm:text-4xl">
 							{title}
 						</h1>
-						<p className="max-w-2xl text-base leading-7 text-muted-foreground">{summary}</p>
+						<p className="max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">
+							{summary}
+						</p>
 					</div>
 				</div>
 

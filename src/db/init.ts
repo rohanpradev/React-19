@@ -1,6 +1,4 @@
-import { migrate } from "drizzle-orm/bun-sqlite/migrator";
-
-import db from "@/db";
+import { runMigrations } from "@/db/migrations";
 import { seedCustomers } from "@/db/seed";
 
 let isInitialized = false;
@@ -10,7 +8,7 @@ export function initializeDatabase() {
 		return;
 	}
 
-	migrate(db, { migrationsFolder: "./drizzle" });
+	runMigrations();
 	seedCustomers();
 
 	isInitialized = true;

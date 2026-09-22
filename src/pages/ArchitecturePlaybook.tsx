@@ -79,11 +79,11 @@ const reactCapabilities = [
 	},
 	{
 		name: "<ViewTransition>",
-		status: "Canary watch",
-		tone: "watch",
-		call: "Plan motion boundaries, but do not depend on it in stable builds.",
+		status: "Stable 19.3",
+		tone: "stable",
+		call: "Animate transition and deferred updates within deliberate motion boundaries.",
 		fit: "Route motion, shared elements, Suspense reveal polish.",
-		risk: "Respect reduced motion and avoid shipping Canary APIs accidentally.",
+		risk: "Respect reduced motion and preserve immediate feedback for urgent updates.",
 	},
 ] as const;
 
@@ -163,7 +163,7 @@ const frontendRadar = [
 	{
 		label: "Adopt now",
 		items: [
-			"React 19.2",
+			"React 19.3",
 			"Router data boundaries",
 			"Actions",
 			"Activity",
@@ -177,7 +177,12 @@ const frontendRadar = [
 	},
 	{
 		label: "Watch",
-		items: ["ViewTransition", "RSC in routers", "Module Federation", "edge stream caching"],
+		items: [
+			"Custom motion choreography",
+			"RSC in routers",
+			"Module Federation",
+			"edge stream caching",
+		],
 	},
 ] as const;
 
@@ -187,8 +192,8 @@ const docs = [
 		href: "https://react.dev/versions",
 	},
 	{
-		label: "React 19.2",
-		href: "https://react.dev/blog/2025/10/01/react-19-2",
+		label: "React 19.3",
+		href: "https://react.dev/blog/2026/09/09/react-19-3",
 	},
 	{
 		label: "React useEffectEvent",
@@ -215,7 +220,6 @@ const docs = [
 const toneClassName = {
 	stable: "border-success/20 bg-success/10 text-success",
 	specialized: "border-primary/20 bg-primary/10 text-primary",
-	watch: "border-warning/25 bg-warning/12 text-warning-foreground",
 } as const satisfies Record<(typeof reactCapabilities)[number]["tone"], string>;
 
 export function ArchitecturePlaybookPage() {
@@ -224,10 +228,10 @@ export function ArchitecturePlaybookPage() {
 			<FeatureIntro
 				eyebrow="Architect track"
 				title="React Frontend Architecture"
-				summary="A compact decision map for React 19.2, Router boundaries, frontend platform governance, and microfrontends. Use it to decide what belongs in the app, what belongs in the platform, and what should stay a pilot."
+				summary="A compact decision map for React 19.3, Router boundaries, frontend platform governance, and microfrontends. Use it to decide what belongs in the app, what belongs in the platform, and what should stay a pilot."
 				points={[
 					{
-						title: "React 19.2",
+						title: "React 19.3",
 						detail:
 							"Activity, Effect Events, cacheSignal, performance tracks, and pre-rendering are treated as architectural tools.",
 					},

@@ -57,6 +57,9 @@
 		},
 		"rules": {
 			"preset": "recommended",
+			"complexity": {
+				"useLiteralKeys": "off"
+			},
 			"correctness": {
 				"noUndeclaredDependencies": "error",
 				"noUnusedImports": "error"

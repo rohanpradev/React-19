@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   quality:
-    name: Biome, Types, Build
+    name: Biome, Types, Migrations, Build
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -27,7 +27,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          bun-version: "1.4.2"
 
       - name: Show Bun version
         run: bun --version
@@ -35,11 +35,20 @@ jobs:
       - name: Install dependencies
         run: bun ci
 
+      - name: Dependency security audit
+        run: bun run audit
+
       - name: Biome check
         run: bun run check
 
       - name: Type check
         run: bun run typecheck
+
+      - name: Drizzle migration check
+        run: bun run db:check
+
+      - name: Auth regression tests
+        run: bun run test
 
       - name: Build check
         run: bun run build

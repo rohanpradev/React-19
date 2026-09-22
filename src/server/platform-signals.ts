@@ -87,17 +87,17 @@ async function readUpdatePayload(request: Request): Promise<UpdatePlatformSignal
 		return null;
 	}
 
-	if (!isRecord(body) || typeof body.id !== "string" || typeof body.status !== "string") {
+	if (!isRecord(body) || typeof body["id"] !== "string" || typeof body["status"] !== "string") {
 		return null;
 	}
 
-	if (!isPlatformSignalStatus(body.status)) {
+	if (!isPlatformSignalStatus(body["status"])) {
 		return null;
 	}
 
 	return {
-		id: body.id,
-		status: body.status,
+		id: body["id"],
+		status: body["status"],
 	};
 }
 

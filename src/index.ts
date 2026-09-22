@@ -139,14 +139,15 @@ async function createPlatformHealthResponse() {
 			mode: isDevelopment ? "development" : "production",
 		},
 		packages: {
-			react: packageJson.dependencies?.react ?? "unknown",
+			react: packageJson.dependencies?.["react"] ?? "unknown",
 			"react-router": packageJson.dependencies?.["react-router"] ?? "unknown",
 			"better-auth": packageJson.dependencies?.["better-auth"] ?? "unknown",
 			"@tanstack/react-query": packageJson.dependencies?.["@tanstack/react-query"] ?? "unknown",
 			"@tanstack/react-form": packageJson.dependencies?.["@tanstack/react-form"] ?? "unknown",
 			"@dnd-kit/core": packageJson.dependencies?.["@dnd-kit/core"] ?? "unknown",
-			valibot: packageJson.dependencies?.valibot ?? "unknown",
-			tailwindcss: packageJson.devDependencies?.tailwindcss ?? "unknown",
+			"drizzle-orm": packageJson.dependencies?.["drizzle-orm"] ?? "unknown",
+			valibot: packageJson.dependencies?.["valibot"] ?? "unknown",
+			tailwindcss: packageJson.devDependencies?.["tailwindcss"] ?? "unknown",
 			"@typescript/native-preview":
 				packageJson.devDependencies?.["@typescript/native-preview"] ?? "unknown",
 		},
@@ -157,6 +158,7 @@ async function createPlatformHealthResponse() {
 			"Bun serves API routes and the React app from one runtime.",
 			"TanStack Query is mounted once at the app entry for server-state examples.",
 			"Biome Drizzle rules guard destructive updates and deletes without where clauses.",
+			"Drizzle v1 migration integrity is checked independently from runtime migration execution.",
 			"Production assets are resolved inside the dist directory before serving.",
 		],
 	});
