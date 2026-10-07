@@ -87,29 +87,48 @@ docker run --rm -p 3000:3000 -e BETTER_AUTH_URL=http://localhost:3000 -e BETTER_
 
 ## Current Docs Posture
 
-Official docs and package registry tags were checked on September 22, 2026. React 19.3 and React Router 8.4 are adopted. Better Auth 1.7.5 supports this app’s existing core schema after the 1.7.3 account-schema correction. Drizzle ORM and Kit remain exact-pinned to the current `rc` tag, `1.0.0-rc.4`; the TypeScript native preview remains on its current registry `latest` tag. Radix remains supported by shadcn and the components now share the `radix-ui` package. CI, Docker, and the package-manager declaration use Bun 1.4.2.
+Package registry tags were checked on October 5, 2026; the changed packages were reviewed against their official release notes. React 19.3, React Router 8.4, and Bun 1.4.2 remain current stable releases. Better Auth 1.7.7 supports this app’s existing core schema after the 1.7.3 account-schema correction. Drizzle ORM and Kit remain exact-pinned to the current `rc` tag, `1.0.0-rc.4`; the TypeScript native preview remains on its current registry `latest` tag. These are existing preview-channel exceptions: commit-suffixed Drizzle builds and React/Bun canaries are not adopted. Radix remains supported by shadcn and the components share the `radix-ui` package.
 
 | Package | Version |
 | --- | --- |
 | `react` / `react-dom` | `^19.3.0` |
 | `react-router` | `^8.4.0` |
-| `better-auth` | `^1.7.5` |
+| `better-auth` | `^1.7.7` |
 | `drizzle-orm` / `drizzle-kit` | `1.0.0-rc.4` |
 | `tailwindcss` | `^4.3.3` |
-| `@tanstack/react-table` | `^9.2.4` |
-| `@tanstack/react-query` | `^5.103.2` |
+| `@tanstack/react-table` | `^9.2.6` |
+| `@tanstack/react-query` | `^5.104.1` |
 | `@tanstack/react-form` | `^1.33.5` |
 | `@dnd-kit/core` / `@dnd-kit/sortable` | `^6.3.1` / `^10.0.0` |
 | `valibot` | `^1.5.0` |
-| `lucide-react` | `^1.47.0` |
-| `@biomejs/biome` | `^2.5.14` |
+| `lucide-react` | `^1.52.0` |
+| `@biomejs/biome` | `^2.5.15` |
 | `@typescript/native-preview` | `^7.0.0-dev.20260707.2` |
 | Bun runtime used for validation | `1.4.2` |
 
 The Platform Readiness route includes a docs freshness card, stable-vs-preview release policy, Drizzle v1 migration posture, and Better Auth threat-to-control map. References cover React versions, Router v8 Data Mode, Bun HTML routes, Better Auth hardening, SQLite guidance, Drizzle's v1 upgrade and breaking-change guides, Tailwind CSS v4, TanStack, Valibot, dnd-kit, signal-style state, and Biome's Drizzle lint domain.
 
+## October Upgrade and Audit
+
+- Updated Better Auth to 1.7.7, TanStack Query to 5.104.1, TanStack Table to 9.2.6, and Lucide to 1.52.0, including the lockfile.
+- [Better Auth 1.7.7](https://github.com/better-auth/better-auth/releases/tag/v1.7.7) includes Magic Link, OAuth Proxy, and social sign-in security fixes. This app does not enable Magic Link or OAuth Proxy. Its core schema needs no migration; pending OAuth sign-ins should be restarted after deployment. Tests cover legacy credentials, registration, cached-cookie revocation, password limits, and untrusted origins. Origin and CSRF checks are explicitly enabled, including under the test runner.
+- Protected API authorization bypasses the session cookie cache so database revocation takes effect immediately. The browser can still use the short-lived session cache for presentation.
+- Each authenticated session owns a separate TanStack Query client. Sign-out errors remain visible and do not navigate as if logout succeeded. Successful mutations write the confirmed response into the cache before invalidation, preserving the saved state if the refresh fails or the query has unmounted.
+- Customer-table refresh uses `refetch()` rather than manufacturing a new query key. Placeholder rows retain their actual range, filter controls use current input state, and missing pagination/autocomplete parameters use the documented defaults. Search and filter controls have accessible names.
+- Production now builds browser assets into `dist/public` and server code into `dist/index.js` plus private sibling chunks. Only `dist/public` is served. Missing assets and unknown APIs return 404, unsupported document methods return 405, and deep links load root-relative assets. The build uses fixed targets and output locations; arbitrary build CLI overrides are no longer supported.
+- `bun run test:production` starts the actual production build with an isolated in-memory database and disposable credentials, checks HTTP behavior, and stops it. It runs in `validate`, CI, and Docker builds and requires localhost network access.
+- TanStack Query 5.104.1 has no core behavior changes. Table 9.2.5 refreshes compatible Store dependencies; [9.2.6](https://github.com/TanStack/table/releases/tag/%40tanstack/react-table%409.2.6) reorganizes bundled agent skills. This app has no Intent skill mappings to migrate. Existing Table v9 feature composition and React 19 APIs remain supported.
+
+Implementation references: [Better Auth cache revocation](https://better-auth.com/docs/concepts/session-management), [TanStack mutation responses](https://tanstack.com/query/latest/docs/framework/react/guides/updates-from-mutation-responses), [Bun HTML builds](https://bun.sh/docs/bundler/html-static).
+
+Validation covers the production build, lint, types, migration graph, regression tests, production HTTP smoke checks, and the package vulnerability audit. Google/GitHub OAuth callbacks still require a deployment-specific check with real provider credentials. A disposable browser session verified registration, table pagination, refresh, filtering, and sign-out without console errors. Docker image execution and provider OAuth callbacks were not run locally; this is not a full accessibility audit or penetration test.
+
 ## September Upgrade Notes
 
+- The September 30 refresh updates Better Auth to 1.7.6, TanStack Query to 5.104.0, Lucide to 1.49.0, and Biome to 2.5.15, with a matching `bun.lock`.
+- [Better Auth 1.7.6](https://github.com/better-auth/better-auth/releases/tag/v1.7.6) prevents stale auth-query responses from winning and rejects oversized passwords before verification. The server explicitly caps passwords at 128 characters; an in-memory regression test covers that rejection alongside existing account compatibility checks.
+- Session loading uses the router's cancellation signal and inferred loader types. Session-service errors reach the route error boundary instead of being treated as a signed-out session.
+- The server-state example shares typed query/mutation options, passes the query cancellation signal to `fetch`, and keeps mutation controls pending until the server refresh settles. Failed edits show a rollback message. Regression tests exercise cancellation, rollback, and the refresh lifecycle through TanStack Query observers.
 - The September 22 refresh updates React Router to 8.4.0, Better Auth to 1.7.5, TanStack Query to 5.103.2, Lucide to 1.47.0, and Biome to 2.5.14. Dependency ranges and `bun.lock` are updated together.
 - [Router 8.4](https://reactrouter.com/changelog#v840) reduces unrelated route re-renders and preserves lazy-route import errors. This app uses public Data Mode APIs and keeps the stable matcher; the new route-pattern matching flag is experimental.
 - [Better Auth 1.7.5](https://github.com/better-auth/better-auth/releases/tag/v1.7.5) includes adapter and database fixes without requiring a core schema migration for this Bun SQLite setup. Drizzle stays paired on the `rc` tag, rather than adopting commit-suffixed experimental builds or downgrading to the older `latest` line.
@@ -136,6 +155,7 @@ bun run typecheck:diagnostics
 bun run typecheck:single
 bun run validate
 bun run test
+bun run test:production
 bun run audit
 bun run db:check
 bun run db:generate
@@ -143,7 +163,7 @@ bun run db:migrate
 bun run db:seed
 ```
 
-`bun run validate` runs the production build, Biome checks, `tsgo` type checking, migration graph validation, and auth regression tests. `bun run test` uses an isolated in-memory SQLite database and never touches local accounts.
+`bun run validate` runs the production build, Biome checks, `tsgo` type checking, migration graph validation, regression tests, and production HTTP smoke checks. Auth tests use an isolated in-memory SQLite database; query tests use controlled network responses. Tests never touch local accounts.
 
 ## TypeScript 7 Native Preview
 

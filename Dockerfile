@@ -14,6 +14,7 @@ RUN bun run typecheck
 RUN bun run db:check
 RUN bun run test
 RUN bun run build
+RUN bun run test:production
 
 FROM base AS production-deps
 COPY package.json bun.lock ./

@@ -4,6 +4,8 @@ import { socialProviderAvailability } from "@/auth/social-providers";
 export async function getRequestSession(request: Request) {
 	return auth.api.getSession({
 		headers: request.headers,
+		// API authorization must observe revocation immediately, even with a cached cookie.
+		query: { disableCookieCache: true },
 	});
 }
 

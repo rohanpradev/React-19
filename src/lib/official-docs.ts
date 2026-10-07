@@ -12,8 +12,8 @@ export type OfficialDocLink = {
 	logo?: TechLogoName;
 };
 
-export const docsLastCheckedAt = "2026-09-22";
-export const docsLastCheckedLabel = "September 22, 2026";
+export const docsLastCheckedAt = "2026-10-05";
+export const docsLastCheckedLabel = "October 5, 2026";
 
 export const docsPosture = [
 	{
@@ -32,7 +32,7 @@ export const docsPosture = [
 		title: "Better Auth",
 		status: `Package baseline: ${stackVersions.auth}`,
 		detail:
-			"Better Auth 1.7.3 restored the 1.6 core account schema. This upgrade keeps providerId/accountId identity, trusted origins, session freshness, and rate limiting.",
+			"Better Auth 1.7.7 includes authentication security fixes without a core schema migration. Protected API reads bypass cached session cookies so revoked sessions are rejected immediately.",
 	},
 	{
 		title: "Drizzle ORM",
@@ -67,6 +67,22 @@ export const docsPosture = [
 ] as const;
 
 export const officialDocLinks: OfficialDocLink[] = [
+	{
+		label: "Better Auth 1.7.7 release",
+		description: "Authentication security fixes, verification storage guidance, and adapter fixes.",
+		href: "https://github.com/better-auth/better-auth/releases/tag/v1.7.7",
+		area: "auth",
+		keywords: ["better auth", "1.7.7", "password", "session", "upgrade"],
+		logo: "better-auth",
+	},
+	{
+		label: "TanStack Query cancellation",
+		description:
+			"Pass the query AbortSignal to fetch so cancelled work stops at the network boundary.",
+		href: "https://tanstack.com/query/latest/docs/framework/react/guides/query-cancellation",
+		area: "data",
+		keywords: ["query", "cancellation", "abort", "fetch", "optimistic"],
+	},
 	{
 		label: "React 19.3 release",
 		description: "Stable View Transitions, Fragment refs, browser(), and Trusted Types.",

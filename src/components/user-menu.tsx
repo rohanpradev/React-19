@@ -30,14 +30,19 @@ export function UserMenu({
 }) {
 	const navigate = useNavigate();
 	const [isSigningOut, setIsSigningOut] = useState(false);
+	const [signOutError, setSignOutError] = useState<string | null>(null);
 	const initials = getInitials(session.user.name, session.user.email);
 
 	async function handleSignOut() {
 		setIsSigningOut(true);
+		setSignOutError(null);
 
 		try {
-			await authClient.signOut();
-			navigate(buildAuthHref("/overview"), { replace: true });
+			const result = await authClient.signOut();
+			if (result.error) throw new Error(result.error.message || "Unable to sign out. Try again.");
+			await navigate(buildAuthHref("/overview"), { replace: true });
+		} catch (error) {
+			setSignOutError(error instanceof Error ? error.message : "Unable to sign out. Try again.");
 		} finally {
 			setIsSigningOut(false);
 		}
@@ -67,6 +72,11 @@ export function UserMenu({
 			</DropdownMenuTrigger>
 
 			<DropdownMenuContent align="end" className="w-72">
+				{signOutError ? (
+					<p role="alert" className="px-2 py-1 text-sm text-destructive">
+						{signOutError}
+					</p>
+				) : null}
 				<DropdownMenuLabel className="space-y-1">
 					<p className="truncate font-medium">{session.user.name}</p>
 					<p className="truncate text-xs font-normal text-muted-foreground">{session.user.email}</p>

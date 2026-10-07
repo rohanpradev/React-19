@@ -9,7 +9,6 @@ import {
 	Signal,
 } from "lucide-react";
 
-import { redirectToAuth } from "@/auth/redirects";
 import { FeatureIntro } from "@/components/feature-intro";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -25,14 +24,14 @@ import {
 import {
 	type PlatformSignal,
 	type PlatformSignalStatus,
-	type PlatformSignalsResponse,
 	platformSignalStatuses,
-	summarizePlatformSignals,
-	type UpdatePlatformSignalRequest,
 } from "@/lib/platform-signals";
+import {
+	platformSignalMutationOptions,
+	platformSignalsQueryOptions,
+} from "@/lib/platform-signals-query";
 import { Temporal } from "@/lib/temporal";
 
-const platformSignalsQueryKey = ["platform-signals"] as const;
 const signalSkeletonIds = [
 	"signal-skeleton-1",
 	"signal-skeleton-2",
@@ -42,32 +41,8 @@ const signalSkeletonIds = [
 
 export function ServerStatePage() {
 	const queryClient = useQueryClient();
-	const signalsQuery = useQuery({
-		queryKey: platformSignalsQueryKey,
-		queryFn: fetchPlatformSignals,
-		staleTime: 20_000,
-	});
-	const mutation = useMutation({
-		mutationFn: updatePlatformSignal,
-		onMutate: async (request) => {
-			await queryClient.cancelQueries({ queryKey: platformSignalsQueryKey });
-			const previous = queryClient.getQueryData<PlatformSignalsResponse>(platformSignalsQueryKey);
-
-			queryClient.setQueryData<PlatformSignalsResponse>(platformSignalsQueryKey, (current) =>
-				current ? applySignalStatus(current, request) : current,
-			);
-
-			return { previous };
-		},
-		onError: (_error, _request, context) => {
-			if (context?.previous) {
-				queryClient.setQueryData(platformSignalsQueryKey, context.previous);
-			}
-		},
-		onSettled: () => {
-			void queryClient.invalidateQueries({ queryKey: platformSignalsQueryKey });
-		},
-	});
+	const signalsQuery = useQuery(platformSignalsQueryOptions);
+	const mutation = useMutation(platformSignalMutationOptions(queryClient));
 	const data = signalsQuery.data;
 
 	return (
@@ -131,6 +106,18 @@ export function ServerStatePage() {
 				</Alert>
 			) : null}
 
+			{mutation.error ? (
+				<Alert variant="destructive">
+					<ShieldAlert />
+					<div className="space-y-1">
+						<AlertTitle>Status update failed</AlertTitle>
+						<AlertDescription>
+							{mutation.error.message}. The optimistic change was rolled back. Please try again.
+						</AlertDescription>
+					</div>
+				</Alert>
+			) : null}
+
 			<div className="grid gap-4 md:grid-cols-4">
 				<SummaryCard label="Signals" value={data?.summary.total ?? 0} icon={DatabaseZap} />
 				<SummaryCard label="Ready" value={data?.summary.ready ?? 0} icon={CheckCircle2} />
@@ -156,7 +143,7 @@ export function ServerStatePage() {
 								type="button"
 								variant="outline"
 								onClick={() => void signalsQuery.refetch()}
-								disabled={signalsQuery.isFetching}
+								disabled={signalsQuery.isFetching || mutation.isPending}
 							>
 								<RefreshCw className={signalsQuery.isFetching ? "size-4 animate-spin" : "size-4"} />
 								Refetch
@@ -199,10 +186,11 @@ export function ServerStatePage() {
 					</CardHeader>
 					<CardContent className="space-y-3">
 						{[
-							"QueryClientProvider is mounted once around the app.",
+							"QueryClientProvider is scoped to the authenticated session.",
 							"GET /api/platform/signals fills the shared cache.",
 							"PATCH /api/platform/signals runs an optimistic update first.",
-							"onSettled invalidates the query so the Bun endpoint reconciles final state.",
+							"Query cancellation aborts the fetch before applying optimistic state.",
+							"onSettled returns the refresh promise, keeping edits disabled until reconciliation finishes.",
 							"onError restores the previous cache snapshot.",
 						].map((item) => (
 							<div key={item} className="app-muted-surface flex items-start gap-3 p-4">
@@ -293,64 +281,6 @@ function SummaryCard({
 			</CardContent>
 		</Card>
 	);
-}
-
-async function fetchPlatformSignals(): Promise<PlatformSignalsResponse> {
-	const response = await fetch("/api/platform/signals");
-
-	if (response.status === 401) {
-		redirectToAuth();
-		throw new Error("Authentication is required.");
-	}
-
-	if (!response.ok) {
-		throw new Error(`Platform signals failed with status ${response.status}`);
-	}
-
-	return (await response.json()) as PlatformSignalsResponse;
-}
-
-async function updatePlatformSignal(
-	request: UpdatePlatformSignalRequest,
-): Promise<PlatformSignalsResponse> {
-	const response = await fetch("/api/platform/signals", {
-		method: "PATCH",
-		headers: {
-			"content-type": "application/json",
-		},
-		body: JSON.stringify(request),
-	});
-
-	if (response.status === 401) {
-		redirectToAuth();
-		throw new Error("Authentication is required.");
-	}
-
-	if (!response.ok) {
-		throw new Error(`Platform signal update failed with status ${response.status}`);
-	}
-
-	return (await response.json()) as PlatformSignalsResponse;
-}
-
-function applySignalStatus(
-	response: PlatformSignalsResponse,
-	request: UpdatePlatformSignalRequest,
-): PlatformSignalsResponse {
-	const signals = response.signals.map((signal) =>
-		signal.id === request.id
-			? {
-					...signal,
-					status: request.status,
-					updatedAt: Date.now(),
-				}
-			: signal,
-	);
-
-	return {
-		signals,
-		summary: summarizePlatformSignals(signals),
-	};
 }
 
 function getStatusVariant(status: PlatformSignalStatus) {

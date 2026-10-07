@@ -173,7 +173,6 @@ export function ServerTablePage() {
 	});
 	const [globalFilter, setGlobalFilter] = useState("");
 	const [debouncedGlobalFilter, setDebouncedGlobalFilter] = useState("");
-	const [refreshKey, setRefreshKey] = useState(0);
 
 	useEffect(() => {
 		const timeout = setTimeout(() => {
@@ -192,7 +191,6 @@ export function ServerTablePage() {
 				search: debouncedGlobalFilter,
 				sorting,
 				filters: columnFilters,
-				refreshKey,
 			},
 		],
 		queryFn: ({ signal }) =>
@@ -202,7 +200,6 @@ export function ServerTablePage() {
 				search: debouncedGlobalFilter,
 				sorting: toServerSorting(sorting),
 				filters: toServerFilters(columnFilters),
-				refreshKey,
 				signal,
 			}),
 		placeholderData: keepPreviousData,
@@ -215,7 +212,7 @@ export function ServerTablePage() {
 	const nextPageSize = response?.meta.pageSize;
 
 	useEffect(() => {
-		if (nextPageIndex === undefined || nextPageSize === undefined) {
+		if (query.isPlaceholderData || nextPageIndex === undefined || nextPageSize === undefined) {
 			return;
 		}
 
@@ -229,7 +226,7 @@ export function ServerTablePage() {
 				pageSize: nextPageSize,
 			};
 		});
-	}, [nextPageIndex, nextPageSize]);
+	}, [nextPageIndex, nextPageSize, query.isPlaceholderData]);
 
 	const table = useTable({
 		features: customerTableFeatures,
@@ -261,12 +258,13 @@ export function ServerTablePage() {
 	const totalRows = response?.meta.totalRows ?? 0;
 	const pageCount = response?.meta.pageCount ?? 1;
 	const visibleColumnCount = table.getVisibleLeafColumns().length;
-	const startRow = totalRows === 0 ? 0 : pagination.pageIndex * pagination.pageSize + 1;
-	const endRow = Math.min((pagination.pageIndex + 1) * pagination.pageSize, totalRows);
+	const displayedPageIndex = response?.meta.pageIndex ?? pagination.pageIndex;
+	const displayedPageSize = response?.meta.pageSize ?? pagination.pageSize;
+	const startRow = totalRows === 0 ? 0 : displayedPageIndex * displayedPageSize + 1;
+	const endRow = Math.min((displayedPageIndex + 1) * displayedPageSize, totalRows);
 	const activeFilters = globalFilter.length > 0 || columnFilters.length > 0;
-	const statusFilter =
-		(response?.meta.filters.status ?? readFilterValue(columnFilters, "status")) || "";
-	const planFilter = (response?.meta.filters.plan ?? readFilterValue(columnFilters, "plan")) || "";
+	const statusFilter = readFilterValue(columnFilters, "status");
+	const planFilter = readFilterValue(columnFilters, "plan");
 	const statusFacets = response?.facets.status ?? emptyFacets.status;
 	const planFacets = response?.facets.plan ?? emptyFacets.plan;
 	const skeletonRowIds = Array.from(
@@ -384,7 +382,7 @@ export function ServerTablePage() {
 								type="button"
 								variant="outline"
 								size="sm"
-								onClick={() => setRefreshKey((value) => value + 1)}
+								onClick={() => void query.refetch()}
 								disabled={isRefreshing}
 							>
 								<RefreshCw className={`size-4 ${isRefreshing ? "animate-spin" : ""}`} />
@@ -397,6 +395,7 @@ export function ServerTablePage() {
 						<div className="relative">
 							<Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
 							<Input
+								aria-label="Search customers"
 								value={globalFilter}
 								onChange={(event) => {
 									setGlobalFilter(event.target.value);
@@ -420,7 +419,7 @@ export function ServerTablePage() {
 								)
 							}
 						>
-							<SelectTrigger className="w-full">
+							<SelectTrigger aria-label="Filter by status" className="w-full">
 								<SelectValue placeholder="Status" />
 							</SelectTrigger>
 							<SelectContent>
@@ -444,7 +443,7 @@ export function ServerTablePage() {
 								)
 							}
 						>
-							<SelectTrigger className="w-full">
+							<SelectTrigger aria-label="Filter by plan" className="w-full">
 								<SelectValue placeholder="Plan" />
 							</SelectTrigger>
 							<SelectContent>
@@ -551,7 +550,7 @@ export function ServerTablePage() {
 									value={String(pagination.pageSize)}
 									onValueChange={(value) => table.setPageSize(Number(value))}
 								>
-									<SelectTrigger className="w-27.5">
+									<SelectTrigger aria-label="Rows per page" className="w-27.5">
 										<SelectValue />
 									</SelectTrigger>
 									<SelectContent>
@@ -629,7 +628,6 @@ async function fetchCustomerList({
 	search,
 	sorting,
 	filters,
-	refreshKey,
 	signal,
 }: {
 	pageIndex: number;
@@ -637,7 +635,6 @@ async function fetchCustomerList({
 	search: string;
 	sorting: CustomerTableSorting;
 	filters: CustomerTableFilters;
-	refreshKey: number;
 	signal: AbortSignal;
 }): Promise<CustomerListResponse> {
 	const queryString = buildCustomersQueryString({
@@ -647,7 +644,7 @@ async function fetchCustomerList({
 		sorting,
 		filters,
 	});
-	const response = await fetch(`/api/customers?${queryString}&refresh=${refreshKey}`, { signal });
+	const response = await fetch(`/api/customers?${queryString}`, { signal, cache: "no-store" });
 
 	if (response.status === 401) {
 		redirectToAuth();

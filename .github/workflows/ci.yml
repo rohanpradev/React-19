@@ -47,11 +47,14 @@ jobs:
       - name: Drizzle migration check
         run: bun run db:check
 
-      - name: Auth regression tests
+      - name: Regression tests
         run: bun run test
 
       - name: Build check
         run: bun run build
+
+      - name: Production smoke test
+        run: bun run test:production
 
   docker:
     name: Docker Build

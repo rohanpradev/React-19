@@ -1,17 +1,8 @@
 import { createBrowserRouter, Navigate } from "react-router";
 
 import { App } from "@/App";
-import { authClient } from "@/auth/client";
+import { rootLoader } from "@/auth/loader";
 import { RouteErrorBoundary } from "@/components/route-error-boundary";
-
-/**
- * Root loader to fetch the session once for the entire app.
- * React Router Data Mode executes this before rendering the route tree.
- */
-async function rootLoader() {
-	const { data: session } = await authClient.getSession();
-	return { session };
-}
 
 function RouteHydrateFallback() {
 	return (

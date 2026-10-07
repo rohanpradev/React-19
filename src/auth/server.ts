@@ -15,6 +15,9 @@ export const auth = betterAuth({
 	basePath: "/api/auth",
 	trustedOrigins: serverEnv.auth.trustedOrigins,
 	advanced: {
+		// Keep real origin/CSRF protections enabled in regression tests as well.
+		disableOriginCheck: false,
+		disableCSRFCheck: false,
 		ipAddress: {
 			ipAddressHeaders: serverEnv.auth.ipAddressHeaders,
 		},
@@ -23,6 +26,7 @@ export const auth = betterAuth({
 		enabled: true,
 		autoSignIn: true,
 		minPasswordLength: 10,
+		maxPasswordLength: 128,
 	},
 	session: {
 		expiresIn: 60 * 60 * 24 * 7,

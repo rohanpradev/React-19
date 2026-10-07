@@ -151,7 +151,7 @@ export function parseCustomersSearchParams(searchParams: URLSearchParams): Custo
 	return {
 		pageIndex: clampInteger(Number(searchParams.get("pageIndex")), 0, MAX_PAGE_INDEX, 0),
 		pageSize: clampInteger(
-			Number(searchParams.get("pageSize")),
+			Number(searchParams.get("pageSize") ?? DEFAULT_PAGE_SIZE),
 			5,
 			MAX_PAGE_SIZE,
 			DEFAULT_PAGE_SIZE,

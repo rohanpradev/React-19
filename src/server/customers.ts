@@ -110,7 +110,7 @@ export function autocompleteCustomers(request: Request): CustomerAutocompleteRes
 	const url = new URL(request.url);
 	const query = url.searchParams.get("query")?.trim().slice(0, MAX_AUTOCOMPLETE_QUERY_LENGTH) ?? "";
 	const limit = clampInteger(
-		Number(url.searchParams.get("limit")),
+		Number(url.searchParams.get("limit") ?? DEFAULT_AUTOCOMPLETE_LIMIT),
 		1,
 		MAX_AUTOCOMPLETE_LIMIT,
 		DEFAULT_AUTOCOMPLETE_LIMIT,

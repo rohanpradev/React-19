@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { Navigate, NavLink, Outlet, useLoaderData, useLocation, useNavigation } from "react-router";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ArrowLeft, ArrowRight, Check, ChevronDown, ChevronRight } from "lucide-react";
 
 import { type AuthSession, authClient } from "@/auth/client";
+import type { rootLoader } from "@/auth/loader";
 import { buildAuthHref, getDefaultAuthRedirectPath, sanitizeRedirectPath } from "@/auth/redirects";
 import { AppCommandPalette } from "@/components/app-command-palette";
 import { TechLogo } from "@/components/tech-logo";
@@ -39,7 +42,7 @@ const routeGroups = Object.entries(learningStages)
 
 export function App() {
 	const location = useLocation();
-	const { session: authSession } = useLoaderData() as { session: AuthSession | null };
+	const { session: authSession } = useLoaderData<typeof rootLoader>();
 	const liveSession = authClient.useSession();
 	const isAuthRoute = location.pathname === "/auth";
 	const session = liveSession.isPending ? authSession : liveSession.data;
@@ -60,7 +63,19 @@ export function App() {
 		return <Navigate to={buildAuthHref(currentPath)} replace />;
 	}
 
-	return <WorkspaceLayout session={session} />;
+	return <AuthenticatedWorkspace key={session.session.id} session={session} />;
+}
+
+function AuthenticatedWorkspace({ session }: { session: AuthSession }) {
+	// A new login owns a new cache, including when another tab changes the session.
+	const [queryClient] = useState(
+		() => new QueryClient({ defaultOptions: { queries: { retry: 1, staleTime: 10_000 } } }),
+	);
+	return (
+		<QueryClientProvider client={queryClient}>
+			<WorkspaceLayout session={session} />
+		</QueryClientProvider>
+	);
 }
 
 function WorkspaceLayout({ session }: { session: AuthSession }) {

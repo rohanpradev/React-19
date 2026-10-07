@@ -106,10 +106,54 @@ test("registration, session reads, and sign-out work with the existing core sche
 	expect(await revoked.json()).toBeNull();
 });
 
+test("oversized sign-in passwords are rejected before verification", async () => {
+	const response = await request("sign-in/email", {
+		email: "legacy@example.test",
+		password: "x".repeat(129),
+	});
+	expect(response.status).toBe(400);
+	expect((await response.json()).code).toBe("PASSWORD_TOO_LONG");
+});
+
+test("protected API authorization rejects a revoked session with an unexpired cached cookie", async () => {
+	const { requireRequestSession } = await import("../server/auth");
+	const response = await request("sign-up/email", {
+		name: "Revocation fixture",
+		email: "revoked@example.test",
+		password: "Revocation-fixture-2026!",
+	});
+	expect(response.status).toBe(200);
+	const cookie = cookies(response);
+	expect(cookie).toContain("session_data=");
+	const apiRequest = new Request(`${baseURL}/api/customers`, { headers: { cookie } });
+	expect(await requireRequestSession(apiRequest)).not.toBeNull();
+	expect((await request("sign-out", {}, cookie)).status).toBe(200);
+	expect(await requireRequestSession(apiRequest)).toBeNull();
+});
+
+test("customer autocomplete uses the documented default and treats SQL wildcards literally", async () => {
+	const { autocompleteCustomers } = await import("../server/customers");
+	expect(
+		autocompleteCustomers(new Request(`${baseURL}/api/customers/autocomplete`)).meta.limit,
+	).toBe(8);
+	const result = autocompleteCustomers(
+		new Request(`${baseURL}/api/customers/autocomplete?query=%25`),
+	);
+	expect(result.items).toEqual([]);
+	expect(result.meta.total).toBe(0);
+});
+
 test("invalid credentials and untrusted mutation origins remain rejected", async () => {
 	const body = { email: "legacy@example.test", password: "Incorrect-password-2026!" };
 	expect((await request("sign-in/email", body)).status).toBe(401);
 	expect(
-		(await request("sign-in/email", body, undefined, "https://untrusted.example.test")).status,
+		(
+			await request(
+				"sign-in/email",
+				body,
+				"better-auth.session_token=invalid",
+				"https://untrusted.example.test",
+			)
+		).status,
 	).toBe(403);
 });

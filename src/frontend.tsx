@@ -9,8 +9,6 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router/dom";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
 import { ThemeProvider } from "@/components/theme-provider";
 
 const elem = document.getElementById("root");
@@ -20,25 +18,13 @@ if (!elem) {
 }
 
 const rootElement = elem;
-const queryClient = new QueryClient({
-	defaultOptions: {
-		queries: {
-			refetchOnWindowFocus: false,
-			retry: 1,
-			staleTime: 10_000,
-		},
-	},
-});
-
 async function renderApp() {
 	const { router } = await import("./router");
 	const app = (
 		<StrictMode>
-			<QueryClientProvider client={queryClient}>
-				<ThemeProvider>
-					<RouterProvider router={router} />
-				</ThemeProvider>
-			</QueryClientProvider>
+			<ThemeProvider>
+				<RouterProvider router={router} />
+			</ThemeProvider>
 		</StrictMode>
 	);
 
