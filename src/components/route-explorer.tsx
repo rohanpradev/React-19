@@ -1,10 +1,23 @@
-import { useDeferredValue, useId, useState, ViewTransition } from "react";
+import { useDeferredValue, useId, useRef, useState, ViewTransition } from "react";
 import { NavLink } from "react-router";
 
 import { ArrowUpRight, Search, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import {
+	Empty,
+	EmptyContent,
+	EmptyDescription,
+	EmptyHeader,
+	EmptyMedia,
+	EmptyTitle,
+} from "@/components/ui/empty";
+import {
+	InputGroup,
+	InputGroupAddon,
+	InputGroupButton,
+	InputGroupInput,
+} from "@/components/ui/input-group";
 import { learningStages, navItems } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 
@@ -13,10 +26,14 @@ const routes = navItems.filter((item) => item.path !== "/overview");
 
 export function RouteExplorer() {
 	const searchId = useId();
+	const resultsId = useId();
+	const statusId = useId();
+	const searchRef = useRef<HTMLInputElement>(null);
 	const [query, setQuery] = useState("");
 	const [stage, setStage] = useState<Stage>("all");
 	const deferredQuery = useDeferredValue(query);
 	const deferredStage = useDeferredValue(stage);
+	const isStale = query !== deferredQuery || stage !== deferredStage;
 	const search = deferredQuery.trim().toLowerCase();
 	const matches = routes.filter(
 		(route) =>
@@ -26,35 +43,41 @@ export function RouteExplorer() {
 
 	return (
 		<div className="space-y-4">
-			<div className="relative">
+			<InputGroup className="h-11 bg-card">
 				<label htmlFor={searchId} className="sr-only">
 					Search learning routes
 				</label>
-				<Search
-					aria-hidden="true"
-					className="pointer-events-none absolute top-3 left-3 size-4 text-muted-foreground"
-				/>
-				<Input
+				<InputGroupAddon>
+					<Search aria-hidden="true" />
+				</InputGroupAddon>
+				<InputGroupInput
 					id={searchId}
+					ref={searchRef}
 					type="search"
+					aria-controls={resultsId}
+					aria-describedby={statusId}
 					placeholder="Find a pattern, API, or route…"
 					value={query}
 					onChange={(event) => setQuery(event.target.value)}
-					className="bg-card pr-11 pl-9 shadow-xs [&::-webkit-search-cancel-button]:appearance-none"
+					className="h-full [&::-webkit-search-cancel-button]:appearance-none"
 				/>
 				{query && (
-					<Button
-						type="button"
-						variant="ghost"
-						size="icon-sm"
-						aria-label="Clear route search"
-						className="absolute top-1 right-1"
-						onClick={() => setQuery("")}
-					>
-						<X aria-hidden="true" />
-					</Button>
+					<InputGroupAddon align="inline-end">
+						<InputGroupButton
+							type="button"
+							variant="ghost"
+							size="icon-sm"
+							aria-label="Clear route search"
+							onClick={() => {
+								setQuery("");
+								searchRef.current?.focus();
+							}}
+						>
+							<X aria-hidden="true" />
+						</InputGroupButton>
+					</InputGroupAddon>
 				)}
-			</div>
+			</InputGroup>
 			<fieldset className="flex flex-wrap gap-2">
 				<legend className="sr-only">Filter by learning track</legend>
 				<Button
@@ -81,16 +104,14 @@ export function RouteExplorer() {
 						</Button>
 					))}
 			</fieldset>
-			<p role="status" className="text-xs text-muted-foreground">
+			<p id={statusId} role="status" aria-busy={isStale} className="text-xs text-muted-foreground">
 				{matches.length} of {routes.length} routes
 			</p>
 			<ViewTransition>
 				<div
-					className={cn(
-						"grid gap-3 md:grid-cols-2",
-						(query !== deferredQuery || stage !== deferredStage) && "opacity-60",
-					)}
-					aria-busy={query !== deferredQuery || stage !== deferredStage}
+					id={resultsId}
+					className={cn("grid gap-3 md:grid-cols-2", isStale && "opacity-60")}
+					aria-busy={isStale}
 				>
 					{matches.map((route) => {
 						const Icon = route.icon;
@@ -117,24 +138,30 @@ export function RouteExplorer() {
 						);
 					})}
 					{matches.length === 0 && (
-						<div className="col-span-full rounded-xl border border-dashed border-border bg-card p-10 text-center">
-							<p className="text-sm font-medium">No routes found</p>
-							<p className="mt-1 text-sm text-muted-foreground">
-								Try “Actions”, “forms”, or another track.
-							</p>
-							<Button
-								type="button"
-								variant="outline"
-								size="sm"
-								className="mt-4"
-								onClick={() => {
-									setQuery("");
-									setStage("all");
-								}}
-							>
-								Reset filters
-							</Button>
-						</div>
+						<Empty className="col-span-full border bg-card">
+							<EmptyHeader>
+								<EmptyMedia variant="icon">
+									<Search aria-hidden="true" />
+								</EmptyMedia>
+								<EmptyTitle>No routes found</EmptyTitle>
+								<EmptyDescription>Try “Actions”, “forms”, or another track.</EmptyDescription>
+							</EmptyHeader>
+							<EmptyContent>
+								<Button
+									type="button"
+									variant="outline"
+									size="sm"
+									className="mt-4"
+									onClick={() => {
+										setQuery("");
+										setStage("all");
+										searchRef.current?.focus();
+									}}
+								>
+									Reset filters
+								</Button>
+							</EmptyContent>
+						</Empty>
 					)}
 				</div>
 			</ViewTransition>

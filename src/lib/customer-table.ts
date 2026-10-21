@@ -4,6 +4,12 @@ export const customerPlans = ["starter", "growth", "business", "enterprise"] as 
 
 export const customerFilterIds = ["status", "plan"] as const;
 
+export const MAX_AUTOCOMPLETE_QUERY_LENGTH = 60;
+
+export function normalizeAutocompleteQuery(value: string) {
+	return value.trim().slice(0, MAX_AUTOCOMPLETE_QUERY_LENGTH);
+}
+
 export const customerSortableColumns = [
 	"name",
 	"company",

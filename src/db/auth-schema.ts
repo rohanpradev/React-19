@@ -1,14 +1,25 @@
-import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+import { sql } from "drizzle-orm";
+import { check, index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
-export const authUsersTable = sqliteTable("user", {
-	id: text().primaryKey(),
-	name: text().notNull(),
-	email: text().notNull().unique(),
-	emailVerified: integer({ mode: "boolean" }).notNull(),
-	image: text(),
-	createdAt: text().notNull(),
-	updatedAt: text().notNull(),
-});
+export const authUsersTable = sqliteTable(
+	"user",
+	{
+		id: text().primaryKey(),
+		name: text().notNull(),
+		email: text().notNull().unique(),
+		emailVerified: integer({ mode: "boolean" }).notNull(),
+		image: text(),
+		createdAt: text().notNull(),
+		updatedAt: text().notNull(),
+		role: text({ enum: ["viewer", "editor", "admin"] })
+			.notNull()
+			.default("viewer"),
+		banned: integer({ mode: "boolean" }).default(false),
+		banReason: text(),
+		banExpires: text(),
+	},
+	(table) => [check("user_role_check", sql`${table.role} in ('viewer', 'editor', 'admin')`)],
+);
 
 export const authSessionsTable = sqliteTable(
 	"session",
@@ -23,8 +34,24 @@ export const authSessionsTable = sqliteTable(
 		userAgent: text(),
 		createdAt: text().notNull(),
 		updatedAt: text().notNull(),
+		impersonatedBy: text(),
 	},
 	(table) => [index("session_user_id_idx").on(table.userId)],
+);
+
+// Audit history survives account deletion; actor and target IDs are recorded values.
+export const accessAuditTable = sqliteTable(
+	"access_audit",
+	{
+		id: text().primaryKey(),
+		actorId: text().notNull(),
+		targetId: text().notNull(),
+		previousRole: text(),
+		nextRole: text().notNull(),
+		createdAt: text().notNull(),
+		source: text({ enum: ["bootstrap", "role-change"] }).notNull(),
+	},
+	(table) => [index("access_audit_created_at_idx").on(table.createdAt, table.id)],
 );
 
 export const authAccountsTable = sqliteTable(

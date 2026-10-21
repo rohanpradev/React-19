@@ -56,7 +56,7 @@ const platformSignals = [
 		icon: LockKeyhole,
 		logo: "better-auth",
 		detail:
-			"Better Auth owns sessions, cookie caching, trusted origins, freshness, and rate limiting at the API edge.",
+			"Better Auth owns database-verified sessions, trusted origins, freshness, and rate limiting at the API edge.",
 	},
 	{
 		title: "Runtime model",
@@ -144,7 +144,7 @@ const releaseChannelDecisions = [
 		version: `${stackVersions.router} stable`,
 		decision: "Adopt",
 		detail:
-			"Patch fixes cover encoded params, optional segments, route ranking, blockers, and form types.",
+			"Router subscription recovery is improved. Use React ViewTransition for animations; the router's own transition APIs are deprecated throughout v8.",
 	},
 	{
 		technology: "Better Auth",
@@ -152,6 +152,13 @@ const releaseChannelDecisions = [
 		decision: "Adopt",
 		detail:
 			"Use the restored core account schema from 1.7.3+ and retain the versioned secret keyring.",
+	},
+	{
+		technology: "TypeScript",
+		version: `${stackVersions.typescript} stable`,
+		decision: "Adopt",
+		detail:
+			"Stable native tsc and language-server support replace the retired native-preview package; Bun and TypeScript both check the strict project.",
 	},
 	{
 		technology: "Drizzle ORM / Kit",
@@ -182,10 +189,16 @@ const authSecurityControls = [
 			"Scrypt-backed passwords, strict sign-in/sign-up rate limits, socket-derived client IPs, and production secret validation form the baseline.",
 	},
 	{
+		control: "Response privacy",
+		threat: "Shared caches or browser storage retain authenticated API data.",
+		implementation:
+			"Auth responses and protected API success and error responses explicitly use no-store while preserving authentication cookies.",
+	},
+	{
 		control: "Session containment",
 		threat: "A long-lived or stolen session performs sensitive account operations.",
 		implementation:
-			"Seven-day expiry, daily renewal, five-minute compact cache, ten-minute freshness, and user-visible revocation narrow exposure.",
+			"Seven-day expiry, daily renewal, ten-minute freshness, and database-verified browser/API sessions make remote revocation consistent.",
 	},
 ] as const;
 
@@ -411,7 +424,8 @@ export function PlatformReadinessPage() {
 						</div>
 						<CardTitle>React Router mode decision</CardTitle>
 						<CardDescription>
-							React Router 8.4 documents three modes. This project deliberately lives in Data Mode.
+							React Router {stackVersions.router} documents three modes. This project deliberately
+							lives in Data Mode.
 						</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-3">

@@ -24,7 +24,6 @@ import {
 	X,
 } from "lucide-react";
 
-import { redirectToAuth } from "@/auth/redirects";
 import { DataTableColumnHeader } from "@/components/data-table-column-header";
 import {
 	type CustomerTableFeatures,
@@ -52,6 +51,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import { requestJson } from "@/lib/api-client";
 import {
 	buildCustomersQueryString,
 	type CustomerListResponse,
@@ -475,7 +475,14 @@ export function ServerTablePage() {
 						</Alert>
 					) : null}
 
-					<div className="app-surface overflow-hidden rounded-lg">
+					<p role="status" className="sr-only">
+						{query.isFetching
+							? "Loading customers…"
+							: error
+								? "Customer request failed. Use Refresh to try again."
+								: `${formatNumber(totalRows)} customers. Page ${displayedPageIndex + 1} of ${pageCount}.`}
+					</p>
+					<div className="app-surface overflow-hidden rounded-lg" aria-busy={query.isFetching}>
 						<Table>
 							<TableCaption className="px-4 pb-4 text-left">
 								Rows {startRow}-{endRow} of {formatNumber(totalRows)} accounts in the current view.
@@ -535,7 +542,7 @@ export function ServerTablePage() {
 					<div className="flex flex-col gap-4 border-t border-border/60 pt-4 lg:flex-row lg:items-center lg:justify-between">
 						<div className="text-muted-foreground flex flex-wrap items-center gap-2 text-sm">
 							<Badge variant="outline">
-								Page {pagination.pageIndex + 1} of {formatNumber(pageCount)}
+								Page {displayedPageIndex + 1} of {formatNumber(pageCount)}
 							</Badge>
 							<Badge variant="outline">Order: {formatSortSummary(sorting)}</Badge>
 							{debouncedGlobalFilter ? (
@@ -569,7 +576,7 @@ export function ServerTablePage() {
 									variant="outline"
 									size="sm"
 									onClick={() => table.previousPage()}
-									disabled={!table.getCanPreviousPage()}
+									disabled={query.isPlaceholderData || !table.getCanPreviousPage()}
 								>
 									Previous
 								</Button>
@@ -578,7 +585,7 @@ export function ServerTablePage() {
 									variant="outline"
 									size="sm"
 									onClick={() => table.nextPage()}
-									disabled={!table.getCanNextPage()}
+									disabled={query.isPlaceholderData || !table.getCanNextPage()}
 								>
 									Next
 								</Button>
@@ -644,18 +651,10 @@ async function fetchCustomerList({
 		sorting,
 		filters,
 	});
-	const response = await fetch(`/api/customers?${queryString}`, { signal, cache: "no-store" });
-
-	if (response.status === 401) {
-		redirectToAuth();
-		throw new Error("Authentication is required.");
-	}
-
-	if (!response.ok) {
-		throw new Error(`Request failed with status ${response.status}`);
-	}
-
-	return (await response.json()) as CustomerListResponse;
+	return requestJson<CustomerListResponse>(`/api/customers?${queryString}`, {
+		signal,
+		cache: "no-store",
+	});
 }
 
 function getStatusVariant(status: CustomerStatus) {

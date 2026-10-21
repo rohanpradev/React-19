@@ -34,6 +34,20 @@ const browser = await Bun.build({
 });
 if (!browser.success) throw new AggregateError(browser.logs, "Browser build failed.");
 
+// Only files emitted by this content-hashed build receive immutable caching.
+// Keep the allowlist alongside the server output, outside the public directory.
+await Bun.write(
+	path.join(outdir, "asset-manifest.json"),
+	JSON.stringify(
+		browser.outputs
+			.filter((output) => path.extname(output.path).toLowerCase() !== ".html")
+			.map(
+				(output) =>
+					`/${path.relative(path.join(outdir, "public"), output.path).split(path.sep).join("/")}`,
+			),
+	),
+);
+
 const server = await Bun.build({
 	...shared,
 	entrypoints: [path.join(projectRoot, "src/production.ts")],

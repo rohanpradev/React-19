@@ -28,7 +28,7 @@ const studioStats = [
 	{ value: stackVersions.react, label: "React APIs", detail: "Actions, use, DOM APIs" },
 	{ value: String(learningRoutes.length), label: "Learning routes", detail: "Lazy route modules" },
 	{ value: "Bun", label: "Full-stack runtime", detail: "APIs, build, SQLite" },
-	{ value: "TS7", label: "Native preview", detail: "tsgo type checks" },
+	{ value: "TS7", label: "Bun type checker", detail: "Built-in type checks" },
 ] as const;
 
 const systemCards = [
@@ -87,20 +87,20 @@ const docsLinks = officialDocLinks.filter((doc) =>
 export function OverviewPage() {
 	return (
 		<div className="space-y-7">
-			<section className="relative overflow-hidden rounded-xl border border-border bg-card">
+			<section className="app-hero">
 				<div className="grid lg:grid-cols-[minmax(0,1fr)_280px]">
 					<div className="p-6 sm:p-8 lg:p-9">
 						<div className="mb-6 flex flex-wrap items-center gap-2">
 							<Badge variant="outline" className="gap-1.5 bg-background">
 								<span className="size-1.5 rounded-full bg-primary" />
-								Frontend architecture lab
+								React Systems Studio
 							</Badge>
 							<span className="text-xs text-muted-foreground">Explore. Build. Understand.</span>
 						</div>
 						<h1 className="max-w-2xl font-display text-3xl font-semibold tracking-tight leading-[1.12] sm:text-4xl xl:text-5xl">
-							Your workspace for
+							Build with confidence.
 							<br />
-							<span className="text-primary">modern React.</span>
+							<span className="text-primary">Understand the system.</span>
 						</h1>
 						<p className="mt-4 max-w-xl text-sm leading-7 text-muted-foreground sm:text-base">
 							Working examples, thoughtful architecture, and the patterns behind production apps.
@@ -121,7 +121,7 @@ export function OverviewPage() {
 							</Button>
 						</div>
 					</div>
-					<div className="border-t border-border bg-muted/30 p-6 sm:p-8 lg:border-t-0 lg:border-l lg:p-6">
+					<div className="border-t border-border bg-muted/25 p-6 sm:p-8 lg:border-t-0 lg:border-l lg:p-6">
 						<div className="flex items-center gap-2 text-xs font-semibold">
 							<Layers3 className="size-4 text-primary" />
 							Inside the studio
@@ -185,7 +185,7 @@ export function OverviewPage() {
 							return (
 								<Card
 									key={item.title}
-									className="group relative gap-3 py-5 transition-colors hover:border-primary/40"
+									className="group relative gap-3 py-5 transition-colors hover:border-primary/40 focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/50"
 								>
 									<CardHeader className="px-5">
 										<div className="mb-2 flex items-center justify-between">
@@ -196,12 +196,14 @@ export function OverviewPage() {
 											/>
 										</div>
 										<CardTitle>
-											<NavLink
-												to={item.href}
-												className="after:absolute after:inset-0 after:rounded-xl"
-											>
-												{item.title}
-											</NavLink>
+											<h3>
+												<NavLink
+													to={item.href}
+													className="after:absolute after:inset-0 after:rounded-xl"
+												>
+													{item.title}
+												</NavLink>
+											</h3>
 										</CardTitle>
 										<CardDescription className="leading-6">{item.description}</CardDescription>
 									</CardHeader>
@@ -234,7 +236,8 @@ export function OverviewPage() {
 								<BookOpenText className="size-4 shrink-0" />
 							)}
 							<span className="min-w-0 flex-1 truncate text-xs font-medium">{doc.label}</span>
-							<ArrowUpRight className="size-3.5 text-muted-foreground" />
+							<span className="sr-only"> (opens in a new tab)</span>
+							<ArrowUpRight aria-hidden="true" className="size-3.5 text-muted-foreground" />
 						</a>
 					))}
 				</div>

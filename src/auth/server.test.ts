@@ -1,5 +1,7 @@
 import { afterAll, beforeAll, expect, test } from "bun:test";
 
+import { betterAuth } from "better-auth";
+
 const baseURL = "http://localhost:3098";
 const testEnvironment = {
 	NODE_ENV: "development",
@@ -92,6 +94,14 @@ test("1.6 credentials retain their existing account identity after the upgrade",
 });
 
 test("registration, session reads, and sign-out work with the existing core schema", async () => {
+	const injected = await request("sign-up/email", {
+		name: "Privilege injection",
+		email: "new@example.test",
+		password: "New-fixture-password-2026!",
+		role: "admin",
+	});
+	expect(injected.status).toBe(400);
+	expect(sqlite.query("SELECT id FROM user WHERE email=?").get("new@example.test")).toBeNull();
 	const response = await request("sign-up/email", {
 		name: "New fixture",
 		email: "new@example.test",
@@ -100,10 +110,71 @@ test("registration, session reads, and sign-out work with the existing core sche
 	expect(response.status).toBe(200);
 	const cookie = cookies(response);
 	const session = await request("get-session?disableCookieCache=true", undefined, cookie);
-	expect((await session.json()).user.email).toBe("new@example.test");
+	const { user } = await session.json();
+	expect(user.email).toBe("new@example.test");
+	expect(user.role).toBe("viewer");
+	const profileInjection = await request("update-user", { role: "admin" }, cookie);
+	expect(profileInjection.status).toBe(400);
+	expect(sqlite.query("SELECT role FROM user WHERE id=?").get(user.id)).toEqual({ role: "viewer" });
+	expect((await request("admin/set-role", { userId: user.id, role: "admin" }, cookie)).status).toBe(
+		403,
+	);
 	expect((await request("sign-out", {}, cookie)).status).toBe(200);
 	const revoked = await request("get-session?disableCookieCache=true", undefined, cookie);
 	expect(await revoked.json()).toBeNull();
+});
+
+test("administrators cannot bypass guarded access changes through Better Auth admin endpoints", async () => {
+	const signedIn = await request("sign-in/email", {
+		email: "legacy@example.test",
+		password: "Upgrade-check-2026!",
+	});
+	const cookie = cookies(signedIn);
+	sqlite.query("UPDATE user SET role='admin' WHERE id=?").run("legacy-user");
+	try {
+		for (const [endpoint, payload] of [
+			["admin/set-role", { userId: "legacy-user", role: "viewer" }],
+			["admin/update-user", { userId: "legacy-user", data: { role: "viewer" } }],
+			["admin/ban-user", { userId: "legacy-user" }],
+			["admin/remove-user", { userId: "legacy-user" }],
+			["admin/impersonate-user", { userId: "legacy-user" }],
+			[
+				"admin/create-user",
+				{
+					email: "unwanted@example.test",
+					name: "Unwanted",
+					password: "Unwanted-password-2026!",
+					role: "admin",
+				},
+			],
+			[
+				"admin/set-user-password",
+				{ userId: "legacy-user", newPassword: "Unwanted-password-2026!" },
+			],
+			["admin/revoke-user-sessions", { userId: "legacy-user" }],
+		] as const) {
+			expect((await request(endpoint, payload, cookie)).status).toBe(403);
+		}
+		expect(
+			(
+				await request("admin/create-user", {
+					email: "anonymous@example.test",
+					name: "Anonymous",
+					password: "Unwanted-password-2026!",
+				})
+			).status,
+		).toBe(401);
+		expect(
+			sqlite
+				.query("SELECT id FROM user WHERE email IN (?, ?)")
+				.all("unwanted@example.test", "anonymous@example.test"),
+		).toEqual([]);
+		expect(sqlite.query("SELECT role FROM user WHERE id=?").get("legacy-user")).toEqual({
+			role: "admin",
+		});
+	} finally {
+		sqlite.query("UPDATE user SET role='viewer' WHERE id=?").run("legacy-user");
+	}
 });
 
 test("oversized sign-in passwords are rejected before verification", async () => {
@@ -117,18 +188,42 @@ test("oversized sign-in passwords are rejected before verification", async () =>
 
 test("protected API authorization rejects a revoked session with an unexpired cached cookie", async () => {
 	const { requireRequestSession } = await import("../server/auth");
-	const response = await request("sign-up/email", {
-		name: "Revocation fixture",
-		email: "revoked@example.test",
-		password: "Revocation-fixture-2026!",
+	// Simulate cookies issued by a deployment that still used the presentation cache.
+	const legacyAuth = betterAuth({
+		...auth.options,
+		session: {
+			...auth.options.session,
+			cookieCache: { enabled: true, maxAge: 60 * 5, strategy: "compact" },
+		},
 	});
+	const response = await legacyAuth.handler(
+		new Request(`${baseURL}/api/auth/sign-up/email`, {
+			method: "POST",
+			headers: { origin: baseURL, "content-type": "application/json" },
+			body: JSON.stringify({
+				name: "Revocation fixture",
+				email: "revoked@example.test",
+				password: "Revocation-fixture-2026!",
+			}),
+		}),
+	);
 	expect(response.status).toBe(200);
 	const cookie = cookies(response);
 	expect(cookie).toContain("session_data=");
 	const apiRequest = new Request(`${baseURL}/api/customers`, { headers: { cookie } });
 	expect(await requireRequestSession(apiRequest)).not.toBeNull();
-	expect((await request("sign-out", {}, cookie)).status).toBe(200);
+	const browserSession = await request("get-session", undefined, cookie);
+	const { session } = await browserSession.json();
+	expect(
+		browserSession.headers
+			.getSetCookie()
+			.some((value) => value.includes("session_data=") && value.includes("Max-Age=0")),
+	).toBe(true);
+	// Remote revocation cannot clear cookies in this browser. Reuse the original cache cookie.
+	sqlite.query("DELETE FROM session WHERE id = ?").run(session.id);
 	expect(await requireRequestSession(apiRequest)).toBeNull();
+	const revokedBrowserSession = await request("get-session", undefined, cookie);
+	expect(await revokedBrowserSession.json()).toBeNull();
 });
 
 test("customer autocomplete uses the documented default and treats SQL wildcards literally", async () => {

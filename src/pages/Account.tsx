@@ -15,6 +15,7 @@ import {
 
 import { type AuthSession, authClient } from "@/auth/client";
 import { FeatureIntro } from "@/components/feature-intro";
+import { RoleBadge } from "@/components/role-badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -161,6 +162,7 @@ function AccountSummary({
 					<div className="min-w-0">
 						<div className="flex flex-wrap items-center gap-2">
 							<CardTitle className="truncate">{session.user.name}</CardTitle>
+							<RoleBadge role={session.user.role} />
 							<Badge variant={session.user.emailVerified ? "secondary" : "outline"}>
 								{session.user.emailVerified ? "Verified email" : "Email unverified"}
 							</Badge>
@@ -173,17 +175,29 @@ function AccountSummary({
 					Live session
 				</Badge>
 			</CardHeader>
-			<CardContent className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-				<AccountMetric icon={CalendarClock} label="Account created" value={createdAt} />
-				<AccountMetric icon={ShieldCheck} label="Session started" value={sessionStartedAt} />
-				<AccountMetric icon={ShieldCheck} label="Session expires" value={expiresAt} />
-				<AccountMetric
-					icon={MonitorSmartphone}
-					label="Current device"
-					value={
-						session.session.userAgent ? summarizeUserAgent(session.session.userAgent) : "Unknown"
-					}
-				/>
+			<CardContent className="space-y-4">
+				<p className="text-sm leading-6 text-muted-foreground">
+					Your workspace role is assigned by an administrator. New accounts start as viewers;
+					contact an administrator when your responsibilities require more access.
+				</p>
+				<div className="rounded-lg border border-border/60 bg-muted/35 p-3 text-sm">
+					<p className="font-medium">Account ID</p>
+					<code className="mt-1 block select-all break-all text-xs text-muted-foreground">
+						{session.user.id}
+					</code>
+				</div>
+				<div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+					<AccountMetric icon={CalendarClock} label="Account created" value={createdAt} />
+					<AccountMetric icon={ShieldCheck} label="Session started" value={sessionStartedAt} />
+					<AccountMetric icon={ShieldCheck} label="Session expires" value={expiresAt} />
+					<AccountMetric
+						icon={MonitorSmartphone}
+						label="Current device"
+						value={
+							session.session.userAgent ? summarizeUserAgent(session.session.userAgent) : "Unknown"
+						}
+					/>
+				</div>
 			</CardContent>
 		</Card>
 	);

@@ -1,6 +1,6 @@
 import { mutationOptions, type QueryClient, queryOptions } from "@tanstack/react-query";
 
-import { redirectToAuth } from "@/auth/redirects";
+import { requestJson } from "@/lib/api-client";
 import {
 	type PlatformSignalsResponse,
 	summarizePlatformSignals,
@@ -52,16 +52,5 @@ export function platformSignalMutationOptions(queryClient: QueryClient) {
 }
 
 async function requestPlatformSignals(init: RequestInit): Promise<PlatformSignalsResponse> {
-	const response = await fetch("/api/platform/signals", init);
-
-	if (response.status === 401) {
-		redirectToAuth();
-		throw new Error("Authentication is required.");
-	}
-
-	if (!response.ok) {
-		throw new Error(`Platform signals request failed with status ${response.status}`);
-	}
-
-	return (await response.json()) as PlatformSignalsResponse;
+	return requestJson<PlatformSignalsResponse>("/api/platform/signals", init);
 }

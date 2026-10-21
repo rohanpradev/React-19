@@ -4,7 +4,9 @@ import { NavLink, useNavigate } from "react-router";
 import { Loader2, LogOut, ShieldCheck } from "lucide-react";
 
 import { type AuthSession, authClient } from "@/auth/client";
+import { hasPermission, permissions } from "@/auth/permissions";
 import { buildAuthHref } from "@/auth/redirects";
+import { RoleBadge } from "@/components/role-badge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,9 +17,10 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { accountNavItem } from "@/lib/navigation";
+import { accessNavItem, accountNavItem } from "@/lib/navigation";
 
 const AccountIcon = accountNavItem.icon;
+const AccessIcon = accessNavItem.icon;
 
 export function UserMenu({
 	session,
@@ -80,6 +83,7 @@ export function UserMenu({
 				<DropdownMenuLabel className="space-y-1">
 					<p className="truncate font-medium">{session.user.name}</p>
 					<p className="truncate text-xs font-normal text-muted-foreground">{session.user.email}</p>
+					<RoleBadge role={session.user.role} />
 				</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<div className="px-2 pb-2">
@@ -94,6 +98,14 @@ export function UserMenu({
 						{accountNavItem.label}
 					</NavLink>
 				</DropdownMenuItem>
+				{hasPermission(session.user.role, permissions.accessRead) ? (
+					<DropdownMenuItem asChild>
+						<NavLink to={accessNavItem.path}>
+							<AccessIcon className="size-4" />
+							{accessNavItem.label}
+						</NavLink>
+					</DropdownMenuItem>
+				) : null}
 				<DropdownMenuSeparator />
 				<DropdownMenuItem
 					onSelect={(event) => {

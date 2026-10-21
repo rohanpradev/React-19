@@ -1,5 +1,7 @@
 import { betterAuth } from "better-auth";
+import { admin } from "better-auth/plugins";
 
+import { accessControl, appRoles } from "@/auth/permissions";
 import { serverEnv } from "@/config/server-env";
 import { sqlite } from "@/db";
 
@@ -14,6 +16,17 @@ export const auth = betterAuth({
 	baseURL: serverEnv.auth.baseURL,
 	basePath: "/api/auth",
 	trustedOrigins: serverEnv.auth.trustedOrigins,
+	user: { deleteUser: { enabled: false } },
+	plugins: [
+		admin({ ac: accessControl, roles: appRoles, defaultRole: "viewer", adminRoles: ["admin"] }),
+	],
+	databaseHooks: {
+		user: {
+			create: {
+				before: async (user) => ({ data: { ...user, role: "viewer" } }),
+			},
+		},
+	},
 	advanced: {
 		// Keep real origin/CSRF protections enabled in regression tests as well.
 		disableOriginCheck: false,
@@ -33,9 +46,9 @@ export const auth = betterAuth({
 		updateAge: 60 * 60 * 24,
 		freshAge: 60 * 10,
 		cookieCache: {
-			enabled: true,
-			maxAge: 60 * 5,
-			strategy: "compact",
+			// Browser session reads and API authorization must agree after remote revocation.
+			// Better Auth also expires cache cookies issued by earlier deployments.
+			enabled: false,
 		},
 	},
 	rateLimit: {

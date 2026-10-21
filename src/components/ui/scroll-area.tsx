@@ -1,18 +1,15 @@
-import * as React from "react";
+"use client";
 
+import type * as React from "react";
+
+import { cn } from "cn";
 import { ScrollArea as ScrollAreaPrimitive } from "radix-ui";
-
-import { cn } from "@/lib/utils";
 
 function ScrollArea({
 	className,
 	children,
 	...props
 }: React.ComponentProps<typeof ScrollAreaPrimitive.Root>) {
-	const childArray = React.Children.toArray(children);
-	const scrollBars = childArray.filter(isScrollBar);
-	const viewportChildren = childArray.filter((child) => !isScrollBar(child));
-
 	return (
 		<ScrollAreaPrimitive.Root
 			data-slot="scroll-area"
@@ -21,18 +18,14 @@ function ScrollArea({
 		>
 			<ScrollAreaPrimitive.Viewport
 				data-slot="scroll-area-viewport"
-				className="focus-visible:ring-ring/50 size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-1"
+				className="size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1"
 			>
-				{viewportChildren}
+				{children}
 			</ScrollAreaPrimitive.Viewport>
-			{scrollBars.length > 0 ? scrollBars : <ScrollBar />}
+			<ScrollBar />
 			<ScrollAreaPrimitive.Corner />
 		</ScrollAreaPrimitive.Root>
 	);
-}
-
-function isScrollBar(child: React.ReactNode) {
-	return React.isValidElement(child) && child.type === ScrollBar;
 }
 
 function ScrollBar({
@@ -54,7 +47,7 @@ function ScrollBar({
 		>
 			<ScrollAreaPrimitive.ScrollAreaThumb
 				data-slot="scroll-area-thumb"
-				className="bg-border relative flex-1 rounded-full"
+				className="relative flex-1 rounded-full bg-border"
 			/>
 		</ScrollAreaPrimitive.ScrollAreaScrollbar>
 	);

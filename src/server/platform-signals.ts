@@ -5,6 +5,8 @@ import {
 	type UpdatePlatformSignalRequest,
 } from "@/lib/platform-signals";
 
+import { MAX_SIGNAL_BODY_BYTES, readJsonBody } from "./requests";
+
 let platformSignals: PlatformSignal[] = [
 	{
 		id: "compiler-readiness",
@@ -51,8 +53,13 @@ export function listPlatformSignals() {
 	return createPlatformSignalsResponse(platformSignals);
 }
 
-export async function updatePlatformSignal(request: Request) {
-	const payload = await readUpdatePayload(request);
+export async function updatePlatformSignal(
+	request: Request,
+	authorizeCommit?: () => Response | null,
+) {
+	const body = await readJsonBody(request, MAX_SIGNAL_BODY_BYTES);
+	if (!body.ok) return body.response;
+	const payload = readUpdatePayload(body.value);
 
 	if (!payload) {
 		return new Response("Invalid platform signal payload.", { status: 400 });
@@ -63,6 +70,9 @@ export async function updatePlatformSignal(request: Request) {
 	if (signalIndex < 0) {
 		return new Response("Platform signal not found.", { status: 404 });
 	}
+	// Body reads can outlive a role change or session revocation. Recheck immediately before writing.
+	const authorizationError = authorizeCommit?.();
+	if (authorizationError) return authorizationError;
 
 	platformSignals = platformSignals.map((signal, index) =>
 		index === signalIndex
@@ -78,15 +88,7 @@ export async function updatePlatformSignal(request: Request) {
 	return Response.json(listPlatformSignals());
 }
 
-async function readUpdatePayload(request: Request): Promise<UpdatePlatformSignalRequest | null> {
-	let body: unknown;
-
-	try {
-		body = await request.json();
-	} catch {
-		return null;
-	}
-
+function readUpdatePayload(body: unknown): UpdatePlatformSignalRequest | null {
 	if (!isRecord(body) || typeof body["id"] !== "string" || typeof body["status"] !== "string") {
 		return null;
 	}

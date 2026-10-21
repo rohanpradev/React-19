@@ -1,19 +1,29 @@
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { type HTMLBundle, type Server, serve } from "bun";
 
+import { permissions } from "@/auth/permissions";
 import { auth } from "@/auth/server";
 import { serverEnv } from "@/config/server-env";
+import { sqlite } from "@/db";
 
 import { initializeDatabase } from "./db/init";
-import { authProvidersResponse, requireRequestSession, unauthorizedResponse } from "./server/auth";
+import { AccessError, createAccessHandlers, createAccessService } from "./server/access";
+import {
+	authProvidersResponse,
+	requireRequestPermission,
+	requireRequestSession,
+} from "./server/auth";
 import { autocompleteCustomers, listCustomers } from "./server/customers";
 import { listPlatformSignals, updatePlatformSignal } from "./server/platform-signals";
+import { apiRoute, MAX_REQUEST_BODY_BYTES, validateMutationOrigin } from "./server/requests";
+import { privateJson, privateResponse } from "./server/responses";
 import { createProductionAppHandler } from "./server/static";
 
 const { isDevelopment } = serverEnv;
 const projectRoot = process.cwd();
 const productionDistDir = path.resolve(projectRoot, "dist/public");
-const createProductionAppResponse = createProductionAppHandler(productionDistDir);
+const canonicalOrigin = new URL(serverEnv.auth.baseURL).origin;
 
 const siteRoutes = [
 	"/",
@@ -35,6 +45,7 @@ const siteRoutes = [
 	"/server-state",
 	"/revenue-ops",
 	"/account",
+	"/access",
 	"/auth",
 ] as const;
 
@@ -116,8 +127,8 @@ function withSocketClientIp(request: Request, server: Server<undefined>) {
 	return new Request(request, { headers });
 }
 
-function handleAuthRequest(request: Request, server: Server<undefined>) {
-	return auth.handler(withSocketClientIp(request, server));
+async function handleAuthRequest(request: Request, server: Server<undefined>) {
+	return privateResponse(await auth.handler(withSocketClientIp(request, server)));
 }
 
 type PackageManifest = {
@@ -130,7 +141,7 @@ async function createPlatformHealthResponse() {
 		path.join(projectRoot, "package.json"),
 	).json()) as PackageManifest;
 
-	return Response.json({
+	return privateJson({
 		status: "ok",
 		runtime: {
 			bun: Bun.version,
@@ -146,8 +157,7 @@ async function createPlatformHealthResponse() {
 			"drizzle-orm": packageJson.dependencies?.["drizzle-orm"] ?? "unknown",
 			valibot: packageJson.dependencies?.["valibot"] ?? "unknown",
 			tailwindcss: packageJson.devDependencies?.["tailwindcss"] ?? "unknown",
-			"@typescript/native-preview":
-				packageJson.devDependencies?.["@typescript/native-preview"] ?? "unknown",
+			typescript: packageJson.devDependencies?.["typescript"] ?? "unknown",
 		},
 		checks: [
 			"React Router Data Mode route tree is defined outside render.",
@@ -162,11 +172,49 @@ async function createPlatformHealthResponse() {
 	});
 }
 
+function createReadinessResponse() {
+	try {
+		sqlite.query("SELECT 1").get();
+		return privateJson({ status: "ok" });
+	} catch {
+		return privateJson({ status: "unavailable" }, { status: 503 });
+	}
+}
+
+function readProductionAssetManifest() {
+	const manifestPath = path.join(projectRoot, "dist", "asset-manifest.json");
+	// Serving without a manifest remains safe: all assets will revalidate.
+	if (isDevelopment || !existsSync(manifestPath)) return new Set<string>();
+	const entries: unknown = JSON.parse(readFileSync(manifestPath, "utf8"));
+	if (
+		!Array.isArray(entries) ||
+		!entries.every((entry): entry is string => typeof entry === "string" && entry.startsWith("/"))
+	) {
+		throw new Error("Production asset manifest must contain root-relative asset paths.");
+	}
+	return new Set<string>(entries);
+}
+
 export function startServer(frontend?: HTMLBundle) {
+	const createProductionAppResponse = createProductionAppHandler(
+		productionDistDir,
+		readProductionAssetManifest(),
+	);
 	initializeDatabase();
+	const accessService = createAccessService(sqlite);
+	const accessHandlers = createAccessHandlers({
+		service: accessService,
+		canonicalOrigin,
+		resolveActor: async (request) => {
+			const session = await requireRequestSession(request);
+			return session ? { userId: session.user.id, sessionId: session.session.id } : null;
+		},
+	});
 	const server = serve({
 		port: serverEnv.port,
+		maxRequestBodySize: MAX_REQUEST_BODY_BYTES,
 		routes: {
+			"/healthz": apiRoute({ GET: createReadinessResponse }),
 			// Static & SEO
 			"/robots.txt": createRobotsTxt,
 			"/llms.txt": createLlmsTxt,
@@ -175,44 +223,71 @@ export function startServer(frontend?: HTMLBundle) {
 			// Authentication (Better Auth)
 			"/api/auth": handleAuthRequest,
 			"/api/auth/*": handleAuthRequest,
-			"/api/auth-providers": authProvidersResponse,
-			"/api/platform/health": createPlatformHealthResponse,
-			"/api/platform/signals": {
+			"/api/auth-providers": apiRoute({ GET: authProvidersResponse }),
+			"/api/platform/health": apiRoute({ GET: createPlatformHealthResponse }),
+			"/api/platform/signals": apiRoute({
 				GET: async (req) => {
-					const session = await requireRequestSession(req);
-					if (!session) return unauthorizedResponse();
-					return Response.json(listPlatformSignals());
+					const access = await requireRequestPermission(req, permissions.signalsRead);
+					if (!access.ok) return access.response;
+					return privateJson(listPlatformSignals());
 				},
 				PATCH: async (req) => {
-					const session = await requireRequestSession(req);
-					if (!session) return unauthorizedResponse();
-					return updatePlatformSignal(req);
+					const originError = validateMutationOrigin(req, canonicalOrigin);
+					if (originError) return originError;
+					const access = await requireRequestPermission(req, permissions.signalsWrite);
+					if (!access.ok) return access.response;
+					return privateResponse(
+						await updatePlatformSignal(req, () => {
+							try {
+								accessService.authorize(
+									{ userId: access.session.user.id, sessionId: access.session.session.id },
+									permissions.signalsWrite,
+								);
+								return null;
+							} catch (error) {
+								if (error instanceof AccessError)
+									return privateJson(
+										{ error: error.message, code: error.code },
+										{ status: error.status },
+									);
+								throw error;
+							}
+						}),
+					);
 				},
-			},
+			}),
+			"/api/access": apiRoute({ GET: accessHandlers.list }),
+			"/api/access/roles": apiRoute({ PATCH: accessHandlers.updateRole }),
 
 			// API Routes
-			"/api/hello": {
+			"/api/hello": apiRoute({
 				GET: () => Response.json({ message: "Hello from Bun!", timestamp: Date.now() }),
 				PUT: () => Response.json({ message: "Update successful" }),
-			},
+			}),
 			"/api/hello/:name": (req) => {
-				return Response.json({ message: `Hello, ${req.params.name}!` });
+				return apiRoute({
+					GET: () => Response.json({ message: `Hello, ${req.params.name}!` }),
+				})(req);
 			},
 
 			// Protected API Routes
-			"/api/customers": async (req) => {
-				const session = await requireRequestSession(req);
-				if (!session) return unauthorizedResponse();
-				return Response.json(listCustomers(req));
-			},
-			"/api/customers/autocomplete": async (req) => {
-				const session = await requireRequestSession(req);
-				if (!session) return unauthorizedResponse();
-				return Response.json(autocompleteCustomers(req));
-			},
+			"/api/customers": apiRoute({
+				GET: async (req) => {
+					const access = await requireRequestPermission(req, permissions.customersRead);
+					if (!access.ok) return access.response;
+					return privateJson(listCustomers(req));
+				},
+			}),
+			"/api/customers/autocomplete": apiRoute({
+				GET: async (req) => {
+					const access = await requireRequestPermission(req, permissions.customersRead);
+					if (!access.ok) return access.response;
+					return privateJson(autocompleteCustomers(req));
+				},
+			}),
 
 			// App Shell Fallback
-			"/api/*": () => Response.json({ error: "Not found." }, { status: 404 }),
+			"/api/*": () => privateJson({ error: "Not found." }, { status: 404 }),
 			"/*": frontend ?? createProductionAppResponse,
 		},
 
@@ -226,7 +301,7 @@ export function startServer(frontend?: HTMLBundle) {
 		// Global error handling and logging
 		error(error) {
 			console.error("Server Error:", error);
-			return new Response("Internal Server Error", { status: 500 });
+			return privateResponse(new Response("Internal Server Error", { status: 500 }));
 		},
 	});
 

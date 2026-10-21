@@ -9,6 +9,8 @@ import {
 	Signal,
 } from "lucide-react";
 
+import { authClient } from "@/auth/client";
+import { hasPermission, permissions } from "@/auth/permissions";
 import { FeatureIntro } from "@/components/feature-intro";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -40,6 +42,8 @@ const signalSkeletonIds = [
 ];
 
 export function ServerStatePage() {
+	const { data: session } = authClient.useSession();
+	const canEdit = hasPermission(session?.user.role, permissions.signalsWrite);
 	const queryClient = useQueryClient();
 	const signalsQuery = useQuery(platformSignalsQueryOptions);
 	const mutation = useMutation(platformSignalMutationOptions(queryClient));
@@ -82,6 +86,7 @@ export function ServerStatePage() {
 			/>
 
 			<div className="flex flex-wrap items-center gap-2">
+				{!canEdit ? <Badge variant="secondary">Read-only access</Badge> : null}
 				<Badge variant={signalsQuery.isFetching ? "secondary" : "outline"}>
 					{signalsQuery.isFetching ? "Fetching" : "Cache settled"}
 				</Badge>
@@ -91,12 +96,22 @@ export function ServerStatePage() {
 				<Badge variant="outline">staleTime: 20s</Badge>
 				<Badge variant="outline">Endpoint: /api/platform/signals</Badge>
 			</div>
+			{!canEdit ? (
+				<p className="text-sm leading-6 text-muted-foreground">
+					Your role can view signals. An editor or administrator role is required to change their
+					status.
+				</p>
+			) : null}
 
 			{signalsQuery.error ? (
 				<Alert variant="destructive">
 					<ShieldAlert />
 					<div className="space-y-1">
-						<AlertTitle>Unable to load server state</AlertTitle>
+						<AlertTitle>
+							{data
+								? "Refresh failed; showing the last loaded state"
+								: "Unable to load server state"}
+						</AlertTitle>
 						<AlertDescription>
 							{signalsQuery.error instanceof Error
 								? signalsQuery.error.message
@@ -136,7 +151,9 @@ export function ServerStatePage() {
 							<div>
 								<CardTitle>Platform signals</CardTitle>
 								<CardDescription>
-									Change a signal status to see optimistic cache state and invalidation.
+									{canEdit
+										? "Change a signal status to see optimistic cache state and invalidation."
+										: "Review the current platform status. Status changes require editor access."}
 								</CardDescription>
 							</div>
 							<Button
@@ -150,7 +167,7 @@ export function ServerStatePage() {
 							</Button>
 						</div>
 					</CardHeader>
-					<CardContent className="space-y-3 pt-6">
+					<CardContent className="space-y-3 pt-6" aria-busy={signalsQuery.isFetching}>
 						{signalsQuery.isLoading ? (
 							<div className="grid gap-3">
 								{signalSkeletonIds.map((skeletonId) => (
@@ -165,12 +182,14 @@ export function ServerStatePage() {
 								signal={signal}
 								activeMutationId={mutation.variables?.id}
 								isMutating={mutation.isPending}
-								onStatusChange={(status) =>
+								canEdit={canEdit}
+								onStatusChange={(status) => {
+									if (!canEdit) return;
 									mutation.mutate({
 										id: signal.id,
 										status,
-									})
-								}
+									});
+								}}
 							/>
 						))}
 					</CardContent>
@@ -209,11 +228,13 @@ function SignalRow({
 	signal,
 	activeMutationId,
 	isMutating,
+	canEdit,
 	onStatusChange,
 }: {
 	signal: PlatformSignal;
 	activeMutationId: string | undefined;
 	isMutating: boolean;
+	canEdit: boolean;
 	onStatusChange: (status: PlatformSignalStatus) => void;
 }) {
 	const isActiveMutation = isMutating && activeMutationId === signal.id;
@@ -244,9 +265,9 @@ function SignalRow({
 			<Select
 				value={signal.status}
 				onValueChange={(status) => onStatusChange(status as PlatformSignalStatus)}
-				disabled={isMutating}
+				disabled={isMutating || !canEdit}
 			>
-				<SelectTrigger className="w-full">
+				<SelectTrigger aria-label={`Status for ${signal.title}`} className="w-full">
 					<SelectValue />
 				</SelectTrigger>
 				<SelectContent>

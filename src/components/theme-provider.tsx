@@ -44,23 +44,36 @@ const STORAGE_KEY = "bun-react-theme";
 const PRESET_STORAGE_KEY = "bun-react-theme-preset";
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-function getStoredTheme(): Theme {
+function readPreference(key: string): string | null {
 	if (typeof window === "undefined") {
-		return "system";
+		return null;
 	}
 
-	const storedTheme = window.localStorage.getItem(STORAGE_KEY);
+	try {
+		return window.localStorage.getItem(key);
+	} catch {
+		// Appearance remains usable when the browser blocks persistent storage.
+		return null;
+	}
+}
+
+function writePreference(key: string, value: string) {
+	try {
+		window.localStorage.setItem(key, value);
+	} catch {
+		// Keep the selected appearance for this tab when persistence is unavailable.
+	}
+}
+
+function getStoredTheme(): Theme {
+	const storedTheme = readPreference(STORAGE_KEY);
 	return storedTheme === "light" || storedTheme === "dark" || storedTheme === "system"
 		? storedTheme
 		: "system";
 }
 
 function getStoredPreset(): ThemePreset {
-	if (typeof window === "undefined") {
-		return "studio";
-	}
-
-	const storedPreset = window.localStorage.getItem(PRESET_STORAGE_KEY);
+	const storedPreset = readPreference(PRESET_STORAGE_KEY);
 	return themePresetOptions.some((option) => option.value === storedPreset)
 		? (storedPreset as ThemePreset)
 		: "studio";
@@ -80,6 +93,9 @@ function applyTheme(resolvedTheme: ResolvedTheme, preset: ThemePreset) {
 	root.dataset["theme"] = resolvedTheme;
 	root.dataset["preset"] = preset;
 	root.style.colorScheme = resolvedTheme;
+	document
+		.querySelector('meta[name="theme-color"]')
+		?.setAttribute("content", resolvedTheme === "dark" ? "#101828" : "#f8fafc");
 }
 
 export function ThemeProvider({ children }: PropsWithChildren) {
@@ -107,14 +123,28 @@ export function ThemeProvider({ children }: PropsWithChildren) {
 		return () => media.removeEventListener("change", syncTheme);
 	}, [preset, theme]);
 
+	useEffect(() => {
+		const syncPreferences = (event: StorageEvent) => {
+			if (event.key === STORAGE_KEY || event.key === null) {
+				setThemeState(getStoredTheme());
+			}
+			if (event.key === PRESET_STORAGE_KEY || event.key === null) {
+				setPresetState(getStoredPreset());
+			}
+		};
+
+		window.addEventListener("storage", syncPreferences);
+		return () => window.removeEventListener("storage", syncPreferences);
+	}, []);
+
 	const setTheme = (nextTheme: Theme) => {
 		setThemeState(nextTheme);
-		window.localStorage.setItem(STORAGE_KEY, nextTheme);
+		writePreference(STORAGE_KEY, nextTheme);
 	};
 
 	const setPreset = (nextPreset: ThemePreset) => {
 		setPresetState(nextPreset);
-		window.localStorage.setItem(PRESET_STORAGE_KEY, nextPreset);
+		writePreference(PRESET_STORAGE_KEY, nextPreset);
 	};
 
 	return (

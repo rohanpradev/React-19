@@ -62,7 +62,7 @@ export function FeatureIntro({ eyebrow, title, summary, points, links = [] }: Fe
 
 			<div className="mt-6 grid gap-2 sm:grid-cols-3">
 				{points.slice(0, 3).map((point) => (
-					<div key={point.title} className="rounded-lg border border-border/55 bg-muted/35 p-3">
+					<div key={point.title} className="border-l-2 border-border py-1 pl-4">
 						<p className="text-sm font-medium text-foreground">{point.title}</p>
 						<p className="mt-1 text-xs leading-5 text-muted-foreground">{point.detail}</p>
 					</div>

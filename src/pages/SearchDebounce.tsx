@@ -11,7 +11,6 @@ import {
 	Workflow,
 } from "lucide-react";
 
-import { redirectToAuth } from "@/auth/redirects";
 import { FeatureIntro } from "@/components/feature-intro";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -25,7 +24,13 @@ import {
 	CommandItem,
 	CommandList,
 } from "@/components/ui/command";
-import type { CustomerAutocompleteItem, CustomerAutocompleteResponse } from "@/lib/customer-table";
+import { requestJson } from "@/lib/api-client";
+import {
+	type CustomerAutocompleteItem,
+	type CustomerAutocompleteResponse,
+	MAX_AUTOCOMPLETE_QUERY_LENGTH,
+	normalizeAutocompleteQuery,
+} from "@/lib/customer-table";
 import { Temporal } from "@/lib/temporal";
 
 const AUTOCOMPLETE_LIMIT = 8;
@@ -49,15 +54,19 @@ export function SearchDebounce() {
 	const [error, setError] = useState<string | null>(null);
 	const deferredQuery = useDeferredValue(query, "");
 	const isDeferred = query !== deferredQuery;
+	const isSearchPending =
+		loading || isDeferred || normalizeAutocompleteQuery(query) !== response.meta.query;
 	const topResults = response.items.slice(0, 4);
-	const resultState = loading
-		? "Searching local customer index..."
-		: query
-			? `${response.meta.total} matching customer${response.meta.total === 1 ? "" : "s"}`
-			: "Awaiting search input";
+	const resultState = error
+		? "Search failed. Change the query to try again."
+		: isSearchPending
+			? "Searching local customer index..."
+			: query
+				? `${response.meta.total} matching customer${response.meta.total === 1 ? "" : "s"}`
+				: "Awaiting search input";
 
 	const runSearch = useEffectEvent(async (value: string, signal: AbortSignal) => {
-		const normalizedQuery = value.trim();
+		const normalizedQuery = normalizeAutocompleteQuery(value);
 
 		if (!normalizedQuery) {
 			setError(null);
@@ -74,20 +83,10 @@ export function SearchDebounce() {
 				query: normalizedQuery,
 				limit: String(AUTOCOMPLETE_LIMIT),
 			});
-			const request = await fetch(`/api/customers/autocomplete?${params}`, {
-				signal,
-			});
-
-			if (request.status === 401) {
-				redirectToAuth();
-				return;
-			}
-
-			if (!request.ok) {
-				throw new Error(`Search failed with status ${request.status}`);
-			}
-
-			const nextResponse = (await request.json()) as CustomerAutocompleteResponse;
+			const nextResponse = await requestJson<CustomerAutocompleteResponse>(
+				`/api/customers/autocomplete?${params}`,
+				{ signal },
+			);
 
 			if (!signal.aborted) {
 				setResponse(nextResponse);
@@ -239,7 +238,7 @@ export function SearchDebounce() {
 							</Button>
 						</div>
 
-						<div className="grid gap-3">
+						<div className="grid gap-3" aria-busy={isSearchPending}>
 							{error ? (
 								<Alert variant="destructive">
 									<div className="space-y-1">
@@ -327,7 +326,9 @@ export function SearchDebounce() {
 							<p className="text-xs font-medium tracking-[0.16em] text-muted-foreground uppercase">
 								Live status
 							</p>
-							<p className="mt-2 font-medium text-foreground">{resultState}</p>
+							<p role="status" className="mt-2 font-medium text-foreground">
+								{resultState}
+							</p>
 							<p className="mt-1 text-sm leading-6 text-muted-foreground">
 								Query length: {query.length}. Endpoint limit: {response.meta.limit}. Deferred lag:{" "}
 								{isDeferred ? "active" : "settled"}.
@@ -340,18 +341,22 @@ export function SearchDebounce() {
 			<CommandDialog
 				open={open}
 				onOpenChange={setOpen}
+				commandProps={{ shouldFilter: false }}
 				title="Customer autocomplete"
 				description="Search the local SQLite customer dataset through the Bun autocomplete endpoint."
 			>
 				<CommandInput
+					aria-label="Search customers"
+					maxLength={MAX_AUTOCOMPLETE_QUERY_LENGTH}
 					placeholder="Search customer, company, email, or country..."
 					value={query}
 					onValueChange={setQuery}
 				/>
 
-				<CommandList>
-					{loading ? (
-						<div className="flex justify-center py-8">
+				<CommandList aria-busy={isSearchPending}>
+					{isSearchPending ? (
+						<div role="status" className="flex justify-center py-8">
+							<span className="sr-only">Searching customers…</span>
 							<Loader2 className="size-4 animate-spin text-muted-foreground" />
 						</div>
 					) : null}
@@ -367,11 +372,11 @@ export function SearchDebounce() {
 						</div>
 					) : null}
 
-					{!loading && !error && !query.trim() ? (
+					{!isSearchPending && !error && !query.trim() ? (
 						<CommandEmpty>Type a customer, company, email, or country to begin.</CommandEmpty>
 					) : null}
 
-					{!loading && !error && query.trim() && response.items.length === 0 ? (
+					{!isSearchPending && !error && query.trim() && response.items.length === 0 ? (
 						<CommandEmpty>No matching customers.</CommandEmpty>
 					) : null}
 
@@ -380,6 +385,7 @@ export function SearchDebounce() {
 							{response.items.map((customer) => (
 								<CommandItem
 									key={customer.id}
+									disabled={isSearchPending}
 									value={`${customer.name} ${customer.email} ${customer.company} ${customer.country} ${customer.plan} ${customer.status}`}
 									onSelect={() => {
 										setQuery(customer.name);

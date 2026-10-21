@@ -1,8 +1,9 @@
 import {
 	Activity,
+	type CSSProperties,
 	type KeyboardEvent,
 	type PointerEvent as ReactPointerEvent,
-	useEffectEvent,
+	useId,
 	useMemo,
 	useRef,
 	useState,
@@ -88,6 +89,8 @@ const workspaces: [WorkbenchItem, ...WorkbenchItem[]] = [
 ];
 
 export function WorkbenchLayoutPage() {
+	const railId = useId();
+	const inspectorId = useId();
 	const [leftOpen, setLeftOpen] = useState(true);
 	const [inspectorOpen, setInspectorOpen] = useState(true);
 	const [leftWidth, setLeftWidth] = useState(280);
@@ -193,6 +196,8 @@ export function WorkbenchLayoutPage() {
 								type="button"
 								variant={leftOpen ? "secondary" : "outline"}
 								size="sm"
+								aria-controls={railId}
+								aria-expanded={leftOpen}
 								onClick={() => setLeftOpen((value) => !value)}
 							>
 								{leftOpen ? "Hide rail" : "Show rail"}
@@ -201,6 +206,8 @@ export function WorkbenchLayoutPage() {
 								type="button"
 								variant={inspectorOpen ? "secondary" : "outline"}
 								size="sm"
+								aria-controls={inspectorId}
+								aria-expanded={inspectorOpen}
 								onClick={() => setInspectorOpen((value) => !value)}
 							>
 								{inspectorOpen ? "Hide inspector" : "Show inspector"}
@@ -211,10 +218,10 @@ export function WorkbenchLayoutPage() {
 
 				<CardContent className="pt-6">
 					<div
-						className="grid h-[640px] overflow-hidden rounded-lg border border-border/70 bg-card/80 transition-[grid-template-columns] duration-200"
-						style={{ gridTemplateColumns }}
+						className="grid grid-cols-1 overflow-hidden rounded-lg border border-border/70 bg-card/80 lg:h-[640px] lg:[grid-template-columns:var(--workbench-columns)]"
+						style={{ "--workbench-columns": gridTemplateColumns } as CSSProperties}
 					>
-						<div className="min-w-0 overflow-hidden">
+						<div id={railId} className="min-w-0 overflow-hidden lg:col-start-1 lg:row-start-1">
 							<Activity mode={leftOpen ? "visible" : "hidden"}>
 								<WorkspaceRail
 									activeId={workspaceId}
@@ -225,43 +232,50 @@ export function WorkbenchLayoutPage() {
 							</Activity>
 						</div>
 
-						{leftOpen ? (
-							<ResizeHandle
-								label="Resize navigation rail"
-								value={leftWidth}
-								min={minRailWidth}
-								max={maxRailWidth}
-								onDelta={(delta) =>
-									setLeftWidth((value) => clamp(value + delta, minRailWidth, maxRailWidth))
-								}
-								onNudge={(delta) =>
-									setLeftWidth((value) => clamp(value + delta, minRailWidth, maxRailWidth))
-								}
-							/>
-						) : null}
+						<div className="hidden min-w-0 lg:col-start-2 lg:row-start-1 lg:block">
+							{leftOpen ? (
+								<ResizeHandle
+									label="Resize navigation rail"
+									controls={railId}
+									value={leftWidth}
+									min={minRailWidth}
+									max={maxRailWidth}
+									onDelta={(delta) =>
+										setLeftWidth((value) => clamp(value + delta, minRailWidth, maxRailWidth))
+									}
+									onNudge={(delta) =>
+										setLeftWidth((value) => clamp(value + delta, minRailWidth, maxRailWidth))
+									}
+								/>
+							) : null}
+						</div>
 
 						<WorkspaceCanvas workspace={activeWorkspace} />
 
-						{inspectorOpen ? (
-							<ResizeHandle
-								label="Resize inspector"
-								value={inspectorWidth}
-								min={minInspectorWidth}
-								max={maxInspectorWidth}
-								onDelta={(delta) =>
-									setInspectorWidth((value) =>
-										clamp(value - delta, minInspectorWidth, maxInspectorWidth),
-									)
-								}
-								onNudge={(delta) =>
-									setInspectorWidth((value) =>
-										clamp(value - delta, minInspectorWidth, maxInspectorWidth),
-									)
-								}
-							/>
-						) : null}
+						<div className="hidden min-w-0 lg:col-start-4 lg:row-start-1 lg:block">
+							{inspectorOpen ? (
+								<ResizeHandle
+									label="Resize inspector"
+									controls={inspectorId}
+									reversed
+									value={inspectorWidth}
+									min={minInspectorWidth}
+									max={maxInspectorWidth}
+									onDelta={(delta) =>
+										setInspectorWidth((value) =>
+											clamp(value - delta, minInspectorWidth, maxInspectorWidth),
+										)
+									}
+									onNudge={(delta) =>
+										setInspectorWidth((value) =>
+											clamp(value - delta, minInspectorWidth, maxInspectorWidth),
+										)
+									}
+								/>
+							) : null}
+						</div>
 
-						<div className="min-w-0 overflow-hidden">
+						<div id={inspectorId} className="min-w-0 overflow-hidden lg:col-start-5 lg:row-start-1">
 							<Activity mode={inspectorOpen ? "visible" : "hidden"}>
 								<InspectorPanel workspace={activeWorkspace} />
 							</Activity>
@@ -343,6 +357,7 @@ function WorkspaceRail({
 					Rail note
 				</p>
 				<Textarea
+					aria-label="Workspace rail note"
 					value={railNote}
 					onChange={(event) => setRailNote(event.target.value)}
 					className="mt-2 min-h-28 text-sm"
@@ -354,7 +369,7 @@ function WorkspaceRail({
 
 function WorkspaceCanvas({ workspace }: { workspace: WorkbenchItem }) {
 	return (
-		<div className="min-w-0 overflow-auto p-5">
+		<div className="min-h-80 min-w-0 overflow-auto p-5 lg:col-start-3 lg:row-start-1">
 			<div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
 				<div>
 					<div className="flex flex-wrap items-center gap-2">
@@ -448,6 +463,7 @@ function InspectorPanel({ workspace }: { workspace: WorkbenchItem }) {
 						Inspector notes
 					</p>
 					<Textarea
+						aria-label="Inspector notes"
 						value={notes}
 						onChange={(event) => setNotes(event.target.value)}
 						className="mt-2 min-h-36 text-sm"
@@ -470,6 +486,8 @@ function InspectorPanel({ workspace }: { workspace: WorkbenchItem }) {
 
 function ResizeHandle({
 	label,
+	controls,
+	reversed = false,
 	value,
 	min,
 	max,
@@ -477,31 +495,38 @@ function ResizeHandle({
 	onNudge,
 }: {
 	label: string;
+	controls: string;
+	reversed?: boolean;
 	value: number;
 	min: number;
 	max: number;
 	onDelta: (delta: number) => void;
 	onNudge: (delta: number) => void;
 }) {
-	const previousXRef = useRef(0);
-	const applyDelta = useEffectEvent((delta: number) => onDelta(delta));
+	const dragRef = useRef<{ pointerId: number; previousX: number } | null>(null);
 
 	const handlePointerDown = (event: ReactPointerEvent<HTMLHRElement>) => {
+		if (!event.isPrimary || event.button !== 0 || dragRef.current) return;
 		event.preventDefault();
-		previousXRef.current = event.clientX;
+		event.currentTarget.focus({ preventScroll: true });
+		event.currentTarget.setPointerCapture(event.pointerId);
+		dragRef.current = { pointerId: event.pointerId, previousX: event.clientX };
+	};
 
-		const handlePointerMove = (moveEvent: PointerEvent) => {
-			const delta = moveEvent.clientX - previousXRef.current;
-			previousXRef.current = moveEvent.clientX;
-			applyDelta(delta);
-		};
-		const handlePointerUp = () => {
-			window.removeEventListener("pointermove", handlePointerMove);
-			window.removeEventListener("pointerup", handlePointerUp);
-		};
+	const handlePointerMove = (event: ReactPointerEvent<HTMLHRElement>) => {
+		const drag = dragRef.current;
+		if (!drag || drag.pointerId !== event.pointerId) return;
+		const delta = event.clientX - drag.previousX;
+		drag.previousX = event.clientX;
+		onDelta(delta);
+	};
 
-		window.addEventListener("pointermove", handlePointerMove);
-		window.addEventListener("pointerup", handlePointerUp, { once: true });
+	const endDrag = (event: ReactPointerEvent<HTMLHRElement>) => {
+		if (dragRef.current?.pointerId !== event.pointerId) return;
+		dragRef.current = null;
+		if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+			event.currentTarget.releasePointerCapture(event.pointerId);
+		}
 	};
 
 	const handleKeyDown = (event: KeyboardEvent<HTMLHRElement>) => {
@@ -514,18 +539,30 @@ function ResizeHandle({
 			event.preventDefault();
 			onNudge(24);
 		}
+
+		if (event.key === "Home" || event.key === "End") {
+			event.preventDefault();
+			const target = event.key === "Home" ? min : max;
+			onNudge((target - value) * (reversed ? -1 : 1));
+		}
 	};
 
 	return (
 		<hr
 			tabIndex={0}
 			aria-label={label}
+			aria-controls={controls}
 			aria-orientation="vertical"
 			aria-valuemin={min}
 			aria-valuemax={max}
 			aria-valuenow={value}
-			className="m-0 h-full w-full cursor-col-resize border-0 border-x border-border/40 bg-muted/30 outline-none transition-colors hover:bg-primary/10 focus-visible:bg-primary/10 focus-visible:ring-2 focus-visible:ring-ring/45"
+			aria-valuetext={`${value} pixels`}
+			className="m-0 h-full w-full touch-none cursor-col-resize select-none border-0 border-x border-border/40 bg-muted/30 outline-none transition-colors hover:bg-primary/10 focus-visible:bg-primary/10 focus-visible:ring-2 focus-visible:ring-ring/45"
 			onPointerDown={handlePointerDown}
+			onPointerMove={handlePointerMove}
+			onPointerUp={endDrag}
+			onPointerCancel={endDrag}
+			onLostPointerCapture={endDrag}
 			onKeyDown={handleKeyDown}
 		/>
 	);

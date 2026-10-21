@@ -10,9 +10,9 @@
 				"require_config_file": true
 			}
 		},
-		"tsgo": {
+		"typescript-ls": {
 			"settings": {
-				"package_version": "7.0.0-dev.20260421.2"
+				"package_version": "7.0.2"
 			}
 		},
 		"tailwindcss-language-server": {
@@ -30,7 +30,7 @@
 	},
 	"languages": {
 		"TypeScript": {
-			"language_servers": ["tsgo", "vtsls", "..."],
+			"language_servers": ["typescript-ls", "!vtsls", "!typescript-language-server", "..."],
 			"formatter": {
 				"language_server": {
 					"name": "biome"
@@ -45,7 +45,7 @@
 			}
 		},
 		"TSX": {
-			"language_servers": ["tsgo", "vtsls", "..."],
+			"language_servers": ["typescript-ls", "!vtsls", "!typescript-language-server", "..."],
 			"formatter": {
 				"language_server": {
 					"name": "biome"

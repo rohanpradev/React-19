@@ -16,6 +16,7 @@ import {
 	RadioTower,
 	Rocket,
 	Search,
+	ShieldCheck,
 	Sparkles,
 	UserRound,
 	Workflow,
@@ -208,7 +209,17 @@ export const accountNavItem = {
 	apiLabels: ["updateUser", "changePassword", "Sessions"],
 } satisfies NavItem;
 
-export const workspaceNavItems = [accountNavItem] as const;
+export const accessNavItem = {
+	path: "/access",
+	label: "Access Management",
+	blurb: "Assign workspace roles and review the access change history.",
+	icon: ShieldCheck,
+	stage: "full-stack",
+	releaseArea: "Workspace access",
+	apiLabels: ["Better Auth", "Permissions", "Audit history"],
+} satisfies NavItem;
+
+export const workspaceNavItems = [accountNavItem, accessNavItem] as const;
 
 export const releaseCoverage = [
 	{

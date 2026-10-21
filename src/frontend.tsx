@@ -6,9 +6,10 @@
  */
 
 import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import { createRoot, type Root } from "react-dom/client";
 import { RouterProvider } from "react-router/dom";
 
+import { AppBootState } from "@/components/app-boot-state";
 import { ThemeProvider } from "@/components/theme-provider";
 
 const elem = document.getElementById("root");
@@ -17,29 +18,30 @@ if (!elem) {
 	throw new Error('Root element "#root" was not found.');
 }
 
-const rootElement = elem;
+// Reuse the root across Bun updates, including a failed startup followed by a fix.
+let root: Root;
+if (import.meta.hot) {
+	if (!import.meta.hot.data.root) import.meta.hot.data.root = createRoot(elem);
+	root = import.meta.hot.data.root;
+} else {
+	root = createRoot(elem);
+}
+
 async function renderApp() {
-	const { router } = await import("./router");
-	const app = (
-		<StrictMode>
-			<ThemeProvider>
-				<RouterProvider router={router} />
-			</ThemeProvider>
-		</StrictMode>
-	);
-
-	if (import.meta.hot) {
-		// With hot module reloading, `import.meta.hot.data` is persisted.
-		if (!import.meta.hot.data.root) {
-			import.meta.hot.data.root = createRoot(rootElement);
-		}
-		const root = import.meta.hot.data.root;
-		root.render(app);
-		return;
+	root.render(<AppBootState />);
+	try {
+		const { router } = await import("./router");
+		root.render(
+			<StrictMode>
+				<ThemeProvider>
+					<RouterProvider router={router} />
+				</ThemeProvider>
+			</StrictMode>,
+		);
+	} catch (error) {
+		console.error("The workspace failed to start.", error);
+		root.render(<AppBootState failed />);
 	}
-
-	// The hot module reloading API is not available in production.
-	createRoot(rootElement).render(app);
 }
 
 void renderApp();

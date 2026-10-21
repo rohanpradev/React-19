@@ -12,8 +12,8 @@ export type OfficialDocLink = {
 	logo?: TechLogoName;
 };
 
-export const docsLastCheckedAt = "2026-10-05";
-export const docsLastCheckedLabel = "October 5, 2026";
+export const docsLastCheckedAt = "2026-10-21";
+export const docsLastCheckedLabel = "October 21, 2026";
 
 export const docsPosture = [
 	{
@@ -26,13 +26,13 @@ export const docsPosture = [
 		title: "React Router",
 		status: `Package baseline: ${stackVersions.router}`,
 		detail:
-			"React Router 8.4 reduces unrelated route re-renders and preserves lazy import errors. Data Mode stays on the stable matcher; the new route-pattern matcher remains experimental.",
+			"React Router 8.5 improves router state recovery and deprecates its viewTransition APIs in favor of React 19.3 ViewTransition, which the route explorer already uses. Data Mode keeps the stable matcher.",
 	},
 	{
 		title: "Better Auth",
 		status: `Package baseline: ${stackVersions.auth}`,
 		detail:
-			"Better Auth 1.7.7 includes authentication security fixes without a core schema migration. Protected API reads bypass cached session cookies so revoked sessions are rejected immediately.",
+			"Admin-plugin access control defines Viewer, Editor, and Administrator permissions. Protected APIs read authoritative sessions; role changes are audited and revoke affected sessions.",
 	},
 	{
 		title: "Drizzle ORM",
@@ -48,9 +48,9 @@ export const docsPosture = [
 	},
 	{
 		title: "Bun",
-		status: "Runtime checked: 1.4.2",
+		status: `Runtime baseline: ${stackVersions.bun}`,
 		detail:
-			"Bun docs now center HTML route imports, development HMR/console forwarding, and route maps in Bun.serve.",
+			"Bun 1.4.3 adds built-in TypeScript checking. The project uses bun --check alongside Biome, HTML route imports, and Bun.serve route maps.",
 	},
 	{
 		title: "Biome",
@@ -60,20 +60,128 @@ export const docsPosture = [
 	},
 	{
 		title: "TypeScript",
-		status: "Native preview: 7.0",
+		status: `Stable native compiler: ${stackVersions.typescript}`,
 		detail:
-			"Strict mode now rejects unused symbols and unsafe index-signature property access in addition to unchecked indexed reads and fallthrough.",
+			"Bun checks the strict tsconfig; stable TypeScript 7 supplies native tsc diagnostics and Zed's language server. The retired native-preview package is no longer required.",
+	},
+	{
+		title: "Validation harness",
+		status: "Local, production, and CI contracts",
+		detail:
+			"Named checks have deadlines and a structured report. Production probes use disposable credentials and cover all browser chunks, session revocation, API methods, and rejected mutation safety.",
 	},
 ] as const;
 
 export const officialDocLinks: OfficialDocLink[] = [
 	{
-		label: "Better Auth 1.7.7 release",
-		description: "Authentication security fixes, verification storage guidance, and adapter fixes.",
-		href: "https://github.com/better-auth/better-auth/releases/tag/v1.7.7",
+		label: "React Router 8.5 release",
+		description:
+			"React ViewTransition guidance, router subscription recovery, and optional React types.",
+		href: "https://github.com/remix-run/react-router/blob/react-router%408.5.0/CHANGELOG.md#v850",
+		area: "router",
+		keywords: ["react router", "8.5", "release", "viewtransition", "upgrade"],
+		logo: "react-router",
+	},
+	{
+		label: "TypeScript 7 stable",
+		description: "Stable native tsc, language-server support, and migration from native-preview.",
+		href: "https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/",
+		area: "platform",
+		keywords: ["typescript", "7", "stable", "native", "tsc", "language server"],
+	},
+	{
+		label: "TanStack Query 5.104.5 release",
+		description:
+			"Use supplied options during optimistic fetches and recompute mutation state snapshots.",
+		href: "https://github.com/TanStack/query/releases/tag/release-2026-10-19-1659",
+		area: "data",
+		keywords: ["tanstack", "query", "5.104.5", "optimistic", "mutation", "upgrade"],
+		logo: "tanstack",
+	},
+	{
+		label: "Practical React Query",
+		description:
+			"Maintainer engineering notes on server state, cache lifetime, defaults, and query ownership.",
+		href: "https://tkdodo.eu/blog/practical-react-query",
+		area: "data",
+		keywords: ["tanstack", "query", "blog", "cache", "stale time", "architecture"],
+		logo: "tanstack",
+	},
+	{
+		label: "Bun process lifecycle",
+		description:
+			"Subprocess cancellation, bounded execution, signals, and exit handling for tooling.",
+		href: "https://bun.sh/docs/runtime/child-process",
+		area: "bun",
+		keywords: ["bun", "spawn", "timeout", "validation", "harness", "cancellation"],
+		logo: "bun",
+	},
+	{
+		label: "Bun server lifecycle",
+		description: "Request body limits, graceful connection draining, and server shutdown.",
+		href: "https://bun.sh/docs/runtime/http/server",
+		area: "bun",
+		keywords: ["bun", "server", "shutdown", "readiness", "body", "limits"],
+		logo: "bun",
+	},
+	{
+		label: "Bun 1.4.3 release",
+		description: "Built-in TypeScript checking and runtime, bundler, and package-manager fixes.",
+		href: "https://bun.sh/blog/release-notes/bun-v1.4.3",
+		area: "bun",
+		keywords: ["bun", "1.4.3", "release", "typecheck", "upgrade"],
+		logo: "bun",
+	},
+	{
+		label: "Bun TypeScript checking",
+		description: "Project checks, timing, thread limits, and the existing check-script precedence.",
+		href: "https://bun.sh/docs/runtime/check",
+		area: "bun",
+		keywords: ["bun", "typescript", "typecheck", "check", "ci"],
+		logo: "bun",
+	},
+	{
+		label: "Better Auth Admin access control",
+		description:
+			"Application-wide roles, explicit resource permissions, safe custom roles, and plugin schema.",
+		href: "https://better-auth.com/docs/plugins/admin#access-control",
 		area: "auth",
-		keywords: ["better auth", "1.7.7", "password", "session", "upgrade"],
+		keywords: ["better auth", "rbac", "admin", "roles", "permissions", "access control"],
 		logo: "better-auth",
+	},
+	{
+		label: "Better Auth organizations",
+		description:
+			"Organization membership, invitations, teams, and organization-scoped authorization.",
+		href: "https://better-auth.com/docs/plugins/organization#access-control",
+		area: "auth",
+		keywords: ["better auth", "rbac", "organization", "tenant", "membership", "permissions"],
+		logo: "better-auth",
+	},
+	{
+		label: "Better Auth user fields",
+		description:
+			"Additional-field input restrictions and schema ownership for security-sensitive user data.",
+		href: "https://better-auth.com/docs/concepts/database#extending-core-schema",
+		area: "auth",
+		keywords: ["better auth", "schema", "role", "input", "database", "security"],
+		logo: "better-auth",
+	},
+	{
+		label: "Better Auth 1.7.12 release",
+		description:
+			"Token audience, timestamp, algorithm, OAuth-proxy checks, and required client-ID guidance.",
+		href: "https://github.com/better-auth/better-auth/releases/tag/v1.7.12",
+		area: "auth",
+		keywords: ["better auth", "1.7.12", "token", "client id", "security", "upgrade"],
+		logo: "better-auth",
+	},
+	{
+		label: "Lucide 1.60.0 release",
+		description: "New icons and release details for the shared React icon library.",
+		href: "https://github.com/lucide-icons/lucide/releases/tag/1.60.0",
+		area: "ui",
+		keywords: ["lucide", "1.60.0", "icons", "react", "release", "upgrade"],
 	},
 	{
 		label: "TanStack Query cancellation",
@@ -250,7 +358,7 @@ export const officialDocLinks: OfficialDocLink[] = [
 		description: "Stable v8 release notes, compatibility baselines, fixes, and upgrade signals.",
 		href: "https://reactrouter.com/changelog",
 		area: "router",
-		keywords: ["react router", "v8", "8.4", "changelog", "release"],
+		keywords: ["react router", "v8", "8.5", "changelog", "release"],
 		logo: "react-router",
 	},
 	{
