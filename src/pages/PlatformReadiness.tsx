@@ -235,7 +235,7 @@ function ActivityPreview({ onLifecycle }: { onLifecycle: (event: string) => void
 				aria-label="Activity preview draft"
 				value={draft}
 				onChange={(event) => setDraft(event.target.value)}
-				className="mt-4 min-h-24 w-full resize-none rounded-lg border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground outline-none transition-shadow focus-visible:ring-2 focus-visible:ring-ring/40"
+				className="mt-4 min-h-24 w-full resize-none rounded-lg border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground transition-shadow outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
 			/>
 		</div>
 	);
@@ -577,7 +577,7 @@ export function PlatformReadinessPage() {
 													{doc.description}
 												</span>
 											</span>
-											<ArrowUpRight className="mt-0.5 size-4 shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+											<ArrowUpRight className="mt-0.5 size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
 										</a>
 									))}
 							</div>

@@ -184,7 +184,7 @@ export function WorkflowBoardPage() {
 							<p className="text-sm font-medium text-muted-foreground">Top priority</p>
 							<Sparkles className="size-5 text-primary" />
 						</div>
-						<p className="text-lg font-semibold leading-6 text-foreground">
+						<p className="text-lg leading-6 font-semibold text-foreground">
 							{topItem?.title ?? "No work selected"}
 						</p>
 						<p className="text-sm leading-6 text-muted-foreground">
@@ -324,7 +324,7 @@ function SortableWorkItem({
 		>
 			<button
 				type="button"
-				className="flex size-11 items-center justify-center rounded-lg border border-border/70 bg-muted/45 text-muted-foreground outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring/45"
+				className="flex size-11 items-center justify-center rounded-lg border border-border/70 bg-muted/45 text-muted-foreground transition-colors outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring/45"
 				aria-label={`Reorder ${item.title}`}
 				{...attributes}
 				{...listeners}
@@ -341,7 +341,7 @@ function SortableWorkItem({
 					<Badge variant="outline">{item.area}</Badge>
 				</div>
 				<div>
-					<p className="font-semibold leading-6 text-foreground">{item.title}</p>
+					<p className="leading-6 font-semibold text-foreground">{item.title}</p>
 					<p className="mt-1 text-sm leading-6 text-muted-foreground">{item.owner}</p>
 				</div>
 			</div>

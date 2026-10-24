@@ -313,12 +313,12 @@ function PersonRoleRow({
 		<div className="app-surface grid gap-4 p-4 lg:grid-cols-[minmax(0,1fr)_minmax(220px,320px)_90px] lg:items-center">
 			<div className="min-w-0 space-y-1">
 				<div className="flex flex-wrap items-center gap-2">
-					<p className="break-words font-semibold">{user.name || "Unnamed account"}</p>
+					<p className="font-semibold break-words">{user.name || "Unnamed account"}</p>
 					<RoleBadge role={user.role} />
 					{isCurrentUser ? <Badge variant="outline">You</Badge> : null}
 				</div>
-				<p className="break-all text-sm text-muted-foreground">{user.email}</p>
-				<code className="block select-all break-all text-xs text-muted-foreground">{user.id}</code>
+				<p className="text-sm break-all text-muted-foreground">{user.email}</p>
+				<code className="block text-xs break-all text-muted-foreground select-all">{user.id}</code>
 			</div>
 			<div className="space-y-2">
 				<Select
@@ -465,7 +465,7 @@ function AccountReference({
 						? `${user.name || "Account"} · ${user.email}`
 						: "Account ID"}
 			</p>
-			<code className="block select-all break-all text-muted-foreground">{id}</code>
+			<code className="block break-all text-muted-foreground select-all">{id}</code>
 		</div>
 	);
 }

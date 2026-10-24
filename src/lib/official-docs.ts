@@ -12,8 +12,8 @@ export type OfficialDocLink = {
 	logo?: TechLogoName;
 };
 
-export const docsLastCheckedAt = "2026-10-21";
-export const docsLastCheckedLabel = "October 21, 2026";
+export const docsLastCheckedAt = "2026-10-24";
+export const docsLastCheckedLabel = "October 24, 2026";
 
 export const docsPosture = [
 	{
@@ -38,7 +38,7 @@ export const docsPosture = [
 		title: "Drizzle ORM",
 		status: `Pinned RC: ${stackVersions.drizzle}`,
 		detail:
-			"ORM and Kit are exact-pinned as a pair, use the v3 migration graph, enforce database checks, and pass Drizzle's commutativity check.",
+			"ORM and Kit are exact-pinned as a pair at the verified RC tag, use the v3 migration graph, and run migration integrity checks in the shared validator.",
 	},
 	{
 		title: "shadcn/ui",
@@ -50,13 +50,13 @@ export const docsPosture = [
 		title: "Bun",
 		status: `Runtime baseline: ${stackVersions.bun}`,
 		detail:
-			"Bun 1.4.3 adds built-in TypeScript checking. The project uses bun --check alongside Biome, HTML route imports, and Bun.serve route maps.",
+			"Bun 1.4.4 supplies native formatting with Tailwind and package sorting, a faster checker, and more resilient installs. The shared validator checks formatting before Biome lint and bun --check.",
 	},
 	{
 		title: "Biome",
 		status: `Drizzle domain enabled: ${stackVersions.biome}`,
 		detail:
-			"Biome exposes Drizzle ORM rules in the nursery group, so destructive update and delete calls are explicitly guarded.",
+			"Biome retains linting, custom import organization, and explicit guards for destructive Drizzle calls. Bun owns formatting in the CLI, editor, and validation pipeline.",
 	},
 	{
 		title: "TypeScript",
@@ -125,11 +125,20 @@ export const officialDocLinks: OfficialDocLink[] = [
 		logo: "bun",
 	},
 	{
-		label: "Bun 1.4.3 release",
-		description: "Built-in TypeScript checking and runtime, bundler, and package-manager fixes.",
-		href: "https://bun.sh/blog/release-notes/bun-v1.4.3",
+		label: "Bun 1.4.4 release",
+		description: "Native formatting, faster type checking, resilient installs, and runtime fixes.",
+		href: "https://bun.com/blog/bun-v1.4.4",
 		area: "bun",
-		keywords: ["bun", "1.4.3", "release", "typecheck", "upgrade"],
+		keywords: ["bun", "1.4.4", "release", "format", "typecheck", "upgrade"],
+		logo: "bun",
+	},
+	{
+		label: "Bun formatter",
+		description:
+			"Native formatting, Tailwind class and package sorting, check mode, and changed or staged files.",
+		href: "https://bun.com/docs/format",
+		area: "bun",
+		keywords: ["bun", "fmt", "formatter", "tailwind", "package json", "staged", "changed"],
 		logo: "bun",
 	},
 	{
@@ -177,11 +186,18 @@ export const officialDocLinks: OfficialDocLink[] = [
 		logo: "better-auth",
 	},
 	{
-		label: "Lucide 1.60.0 release",
+		label: "Lucide 1.61.0 release",
 		description: "New icons and release details for the shared React icon library.",
-		href: "https://github.com/lucide-icons/lucide/releases/tag/1.60.0",
+		href: "https://github.com/lucide-icons/lucide/releases/tag/1.61.0",
 		area: "ui",
-		keywords: ["lucide", "1.60.0", "icons", "react", "release", "upgrade"],
+		keywords: ["lucide", "1.61.0", "icons", "react", "release", "upgrade"],
+	},
+	{
+		label: "Biome 2.6.2 release",
+		description: "Lint, migration, configuration, and language support improvements for Biome.",
+		href: "https://github.com/biomejs/biome/releases/tag/%40biomejs%2Fbiome%402.6.2",
+		area: "platform",
+		keywords: ["biome", "2.6.2", "lint", "configuration", "release", "upgrade"],
 	},
 	{
 		label: "TanStack Query cancellation",
@@ -561,7 +577,7 @@ export const officialDocLinks: OfficialDocLink[] = [
 		description: "Drizzle ORM lint domain and activation guidance for Biome.",
 		href: "https://biomejs.dev/linter/domains/#drizzle",
 		area: "platform",
-		keywords: ["biome", "drizzle", "domain", "lint", "nursery"],
+		keywords: ["biome", "drizzle", "domain", "lint", "suspicious"],
 		logo: undefined,
 	},
 	{

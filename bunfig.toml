@@ -1,6 +1,16 @@
 [install]
 peer = false
 
+[fmt]
+printWidth = 100
+useTabs = true
+endOfLine = "lf"
+sortPackageJson = true
+ignorePatterns = ["drizzle/**"]
+
+[fmt.sortTailwindcss]
+stylesheet = "./styles/globals.css"
+
 [serve.static]
 plugins = ["bun-plugin-tailwind"]
 env = "BUN_PUBLIC_*"

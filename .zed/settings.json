@@ -32,8 +32,9 @@
 		"TypeScript": {
 			"language_servers": ["typescript-ls", "!vtsls", "!typescript-language-server", "..."],
 			"formatter": {
-				"language_server": {
-					"name": "biome"
+				"external": {
+					"command": "bun",
+					"arguments": ["fmt", "--stdin-filepath", "{buffer_path}"]
 				}
 			},
 			"code_actions_on_format": {
@@ -47,8 +48,9 @@
 		"TSX": {
 			"language_servers": ["typescript-ls", "!vtsls", "!typescript-language-server", "..."],
 			"formatter": {
-				"language_server": {
-					"name": "biome"
+				"external": {
+					"command": "bun",
+					"arguments": ["fmt", "--stdin-filepath", "{buffer_path}"]
 				}
 			},
 			"code_actions_on_format": {
@@ -61,8 +63,9 @@
 		},
 		"JavaScript": {
 			"formatter": {
-				"language_server": {
-					"name": "biome"
+				"external": {
+					"command": "bun",
+					"arguments": ["fmt", "--stdin-filepath", "{buffer_path}"]
 				}
 			},
 			"code_actions_on_format": {
@@ -75,8 +78,9 @@
 		},
 		"JSX": {
 			"formatter": {
-				"language_server": {
-					"name": "biome"
+				"external": {
+					"command": "bun",
+					"arguments": ["fmt", "--stdin-filepath", "{buffer_path}"]
 				}
 			},
 			"code_actions_on_format": {
@@ -89,22 +93,57 @@
 		},
 		"CSS": {
 			"formatter": {
-				"language_server": {
-					"name": "biome"
+				"external": {
+					"command": "bun",
+					"arguments": ["fmt", "--stdin-filepath", "{buffer_path}"]
 				}
 			}
 		},
 		"JSON": {
 			"formatter": {
-				"language_server": {
-					"name": "biome"
+				"external": {
+					"command": "bun",
+					"arguments": ["fmt", "--stdin-filepath", "{buffer_path}"]
 				}
 			}
 		},
 		"JSONC": {
 			"formatter": {
-				"language_server": {
-					"name": "biome"
+				"external": {
+					"command": "bun",
+					"arguments": ["fmt", "--stdin-filepath", "{buffer_path}"]
+				}
+			}
+		},
+		"HTML": {
+			"formatter": {
+				"external": {
+					"command": "bun",
+					"arguments": ["fmt", "--stdin-filepath", "{buffer_path}"]
+				}
+			}
+		},
+		"Markdown": {
+			"formatter": {
+				"external": {
+					"command": "bun",
+					"arguments": ["fmt", "--stdin-filepath", "{buffer_path}"]
+				}
+			}
+		},
+		"YAML": {
+			"formatter": {
+				"external": {
+					"command": "bun",
+					"arguments": ["fmt", "--stdin-filepath", "{buffer_path}"]
+				}
+			}
+		},
+		"TOML": {
+			"formatter": {
+				"external": {
+					"command": "bun",
+					"arguments": ["fmt", "--stdin-filepath", "{buffer_path}"]
 				}
 			}
 		}

@@ -85,8 +85,8 @@ const columns: ColumnDef<CustomerTableFeatures, CustomerRow>[] = [
 		header: ({ column }) => <DataTableColumnHeader column={column} title="Customer" />,
 		cell: ({ row }) => (
 			<div className="space-y-1">
-				<div className="text-foreground font-medium">{row.original.name}</div>
-				<div className="text-muted-foreground text-xs">{row.original.email}</div>
+				<div className="font-medium text-foreground">{row.original.name}</div>
+				<div className="text-xs text-muted-foreground">{row.original.email}</div>
 			</div>
 		),
 	},
@@ -97,8 +97,8 @@ const columns: ColumnDef<CustomerTableFeatures, CustomerRow>[] = [
 		header: ({ column }) => <DataTableColumnHeader column={column} title="Account" />,
 		cell: ({ row }) => (
 			<div className="space-y-1">
-				<div className="text-foreground font-medium">{row.original.company}</div>
-				<div className="text-muted-foreground text-xs">{row.original.country}</div>
+				<div className="font-medium text-foreground">{row.original.company}</div>
+				<div className="text-xs text-muted-foreground">{row.original.country}</div>
 			</div>
 		),
 	},
@@ -149,7 +149,7 @@ const columns: ColumnDef<CustomerTableFeatures, CustomerRow>[] = [
 		meta: { label: "Last Seen" } satisfies CustomerColumnMeta,
 		header: ({ column }) => <DataTableColumnHeader column={column} title="Last Seen" />,
 		cell: ({ row }) => (
-			<div className="text-muted-foreground text-sm tabular-nums">
+			<div className="text-sm text-muted-foreground tabular-nums">
 				{formatRelativeDate(row.original.lastSeenAt)}
 			</div>
 		),
@@ -300,8 +300,8 @@ export function ServerTablePage() {
 								<Layers3 className="size-5" />
 							</span>
 							<div>
-								<p className="text-foreground text-sm font-medium">Query orchestration</p>
-								<p className="text-muted-foreground text-sm">
+								<p className="text-sm font-medium text-foreground">Query orchestration</p>
+								<p className="text-sm text-muted-foreground">
 									The browser holds only view state. The API resolves the data.
 								</p>
 							</div>
@@ -393,7 +393,7 @@ export function ServerTablePage() {
 
 					<div className="grid gap-3 xl:grid-cols-[minmax(0,1.6fr)_220px_220px_auto]">
 						<div className="relative">
-							<Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+							<Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
 							<Input
 								aria-label="Search customers"
 								value={globalFilter}
@@ -508,7 +508,7 @@ export function ServerTablePage() {
 									skeletonRowIds.map((rowId) => (
 										<TableRow key={rowId}>
 											<TableCell colSpan={visibleColumnCount}>
-												<div className="bg-muted h-5 animate-pulse rounded-md" />
+												<div className="h-5 animate-pulse rounded-md bg-muted" />
 											</TableCell>
 										</TableRow>
 									))
@@ -529,7 +529,7 @@ export function ServerTablePage() {
 									<TableRow>
 										<TableCell
 											colSpan={visibleColumnCount}
-											className="text-muted-foreground h-24 text-center text-sm"
+											className="h-24 text-center text-sm text-muted-foreground"
 										>
 											No accounts match this view.
 										</TableCell>
@@ -540,7 +540,7 @@ export function ServerTablePage() {
 					</div>
 
 					<div className="flex flex-col gap-4 border-t border-border/60 pt-4 lg:flex-row lg:items-center lg:justify-between">
-						<div className="text-muted-foreground flex flex-wrap items-center gap-2 text-sm">
+						<div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
 							<Badge variant="outline">
 								Page {displayedPageIndex + 1} of {formatNumber(pageCount)}
 							</Badge>
@@ -551,7 +551,7 @@ export function ServerTablePage() {
 						</div>
 
 						<div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-							<div className="text-muted-foreground flex items-center gap-2 text-sm">
+							<div className="flex items-center gap-2 text-sm text-muted-foreground">
 								<span>Rows per page</span>
 								<Select
 									value={String(pagination.pageSize)}
@@ -617,13 +617,13 @@ function SummaryCard({
 		<Card className="border-border/60">
 			<CardContent className="space-y-4 pt-6">
 				<div className="flex items-center justify-between gap-3">
-					<p className="text-muted-foreground text-sm font-medium">{label}</p>
+					<p className="text-sm font-medium text-muted-foreground">{label}</p>
 					<span className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
 						<Icon className="size-5" />
 					</span>
 				</div>
-				<p className="text-foreground text-3xl font-semibold tracking-tight">{value}</p>
-				<p className="text-muted-foreground text-sm leading-6">{description}</p>
+				<p className="text-3xl font-semibold tracking-tight text-foreground">{value}</p>
+				<p className="text-sm leading-6 text-muted-foreground">{description}</p>
 			</CardContent>
 		</Card>
 	);
