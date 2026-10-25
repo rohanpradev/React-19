@@ -376,7 +376,7 @@ function WorkspaceCanvas({ workspace }: { workspace: WorkbenchItem }) {
 						<Badge variant="secondary">{workspace.status}</Badge>
 						<Badge variant="outline">{workspace.owner}</Badge>
 					</div>
-					<h2 className="mt-3 font-display text-4xl leading-none text-foreground">
+					<h2 className="font-display mt-3 text-4xl leading-none text-foreground">
 						{workspace.label}
 					</h2>
 					<p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">
@@ -557,7 +557,7 @@ function ResizeHandle({
 			aria-valuemax={max}
 			aria-valuenow={value}
 			aria-valuetext={`${value} pixels`}
-			className="m-0 h-full w-full touch-none cursor-col-resize select-none border-0 border-x border-border/40 bg-muted/30 outline-none transition-colors hover:bg-primary/10 focus-visible:bg-primary/10 focus-visible:ring-2 focus-visible:ring-ring/45"
+			className="m-0 h-full w-full cursor-col-resize touch-none border-0 border-x border-border/40 bg-muted/30 transition-colors outline-none select-none hover:bg-primary/10 focus-visible:bg-primary/10 focus-visible:ring-2 focus-visible:ring-ring/45"
 			onPointerDown={handlePointerDown}
 			onPointerMove={handlePointerMove}
 			onPointerUp={endDrag}

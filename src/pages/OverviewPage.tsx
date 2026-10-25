@@ -97,7 +97,7 @@ export function OverviewPage() {
 							</Badge>
 							<span className="text-xs text-muted-foreground">Explore. Build. Understand.</span>
 						</div>
-						<h1 className="max-w-2xl font-display text-3xl font-semibold tracking-tight leading-[1.12] sm:text-4xl xl:text-5xl">
+						<h1 className="font-display max-w-2xl text-3xl leading-[1.12] font-semibold tracking-tight sm:text-4xl xl:text-5xl">
 							Build with confidence.
 							<br />
 							<span className="text-primary">Understand the system.</span>
@@ -185,14 +185,14 @@ export function OverviewPage() {
 							return (
 								<Card
 									key={item.title}
-									className="group relative gap-3 py-5 transition-colors hover:border-primary/40 focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/50"
+									className="group relative gap-3 py-5 transition-colors focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/50 hover:border-primary/40"
 								>
 									<CardHeader className="px-5">
 										<div className="mb-2 flex items-center justify-between">
 											<Icon aria-hidden="true" className="size-5 text-primary" />
 											<ArrowUpRight
 												aria-hidden="true"
-												className="size-4 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+												className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
 											/>
 										</div>
 										<CardTitle>

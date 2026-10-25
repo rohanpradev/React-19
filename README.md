@@ -4,7 +4,7 @@ A full-stack React/Bun workspace for learning, testing, and extending modern fro
 
 ## Start
 
-Install **Bun 1.4.3 or later**, then:
+Install **Bun 1.4.4 or later**, then:
 
 ```sh
 bun ci
@@ -15,7 +15,7 @@ Open `http://localhost:3000`. Register a local account to enter the workspace as
 
 ```sh
 bun start                 # Build and run production locally; requires production auth configuration
-bun run validate:quick    # Lint, Bun types, migrations, regression tests
+bun run validate:quick    # Format, lint, Bun types, migrations, regression tests
 bun run validate          # Also check TypeScript, build, and exercise the production server
 bun run validate:ci       # Full validation plus the online dependency security audit
 ```
@@ -24,10 +24,10 @@ bun run validate:ci       # Full validation plus the online dependency security 
 
 Better Auth's Admin plugin and a shared access-control policy define three application roles:
 
-| Role | Permissions |
-| --- | --- |
-| Viewer | Read customers and platform signals; use learning examples |
-| Editor | Viewer permissions plus updating platform signals |
+| Role          | Permissions                                                                   |
+| ------------- | ----------------------------------------------------------------------------- |
+| Viewer        | Read customers and platform signals; use learning examples                    |
+| Editor        | Viewer permissions plus updating platform signals                             |
 | Administrator | Editor permissions plus managing workspace roles and reading the access audit |
 
 New accounts and existing accounts upgraded by the migration start as Viewers. Roles are enforced by the server on protected API requests. The browser uses the same policy to explain permissions and hide unavailable controls.
@@ -44,22 +44,22 @@ See [docs/rbac.md](docs/rbac.md) for the permission matrix, setup, API contracts
 
 ## Current baseline
 
-Direct registry tags and official release guidance were checked on **October 21, 2026**. The lockfile is part of the upgrade contract.
+Direct registry tags and official release guidance were checked on **October 24, 2026**. The lockfile is part of the upgrade contract.
 
-| Area | Baseline |
-| --- | --- |
-| Runtime/package manager | Bun 1.4.3 |
-| UI | React/React DOM 19.3.1, Radix UI 1.8.1, Tailwind CSS 4.3.3, Lucide 1.60.0 |
-| Routing | React Router 8.5.0, Data Mode |
-| Server state | TanStack Query 5.104.5 |
-| Data table / forms | TanStack Table 9.3.1 / Form 1.33.5, Valibot 1.5.0 |
-| Authentication | Better Auth 1.7.12 |
-| Database | SQLite, Drizzle ORM/Kit exact-pinned together at 1.0.0-rc.4 |
-| Quality | Biome 2.5.15, Bun checker, stable TypeScript 7.0.2 |
+| Area                    | Baseline                                                                  |
+| ----------------------- | ------------------------------------------------------------------------- |
+| Runtime/package manager | Bun 1.4.4                                                                 |
+| UI                      | React/React DOM 19.3.1, Radix UI 1.8.1, Tailwind CSS 4.3.3, Lucide 1.61.0 |
+| Routing                 | React Router 8.5.0, Data Mode                                             |
+| Server state            | TanStack Query 5.104.5                                                    |
+| Data table / forms      | TanStack Table 9.3.1 / Form 1.33.5, Valibot 1.5.0                         |
+| Authentication          | Better Auth 1.7.12                                                        |
+| Database                | SQLite, Drizzle ORM/Kit exact-pinned together at 1.0.0-rc.5               |
+| Quality                 | Bun formatter/checker, Biome 2.6.2, stable TypeScript 7.0.2               |
 
 Stable releases are preferred. Drizzle remains an explicit paired release-candidate exception because this project already uses its v1 migration format. Its current `rc` tag was verified; commit-suffixed snapshots are excluded. All other direct dependencies are on their latest compatible published release. Use `bun outdated` and official release notes when refreshing this snapshot.
 
-The October 21 refresh includes [Better Auth 1.7.12's token-validation fixes](https://github.com/better-auth/better-auth/releases/tag/v1.7.12) and [Lucide 1.60.0's icon additions](https://github.com/lucide-icons/lucide/releases/tag/1.60.0). Bun's [official latest release](https://github.com/oven-sh/bun/releases/latest) remains 1.4.3. See the engineering guide for auth configuration implications; the verification record below is dated separately from the dependency check.
+The October 24 refresh adopts [Bun 1.4.4's native formatter, checker improvements, and package-manager fixes](https://bun.com/blog/bun-v1.4.4), [Biome 2.6.2](https://github.com/biomejs/biome/releases/tag/%40biomejs%2Fbiome%402.6.2), [Lucide 1.61.0's icon additions](https://github.com/lucide-icons/lucide/releases/tag/1.61.0), and paired Drizzle RC packages following the [v1 upgrade guide](https://orm.drizzle.team/docs/upgrade-v1). Better Auth remains on [1.7.12 with its token-validation fixes](https://github.com/better-auth/better-auth/releases/tag/v1.7.12). See the engineering guide for auth configuration implications; the historical verification record below is dated separately from this dependency check.
 
 ## What improved
 
@@ -70,12 +70,13 @@ The October 21 refresh includes [Better Auth 1.7.12's token-validation fixes](ht
 - **Explicit API contracts:** read endpoints accept GET/HEAD and reject other methods with 405/Allow. Signal writes require a trusted origin and JSON, enforce a 4 KiB streamed body budget, and validate before changing state. Bun also caps overall request bodies at 64 KiB.
 - **Production lifecycle:** `/healthz` checks database readiness without exposing configuration. Production drains connections on SIGINT/SIGTERM, forces closure after ten seconds, then releases SQLite.
 - **Repeatable verification:** checks have names, deadlines, dependency-aware skipping, interruption handling, and a machine-readable report. Independent checks still run after a failure; production probes never run against an unsuccessful build.
+- **Native formatting:** Bun formats source, configuration, and documentation, sorts Tailwind classes and package metadata, and checks formatting before linting. Biome retains lint rules and custom import organization.
 
 The source-backed design decisions and maintenance workflow are in [docs/engineering.md](docs/engineering.md). The in-app Platform Readiness page and command palette also link current docs and maintainer articles.
 
 ## Validation harness
 
-`bun run validate` runs Biome, Bun type checking, the stable TypeScript compiler, Drizzle migration checks, regression tests, the production build, and real HTTP probes. CI invokes this same pipeline with the dependency audit enabled. Docker builds run the full local pipeline.
+`bun run validate` runs Bun's formatting check, Biome lint and import checks, Bun type checking, the stable TypeScript compiler, Drizzle migration checks, regression tests, the production build, and real HTTP probes. CI invokes this same pipeline with the dependency audit enabled. Docker builds run the full local pipeline.
 
 ```sh
 bun src/tooling/validate.ts --list       # Inspect the full check plan
@@ -85,13 +86,19 @@ bun src/tooling/validate.ts --audit     # Include the registry advisory service
 
 Results are written to `.cache/validation/latest.json`, including status, duration, exit code, and skipped-stage reasons. CI uploads this report even after validation failure. Command output remains in the terminal/CI log. Validation exits nonzero for failures, timeouts, skips, or cancellation.
 
-Production probes start the **actual built server** with an isolated in-memory database, disposable auth credentials, and no developer OAuth secrets. They check readiness, every manifest-listed browser asset, cache revalidation, private-file isolation, auth cookies and revocation, method handling, mutation origin/media/body limits, and rejected-write integrity. Network tests require access to localhost; the advisory audit additionally requires internet access.
+Production probes start the **actual built server** with a disposable SQLite file, disposable auth credentials, and no developer OAuth secrets. They check readiness, every manifest-listed browser asset, cache revalidation, private-file isolation, auth cookies and revocation, method handling, mutation origin/media/body limits, and rejected-write integrity. Network tests require access to localhost; the advisory audit additionally requires internet access.
 
-On October 21, all validation stages passed with RBAC enabled: 64 regression tests (484 assertions), both type checkers, lint, migration checks, production build/HTTP probes, and an advisory audit of 197 packages with no vulnerabilities. Browser checks used an isolated database to verify Viewer read-only controls and denied Admin-page access, the Administrator role matrix and self-change protection, an explicitly approved disposable Viewer-to-Editor change with audit feedback, and Editor permissions after signing in again. Earlier browser checks also verified disposable registration and recovery from a missing route chunk. Docker and real-provider OAuth callbacks were not run locally.
+On October 24, the Bun 1.4.4 baseline passed a frozen install and every `validate:ci` stage on Windows: formatting, lint/import checks, both type checkers, migration checks, 64 tests (484 assertions), production build, production HTTP probes, and an audit of 168 packages with no vulnerabilities. Docker validation runs in GitHub CI; Docker is unavailable locally.
+
+Historical verification on October 21, before the October 24 dependency refresh: all validation stages passed with RBAC enabled, including 64 regression tests (484 assertions), both type checkers, lint, migration checks, production build/HTTP probes, and an advisory audit of 197 packages with no vulnerabilities. Browser checks used an isolated database to verify Viewer read-only controls and denied Admin-page access, the Administrator role matrix and self-change protection, an explicitly approved disposable Viewer-to-Editor change with audit feedback, and Editor permissions after signing in again. Earlier browser checks also verified disposable registration and recovery from a missing route chunk. Docker and real-provider OAuth callbacks were not run locally.
 
 Individual tools remain available:
 
 ```sh
+bun run format
+bun run format:check
+bun run format:changed
+bun run format:staged
 bun run check
 bun run check:write
 bun run typecheck
@@ -107,20 +114,22 @@ bun run db:migrate
 bun run db:seed
 ```
 
-`typecheck` deliberately uses `bun --check`: `bun check` would invoke this project's Biome script. Stable TypeScript 7 supplies native `tsc` and Zed's language server. `.zed/settings.json` configures the official `tsgo` extension, its stable `typescript-ls` server, and Biome.
+`format` runs `bun fmt`; `format:check` checks without writing. `format:changed` formats changes against the default branch, and `format:staged` formats and re-stages files prepared for a commit. Formatting settings live in `bunfig.toml`; generated migrations are excluded. The formatter handles Tailwind class order and `package.json` sorting without extra plugins. Biome's formatter is disabled; `check` and `check:write` retain linting and custom import organization.
+
+`typecheck` deliberately uses `bun --check`: `bun check` would invoke this project's Biome script. Stable TypeScript 7 supplies native `tsc` and Zed's language server. `.zed/settings.json` configures the official `tsgo` extension, its stable `typescript-ls` server, Bun's external formatter, and Biome fix/import code actions.
 
 ## Explore
 
-| Routes | Examples |
-| --- | --- |
-| `/overview`, `/architecture`, `/platform-readiness` | Searchable route map, architecture decisions, verified docs |
-| `/form-actions`, `/actions`, `/optimistic` | Actions, pending states, optimistic rollback |
-| `/react-use`, `/dom-interop` | Suspense, `use`, refs, metadata, custom elements |
-| `/control-room`, `/virtual-explorer` | External state, derived values, virtualization, Activity |
-| `/search-debounce`, `/server-state`, `/revenue-ops` | Real APIs, cancellation, Query cache, server-side table state |
-| `/workflow-board`, `/intake-form`, `/upload-manager` | Sorting, schema validation, simulated upload queue |
-| `/workbench-layout` | Accessible resizing, responsive panes, preserved panel state |
-| `/account`, `/auth`, `/access` | Account, password, sessions, sign-in, and Administrator access management |
+| Routes                                               | Examples                                                                  |
+| ---------------------------------------------------- | ------------------------------------------------------------------------- |
+| `/overview`, `/architecture`, `/platform-readiness`  | Searchable route map, architecture decisions, verified docs               |
+| `/form-actions`, `/actions`, `/optimistic`           | Actions, pending states, optimistic rollback                              |
+| `/react-use`, `/dom-interop`                         | Suspense, `use`, refs, metadata, custom elements                          |
+| `/control-room`, `/virtual-explorer`                 | External state, derived values, virtualization, Activity                  |
+| `/search-debounce`, `/server-state`, `/revenue-ops`  | Real APIs, cancellation, Query cache, server-side table state             |
+| `/workflow-board`, `/intake-form`, `/upload-manager` | Sorting, schema validation, simulated upload queue                        |
+| `/workbench-layout`                                  | Accessible resizing, responsive panes, preserved panel state              |
+| `/account`, `/auth`, `/access`                       | Account, password, sessions, sign-in, and Administrator access management |
 
 This is an extensible systems workspace. Uploads are simulated; the platform-signal demo is shared in-memory state and resets on restart. Customer examples and authentication use SQLite. These demonstrations are not tenant-isolated product features.
 
@@ -132,7 +141,7 @@ Set `BETTER_AUTH_URL` to the canonical origin and supply a strong `BETTER_AUTH_S
 docker compose up --build
 ```
 
-The app runs at `http://localhost:3000`. Compose persists SQLite in the `app-data` volume at `/data/mydb.sqlite`. The final image runs as the unprivileged `bun` user and checks `/healthz`. Bun, CI, and the image share the declared runtime baseline; CI actions use full commit pins.
+The app runs at `http://localhost:3000`. Compose persists SQLite in the `app-data` volume at `/data/mydb.sqlite`. The final image runs as the unprivileged `bun` user and checks `/healthz`. Bun, CI, and the image share the declared runtime baseline; CI actions use full commit pins. Docker dependency stages copy `bunfig.toml` so installation uses the same settings as local development. CI sets `BUN_CONFIG_HTTP_RETRY_BACKOFF=250` to give registry requests a longer initial retry delay.
 
 The build puts browser files in `dist/public` and server files plus the private asset manifest beside it. Only `dist/public` is exposed. Manifest-listed build assets are immutable; HTML and stable assets revalidate with content ETags. Auth, protected API responses, and errors use `no-store`.
 
@@ -143,7 +152,7 @@ Available configuration:
 - `BETTER_AUTH_IP_ADDRESS_HEADERS` for a trusted edge that overwrites a single-value client-IP header. By default Bun overwrites `x-real-ip` from the socket; forwarded header chains are not trusted.
 - `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`, `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` for optional providers.
 
-OAuth callbacks are `/api/auth/callback/google` and `/api/auth/callback/github` on your production origin. Provider callbacks require validation with real deployment credentials. Docker image execution is checked by CI; Docker was unavailable in the local upgrade environment.
+OAuth callbacks are `/api/auth/callback/google` and `/api/auth/callback/github` on your production origin. Provider callbacks require validation with real deployment credentials. CI builds the Docker image and runs validation during the build; Docker was unavailable in the local upgrade environment.
 
 SQLite opens with WAL, foreign keys, a busy timeout, and durability settings. Startup applies Drizzle migrations and seeds customer examples. Constraints enforce customer invariants; paginated reads use deterministic ordering and snapshot transactions, and searches escape wildcard characters.
 

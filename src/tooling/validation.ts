@@ -28,7 +28,8 @@ export function createValidationPlan(options: {
 		timeoutMs,
 	});
 	return [
-		script("check", "Formatting and lint"),
+		script("format:check", "Bun formatting"),
+		script("check", "Biome lint and imports"),
 		script("typecheck", "Bun type check"),
 		...(!options.quick ? [script("typecheck:diagnostics", "TypeScript compiler")] : []),
 		script("db:check", "Migration integrity"),

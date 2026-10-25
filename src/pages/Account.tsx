@@ -182,7 +182,7 @@ function AccountSummary({
 				</p>
 				<div className="rounded-lg border border-border/60 bg-muted/35 p-3 text-sm">
 					<p className="font-medium">Account ID</p>
-					<code className="mt-1 block select-all break-all text-xs text-muted-foreground">
+					<code className="mt-1 block text-xs break-all text-muted-foreground select-all">
 						{session.user.id}
 					</code>
 				</div>

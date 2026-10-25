@@ -1,10 +1,10 @@
 # syntax=docker/dockerfile:1
 
-FROM oven/bun:1.4.3 AS base
+FROM oven/bun:1.4.4 AS base
 WORKDIR /app
 
 FROM base AS deps
-COPY package.json bun.lock ./
+COPY package.json bun.lock bunfig.toml ./
 RUN bun install --frozen-lockfile
 
 FROM deps AS build
@@ -12,7 +12,7 @@ COPY . .
 RUN bun run validate
 
 FROM base AS production-deps
-COPY package.json bun.lock ./
+COPY package.json bun.lock bunfig.toml ./
 RUN bun install --frozen-lockfile --production
 
 FROM base AS release

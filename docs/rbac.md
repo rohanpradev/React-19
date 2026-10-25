@@ -6,15 +6,15 @@ Reviewed against Better Auth **1.7.12** and its current official documentation o
 
 This application has one workspace. A user has exactly one of three roles stored in SQLite. Better Auth's Admin plugin supplies the server-owned role field and shared `createAccessControl` primitives. The application policy lives in `src/auth/permissions.ts`; server handlers, the auth configuration, and browser permission displays import the same definitions.
 
-| Capability | Viewer (`viewer`) | Editor (`editor`) | Administrator (`admin`) |
-| --- | --- | --- | --- |
-| Read customer APIs | Yes | Yes | Yes |
-| Read platform signals | Yes | Yes | Yes |
-| Update platform signals | No | Yes | Yes |
-| List workspace users and access history | No | No | Yes |
-| Change another user's role | No | No | Yes |
-| Change own role | No | No | No |
-| Built-in Admin-plugin user/session administration | No | No | No |
+| Capability                                        | Viewer (`viewer`) | Editor (`editor`) | Administrator (`admin`) |
+| ------------------------------------------------- | ----------------- | ----------------- | ----------------------- |
+| Read customer APIs                                | Yes               | Yes               | Yes                     |
+| Read platform signals                             | Yes               | Yes               | Yes                     |
+| Update platform signals                           | No                | Yes               | Yes                     |
+| List workspace users and access history           | No                | No                | Yes                     |
+| Change another user's role                        | No                | No                | Yes                     |
+| Change own role                                   | No                | No                | No                      |
+| Built-in Admin-plugin user/session administration | No                | No                | No                      |
 
 Learning examples and simulated interactions remain available to authenticated users. The permission boundary applies to protected server resources, including direct requests made outside the interface. Customer data and platform signals are shared workspace data. The latter remains an in-memory demonstration that resets when the server restarts.
 

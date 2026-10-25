@@ -48,7 +48,7 @@ test("interrupting validation cancels work instead of starting later checks", as
 
 test("quick validation excludes production and network work; CI includes the audit", () => {
 	const quick = createValidationPlan({ quick: true, audit: false }).map((stage) => stage.id);
-	expect(quick).toEqual(["check", "typecheck", "db:check", "test"]);
+	expect(quick).toEqual(["format:check", "check", "typecheck", "db:check", "test"]);
 	const full = createValidationPlan({ quick: false, audit: true });
 	expect(full.find((stage) => stage.id === "test:production")?.requires).toEqual(["build"]);
 	expect(full.at(-1)?.id).toBe("audit");

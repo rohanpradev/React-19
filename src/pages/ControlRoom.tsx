@@ -199,7 +199,7 @@ function ControlRoomDashboard() {
 									</Badge>
 									<Badge variant="outline">{formatLabel(activeIncident.status)}</Badge>
 								</div>
-								<p className="mt-3 font-semibold leading-6 text-foreground">
+								<p className="mt-3 leading-6 font-semibold text-foreground">
 									{activeIncident.title}
 								</p>
 								<p className="mt-2 text-sm leading-6 text-muted-foreground">
@@ -398,7 +398,7 @@ function IncidentRow({
 					<Badge variant="outline">{incident.service}</Badge>
 					{active ? <Badge variant="secondary">Selected</Badge> : null}
 				</div>
-				<p className="mt-3 font-semibold leading-6 text-foreground">{incident.title}</p>
+				<p className="mt-3 leading-6 font-semibold text-foreground">{incident.title}</p>
 				<p className="mt-1 text-sm leading-6 text-muted-foreground">{incident.impact}</p>
 			</button>
 

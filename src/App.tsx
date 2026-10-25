@@ -198,7 +198,7 @@ function WorkspaceLayout({ session }: { session: AuthSession }) {
 						>
 							{visibleRouteGroups.map((group) => (
 								<div key={group.stage}>
-									<p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+									<p className="mb-2 px-3 text-[10px] font-semibold tracking-[0.14em] text-muted-foreground uppercase">
 										{group.label}
 									</p>
 									<div className="space-y-1">
@@ -212,7 +212,7 @@ function WorkspaceLayout({ session }: { session: AuthSession }) {
 														cn(
 															"group flex min-h-9 items-center gap-2.5 rounded-md px-3 py-2 text-[13px] transition-colors",
 															isActive
-																? "bg-sidebar-accent font-semibold text-sidebar-accent-foreground shadow-xs ring-1 ring-inset ring-sidebar-border"
+																? "bg-sidebar-accent font-semibold text-sidebar-accent-foreground shadow-xs ring-1 ring-sidebar-border ring-inset"
 																: "text-muted-foreground hover:bg-sidebar-accent hover:text-foreground",
 														)
 													}
@@ -251,7 +251,7 @@ function WorkspaceLayout({ session }: { session: AuthSession }) {
 										<ChevronRight className="size-3.5" />
 										<span className="truncate">{activeLink.releaseArea}</span>
 									</div>
-									<p className="mt-1 truncate font-display text-lg font-semibold leading-none text-foreground sm:text-xl">
+									<p className="font-display mt-1 truncate text-lg leading-none font-semibold text-foreground sm:text-xl">
 										{activeLink.label}
 									</p>
 								</div>
@@ -286,7 +286,7 @@ function WorkspaceLayout({ session }: { session: AuthSession }) {
 						tabIndex={-1}
 						id="main-content"
 						aria-busy={isRoutePending}
-						className="mx-auto min-w-0 max-w-[1400px] scroll-mt-28 py-6 sm:py-8"
+						className="mx-auto max-w-[1400px] min-w-0 scroll-mt-28 py-6 sm:py-8"
 					>
 						<Outlet />
 					</main>

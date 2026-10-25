@@ -1,6 +1,6 @@
 # Engineering contracts
 
-Reviewed October 21, 2026. This document explains the decisions that the code and verification harness enforce. Dependency/release review dates are separate from the dated validation and browser results in the README.
+Reviewed October 24, 2026. This document explains the decisions that the code and verification harness enforce. Dependency/release review dates are separate from the historical validation and browser results in the README.
 
 ## Architecture
 
@@ -44,6 +44,10 @@ The browser/server build boundary is physical: only `dist/public` is served. The
 
 `src/tooling/validate.ts` is the shared local/CI entry point. Its plan names each stage and sets execution deadlines. Independent failures are collected into one report; the production probe explicitly depends on a successful build. Signals cancel the active stage and prevent later stages from starting. `.cache/validation/latest.json` records metadata and results, with command output retained in the caller's log.
 
+The first stage runs `format:check` (`bun fmt --check`), followed by Biome lint and import checks. [Bun's native formatter](https://bun.com/docs/format) uses `bunfig.toml` for tabs, line width, Tailwind class sorting, package metadata sorting, and generated-file exclusions. Biome formatting is disabled; its lint rules and custom import groups remain authoritative. `bun run format` writes formatting, while `format:changed` and `format:staged` support smaller edits. The staged command also re-stages formatted files. Zed uses Bun's stdin formatter and retains Biome fix/import code actions, keeping editor saves aligned with validation.
+
+Git keeps text files on LF line endings across platforms so a fresh Windows checkout satisfies the formatter. Biome 2.6's Drizzle guards now live in `suspicious`. Its React component-factory rule is disabled only for server modules, where uppercase HTTP method handlers such as `GET` return responses rather than React components.
+
 The production probe launches a built server with disposable credentials and an isolated database. Every request has a deadline and the server subprocess has a final lifetime cap. It checks all manifest-listed assets, protected/private paths, real session revocation, and rejected-write integrity. This follows the isolation and observable-behavior principles in [Playwright's testing guidance](https://playwright.dev/docs/best-practices), implemented here with Bun's native HTTP/process tools. [Bun's subprocess docs](https://bun.sh/docs/runtime/child-process) define cancellation and timeout behavior.
 
 Use `validate:quick` while editing, `validate` before review, and `validate:ci` for the advisory audit. The latter requires registry network access. Socket tests need localhost access. Browser behavior, OAuth callbacks, and the Docker image are separate checks: passing types and HTTP probes alone does not verify those interfaces.
@@ -56,9 +60,9 @@ Use `validate:quick` while editing, `validate` before review, and `validate:ci` 
 4. Run the shared validation pipeline. For runtime/auth/router changes also verify browser recovery and session lifecycle, real-provider callbacks where configured, and the Docker image in CI.
 5. Update `src/lib/official-docs.ts` with the verification date and links that support the changes. `package.json` supplies displayed version baselines; avoid independent hardcoded version cards.
 
-Bun 1.4.3 supplies the built-in checker ([release notes](https://bun.sh/blog/release-notes/bun-v1.4.3)). Stable [TypeScript 7](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/) supplies the second compiler check and editor server. CI reads Bun's version from `package.json`; the Docker base and Bun types must stay aligned. Zed's integration follows its [official TypeScript extension configuration](https://github.com/zed-extensions/tsgo).
+Bun 1.4.4 supplies native formatting and improves its built-in checker ([release notes](https://bun.com/blog/bun-v1.4.4)). Keep the `typecheck` script on `bun --check`, because `bun check` invokes the existing Biome script. Stable [TypeScript 7](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/) supplies the second compiler check and editor server. CI reads Bun's version from `package.json`; the Docker base and Bun types must stay aligned. Zed's integration follows its [official TypeScript extension configuration](https://github.com/zed-extensions/tsgo).
 
-On October 21, Bun's [official latest release](https://github.com/oven-sh/bun/releases/latest) still resolved to 1.4.3. [Lucide 1.60.0](https://github.com/lucide-icons/lucide/releases/tag/1.60.0) adds icons and lists no React API migration; the installed version remains the shared source for icon components.
+The October 24 refresh aligns Bun and its types at 1.4.4, updates [Biome to 2.6.2](https://github.com/biomejs/biome/releases/tag/%40biomejs%2Fbiome%402.6.2) and [Lucide to 1.61.0](https://github.com/lucide-icons/lucide/releases/tag/1.61.0), and exact-pins Drizzle ORM/Kit together at 1.0.0-rc.5. Other direct package baselines remain unchanged after registry checks. Bun 1.4.4's install and audit retry improvements apply automatically; CI sets `BUN_CONFIG_HTTP_RETRY_BACKOFF=250` to extend the initial registry retry delay. Docker dependency stages copy `bunfig.toml` alongside the manifest and lockfile to preserve install settings. Continue using frozen installs and review the regenerated lockfile, including platform metadata; do not replace the shared validation pipeline with a version-only check.
 
 ## Extension points
 

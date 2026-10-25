@@ -247,7 +247,7 @@ function SignalRow({
 					{isActiveMutation ? <Badge variant="secondary">Optimistic</Badge> : null}
 				</div>
 				<div>
-					<p className="font-semibold leading-6 text-foreground">{signal.title}</p>
+					<p className="leading-6 font-semibold text-foreground">{signal.title}</p>
 					<p className="mt-1 text-sm leading-6 text-muted-foreground">{signal.detail}</p>
 				</div>
 				<p className="text-xs leading-5 text-muted-foreground">

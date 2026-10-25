@@ -303,11 +303,11 @@ export function DomInteropPage() {
 						</div>
 
 						<div className="app-muted-surface p-4">
-							<p className="text-muted-foreground text-xs font-semibold tracking-[0.18em] uppercase">
+							<p className="text-xs font-semibold tracking-[0.18em] text-muted-foreground uppercase">
 								Active head state
 							</p>
-							<p className="text-foreground mt-3 font-medium">{head.title}</p>
-							<p className="text-muted-foreground mt-2 text-sm leading-6">{head.description}</p>
+							<p className="mt-3 font-medium text-foreground">{head.title}</p>
+							<p className="mt-2 text-sm leading-6 text-muted-foreground">{head.description}</p>
 						</div>
 
 						<CodeBlock>
@@ -377,10 +377,10 @@ export function DomInteropPage() {
 						)}
 
 						<div className="space-y-2">
-							<p className="text-foreground text-sm font-medium">Lifecycle log</p>
+							<p className="text-sm font-medium text-foreground">Lifecycle log</p>
 							<div className="space-y-2">
 								{refEvents.length === 0 ? (
-									<p className="text-muted-foreground text-sm">
+									<p className="text-sm text-muted-foreground">
 										Mount the tracked target to record events.
 									</p>
 								) : (
@@ -428,11 +428,11 @@ export function DomInteropPage() {
 						/>
 
 						<div className="app-surface p-4 text-sm text-muted-foreground">
-							<p className="text-foreground font-medium">Other platform items</p>
+							<p className="font-medium text-foreground">Other platform items</p>
 							<div className="mt-3 space-y-3">
 								{platformNotes.map((note) => (
 									<div key={note.title} className="app-muted-surface p-3">
-										<p className="text-foreground font-medium">{note.title}</p>
+										<p className="font-medium text-foreground">{note.title}</p>
 										<CodeBlock className="mt-3 rounded-lg p-3">{note.code}</CodeBlock>
 									</div>
 								))}
